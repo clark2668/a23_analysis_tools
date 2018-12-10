@@ -105,7 +105,6 @@ int isBadRun(int station, int year, int run_num){
 			waveforms clearly show double pulses or things consistent with surface pulsing
 		*/
 
-		station2_exclude.push_back(3800);
 		station2_exclude.push_back(3811); //deep pulser run
 			station2_exclude.push_back(3810); //elminated by proximity to deep pulser run
 			station2_exclude.push_back(3820); //elminated by proximity to deep pulser run
