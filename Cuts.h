@@ -74,7 +74,7 @@ int isBadRun(int station, int year, int run_num){
 			station2_exclude.push_back(2898); //jan 16 2014 surface pulser runs //exclusion by proximity
 			station2_exclude.push_back(2900); //jan 17 2014 surface pulser runs //exclusion by proximity
 			station2_exclude.push_back(2901); //jan 17 2014 surface pulser runs //exclusion by proximity
-			station2_exclude.push_back(2901); //jan 17 2014 surface pulser runs //exclusion by proximity
+			station2_exclude.push_back(2902); //jan 17 2014 surface pulser runs //exclusion by proximity
 		station2_exclude.push_back(2903); //jan 18 2014 surface pulser runs //actual problem causer
 			station2_exclude.push_back(2905); //jan 18 2014 surface pulser runs //exclusion by proximity
 			station2_exclude.push_back(2906); //jan 18 2014 surface pulser runs //exclusion by proximity
@@ -107,6 +107,26 @@ int isBadRun(int station, int year, int run_num){
 		station3_exclude.push_back(3811); //deep pulser run
 			station3_exclude.push_back(3810); //elminated by proximity to deep pulser run
 			station3_exclude.push_back(3820); //elminated by proximity to deep pulser run
+
+		/*
+		2015 noise source tests
+		http://ara.icecube.wisc.edu/wiki/index.php/Run_Log_2015
+		*/
+		for(int i=3844; i<=3860; i++){
+			station3_exclude.push_back(i);
+		}
+		for(int i=3881; i<=3891; i++){
+			station3_exclude.push_back(i);
+		}
+		for(int i=3916; i<=3918; i++){
+			station3_exclude.push_back(i);
+		}
+		for(int i=3920; i<=3975; i++){
+			station3_exclude.push_back(i);
+		}
+		for(int i=4009; i<=4073; i++){
+			station3_exclude.push_back(i);
+		}
 
 
 
