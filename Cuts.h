@@ -8,7 +8,31 @@
 #include <complex>
 #include <algorithm>
 
+#include "TGraph.h"
+
 using namespace std;
+
+/*
+	input: tgraph of an event
+	output: 0 (has no timing error), 1 (has timing error)
+
+	function: checks to see if ever x_j < x_j+1
+			which otherwise causes the interpolator to fail
+			is called by hasTimingErrorMultiGraph
+*/
+
+int hasTimingErrorGraph(TGraph *gr){
+	Double_t *xVals = gr->GetX();
+	Double_t *yVals = gr->GetX();
+	int has_error=0;
+	for(int i=1; i<gr->GetN(); i++){
+		if(xVals[i]<xVals[i-1]){
+			has_error=1;
+			break;
+		}
+	}
+	return has_error;
+}
 
 /*
 	input: vector of graphs for an event
@@ -28,19 +52,6 @@ int hasTimingErrorMultiGraph(vector<TGraph*> grs){
 		}
 	}
 	return event_has_error;
-}
-
-int hasTimingErrorGraph(TGraph *gr){
-	Double_t *xVals = gr->GetX();
-	Double_t *yVals = gr->GetX();
-	int has_error=0;
-	for(int i=1; i<gr->GetN(); i++){
-		if(xVals[i]<xVals[i]){
-			has_error=1;
-			break;
-		}
-	}
-	return has_error;
 }
 
 int isBadRun(int station, int year, int run_num){
