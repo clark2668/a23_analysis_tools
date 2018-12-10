@@ -23,37 +23,49 @@ using namespace std;
 int main(int argc, char **argv)
 {
 
-	int recoBinCalpulser = 6;
-	int recoBinSelect = 19;
-
 	stringstream ss;
 
-	if(argc<2) {
-		std::cout << "Usage\n" << argv[0] << " <base file name>";
-		std::cout << "e.g.\n" << argv[0] << " ./outputs http://www.hep.ucl.ac.uk/uhen/ara/monitor/root/run1841/event1841.root default_pedestal.txt\n";
-		return 0;
+	if(argc<5) {
+		std::cout << "Usage\n" << argv[0] << " <station> <output_location> <processed_file_location> <filter_file>"<<endl;
+		return -1;
 	}
+	/*
+	arguments
+	0: exec
+	1: station num (2/3)
+	2: output location
+	3: processed file location
+	5: filter file number
+	*/
 
-	ss.str("");
-	ss << argv[1] << "_joined_bins_" << recoBinCalpulser << "_" << recoBinSelect << ".root";
 
-	TFile *OutputFile = TFile::Open(ss.str().c_str(), "RECREATE");
+	int station = atoi(argv[1]);
 
-	TFile *fOpen_filter;
-	TTree *inputSettingsTree_filter; 
-	TTree *inputTree_filter; 
+	//get run number
+	string chRun = "run";
+	string file = string(argv[4]);
+	size_t foundRun = file.find(chRun);
+	string strRunNum = file.substr(foundRun+4,4);
+	int runNum = atoi(strRunNum.c_str());
 
-	ss.str("");
-	ss << argv[1] << "_filter.root";
-	fOpen_filter = TFile::Open(ss.str().c_str());
+	int recoBinCalpulser = 6;
+	int recoBinSelect = 19;
+	char out_filename[400];
+	sprintf(out_filename,"%s/processed_station_%d_run_%d_joined_bins_%d_%d.root",argv[2],station,runNum,recoBinCalpulser,recoBinSelect);
+
+	TFile *OutputFile = TFile::Open(out_filename, "RECREATE");
+
+	char filter_filename[400];
+	sprintf(filter_filename,"%s/processed_station_%d_run_%d_filter.root",argv[3],station,runNum);
+
+	TFile *fOpen_filter = TFile::Open(filter_filename);
 	if(!fOpen_filter) {
-		std::cerr << "Can't open file : filter" << "\n";
-	return -1;
+		std::cout << "Can't open file : filter" << "\n";
+		return -1;
 	}
-
-	inputTree_filter = (TTree*) fOpen_filter->Get("OutputTree");
+	TTree *inputTree_filter = (TTree*) fOpen_filter->Get("OutputTree");
 	if(!inputTree_filter) {
-		std::cerr << "Can't find OutputTree: filter"  << "\n";
+		std::cout << "Can't find OutputTree: filter"  << "\n";
 		return -1;
 	}
 
@@ -71,9 +83,10 @@ int main(int argc, char **argv)
 	for (int i = 0; i < 35; i++){
 		if (i == recoBinSelect || i == recoBinCalpulser){
 
-			ss.str("");
-			ss << argv[1] << "_recoRadius_" << radii[i] << ".root";
-			fOpen_reco[i] = TFile::Open(ss.str().c_str());
+			char reco_filename[400];
+			sprintf(reco_filename,"%s/processed_station_%d_run_%d_recoRadius_%d.root",argv[3],station,runNum,int(radii[i]));
+
+			fOpen_reco[i] = TFile::Open(reco_filename);
 			if(!fOpen_reco[i]) {
 				std::cerr << "Can't open file : "<< i << "\n";
 				return -1;
