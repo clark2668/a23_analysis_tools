@@ -36,9 +36,12 @@ AraAntPol::AraAntPol_t Hpol = AraAntPol::kHorizontal;
 
 using namespace std;
 
+int PlotThisEvent(int station, int year, int runNum, int event, Settings *settings, Detector *detector, RayTraceCorrelator *theCorrelators[2]);
+int doRezero=0;
+
 int main(int argc, char **argv)
 {
-	
+	gStyle->SetOptStat(0);
 	time_t time_now = time(0); //get the time now                                                                                                                                                                  
 	tm *time = localtime(&time_now);
 	int year_now = time -> tm_year + 1900;
@@ -49,7 +52,7 @@ int main(int argc, char **argv)
 	AraEventCalibrator *calibrator = AraEventCalibrator::Instance();
 	
 	if(argc<3){
-		cout<< "Usage\n" << argv[0] << " <station> <year> <output_location> <joined filename 1> <joined filename 2 > ... <joined filename x>";
+		cout<< "Usage\n" << argv[0] << " <station> <year> <output_location> <joined filename 1> <joined filename 2 > ... <joined filename x>"<<endl;
 		return 0;
 	}
 	int station = atoi(argv[1]);
@@ -210,9 +213,10 @@ int main(int argc, char **argv)
 		//now to loop over events
 		for(int event=0; event<numEntries; event++){
 
-			if(event%starEvery==0) {
-				std::cout << "	On event "<<event<<endl;
-			}
+			// if(event%starEvery==0) {
+			// 	std::cout << "	On event "<<event<<endl;
+			// }
+			if(event!=16023) continue;
 
 			isCal=0;
 			isSoft=0;
@@ -245,7 +249,6 @@ int main(int argc, char **argv)
 
 			for(int i=0;i<16;i++){ if(waveformLength[i]<550) isShort=true; }
 
-			
 			for (int i = 0; i < 35; i++){
 				if (i == recoBinSelect || i == recoBinCalpulser){
 					inputTree_reco[i]->GetEntry(event);
@@ -261,9 +264,15 @@ int main(int argc, char **argv)
 			int bestPhi[3];
 
 			for(int pol=0; pol<2; pol++){
+				cout<<"On pol "<<pol<<endl;
 				for(int i=0; i<35; i++){
 					if(i==recoBinSelect){
+						cout<<"On reco bin "<<i<<endl;
+						cout<<"Current peakCorr and bestCorr are "<<peakCorr[i][pol]<<" and "<<bestCorr[pol]<<endl;
 						if(peakCorr[i][pol] > bestCorr[pol]){
+							cout<<"PeakCorr is greater!"<<endl;
+							cout<<"Now best theta is "<<peakTheta[i][pol]<<endl;
+							cout<<"Now best phi is "<<peakPhi[i][pol]<<endl;
 							bestCorr[pol]=peakCorr[i][pol];
 							bestCorrRadiusBin[pol]=i;
 							bestTheta[pol]=peakTheta[i][pol];
@@ -282,6 +291,7 @@ int main(int argc, char **argv)
 
 
 			for(int pol=0; pol<2; pol++){
+				cout<<"best theta pol "<<pol<<" is "<<bestTheta[pol]<<endl;
 				if(bestTheta[pol] > 37) isSurf=true;
 			}
 
@@ -433,78 +443,7 @@ int main(int argc, char **argv)
 					//what happens if we act like it's a *cut*
 					//we want all of the clean events in both histograms (as cut as after filter)
 					if(!isCutonCW_fwd[pol] && !isCutonCW_back[pol] && !isCutonCW_baseline[pol]){
-						// cout<<"no problems!!"<<endl;
-						//print out stuff about events in our signal box that still have high corr values; ugh
-						/*
-						if(bestCorr[pol]>=0.14){
-							char run_file_name[400];
-							sprintf(run_file_name,"/data/wipac/ARA/2013/filtered/burnSample1in10/ARA02/root/run%d/event%d.root",runNum,runNum);
-							TFile *mapFile = TFile::Open(run_file_name);
-							if(!mapFile){
-								cout<<"Can't open data file for map!"<<endl;
-								return -1;
-							}
-							TTree *eventTree = (TTree*) mapFile-> Get("eventTree");
-							if(!eventTree){
-								cout<<"Can't find eventTree for map"<<endl;
-								return -1;
-							}
-							RawAtriStationEvent *rawPtr =0;
-							eventTree->SetBranchAddress("event",&rawPtr);
-							eventTree->GetEvent(event);
-							UsefulAtriStationEvent *realAtriEvPtr = new UsefulAtriStationEvent(rawPtr,AraCalType::kLatestCalib);
-
-							stringstream ss1;
-							string xLabel, yLabel;
-							xLabel = "Time (ns)"; yLabel = "Voltage (mV)";
-							vector<string> titlesForGraphs;
-							for (int i = 0; i < 16; i++){
-								ss1.str("");
-								ss << "Channel " << i;
-								titlesForGraphs.push_back(ss1.str());
-							}
-
-							vector <TGraph*> waveforms = makeGraphsFromRF(realAtriEvPtr,16,xLabel,yLabel,titlesForGraphs);
-							vector<TGraph*> grWaveformsInt = makeInterpolatedGraphs(waveforms, interpolationTimeStep, xLabel, yLabel, titlesForGraphs);
-							vector<TGraph*> grWaveformsPadded = makePaddedGraphs(grWaveformsInt, 0, xLabel, yLabel, titlesForGraphs);
-							xLabel = "Frequency (Hz)"; yLabel = "Power Spectral Density (mV/Hz)";
-							vector<TGraph*> grWaveformsPowerSpectrum = makePowerSpectrumGraphs(grWaveformsPadded, xLabel, yLabel, titlesForGraphs);
-
-							char save_temp_title[300];
-							sprintf(save_temp_title,"/home/brianclark/results/A23/%d.%d.%d_NoCWIssues_Waveforms_Run%d_Ev%d_pol%d.png",year_now,month_now,day_now,runNum,event,pol);
-							TCanvas *cWave = new TCanvas("","",4*1100,4*850);
-							cWave->Divide(4,4);
-							for(int i=0; i<16; i++){
-								cWave->cd(i+1);
-								waveforms[i]->Draw("AL");
-								waveforms[i]->SetLineWidth(3);
-							}
-							cWave->SaveAs(save_temp_title);
-							delete cWave;
-
-							sprintf(save_temp_title,"/home/brianclark/results/A23/%d.%d.%d_NoCWIssues_Spectra_Run%d_Ev%d_pol%d.png",year_now,month_now,day_now,runNum,event,pol);
-							TCanvas *cSpec = new TCanvas("","",4*1100,4*850);
-							cSpec->Divide(4,4);
-							for(int i=0; i<16; i++){
-								cSpec->cd(i+1);
-								grWaveformsPowerSpectrum[i]->Draw("AL");
-								grWaveformsPowerSpectrum[i]->SetLineWidth(3);
-								gPad->SetLogy();
-							}
-							cSpec->SaveAs(save_temp_title);
-							delete cSpec;
-							for(int i=0; i<16; i++){
-								delete waveforms[i];
-								delete grWaveformsInt[i];
-								delete grWaveformsPadded[i];
-								delete grWaveformsPowerSpectrum[i];
-							}
-							delete realAtriEvPtr;
-							mapFile->Close();
-							delete mapFile;
-						}
-						*/
-						1==1;
+						PlotThisEvent(station,year,runNum,event, settings, detector, theCorrelators);
 					} //not cut by any CW
 
 					//and now to do *filtering*
@@ -893,7 +832,7 @@ int main(int argc, char **argv)
 						isSurfEvent=1; //assume again it's surface
 						if(PeakTheta_Recompute_300m<=37){ //recheck for surface
 							isSurfEvent=0;  //mark it as not a surface event
-							
+
 							//recheck wrms and use the recomputed SNR
 							WFRMS[pol]=1; //assume it will fail
 							if(log(bestFaceRMS_new[pol])/log(10) < wavefrontRMScut[pol]){ //recheck if it *passes* the WRMS cut
@@ -983,4 +922,164 @@ int main(int argc, char **argv)
 		delete fpOut;
 		printf("Done! Run Number %d", runNum);
 	} //end loop over input files
+}
+
+
+int PlotThisEvent(int station, int year, int runNum, int event, Settings *settings, Detector *detector, RayTraceCorrelator *theCorrelators[2]){
+	time_t time_now = time(0); //get the time now                                                                                                                                                                  
+	tm *time = localtime(&time_now);
+	int year_now = time -> tm_year + 1900;
+	int month_now = time -> tm_mon + 1;
+	int day_now = time -> tm_mday;
+
+	char run_file_name[400];
+	if(year==2013){
+		sprintf(run_file_name,"/fs/scratch/PAS0654/ara/10pct/RawData/A%d/%d/run%d/event%d.root",station,year,runNum,runNum);
+	}
+	else if(year==2014 || year==2015 || year==2016){
+		sprintf(run_file_name,"/fs/scratch/PAS0654/ara/10pct/RawData/A%d/%d/sym_links/event00%d.root",station,year,runNum,runNum);
+	}
+	TFile *mapFile = TFile::Open(run_file_name);
+	if(!mapFile){
+		cout<<"Can't open data file for map!"<<endl;
+		return -1;
+	}
+	TTree *eventTree = (TTree*) mapFile-> Get("eventTree");
+	if(!eventTree){
+		cout<<"Can't find eventTree for map"<<endl;
+		return -1;
+	}
+
+	RawAtriStationEvent *rawPtr =0;
+	eventTree->SetBranchAddress("event",&rawPtr);
+	eventTree->GetEvent(event);
+
+	int stationID = rawPtr->stationId;
+	char ped_file_name[400];
+
+	if(year==2013){
+		sprintf(ped_file_name,"/fs/scratch/PAS0654/ara/peds/run_specific_peds/A%d/%d/event%d_specificPeds.dat",station,year,runNum);
+	}
+	else if(year==2014 || year==2015 || year==2016){
+		sprintf(ped_file_name,"/fs/scratch/PAS0654/ara/peds/run_specific_peds/A%d/%d/event00%d_specificPeds.dat",station,year,runNum);
+	}
+	AraEventCalibrator *calibrator = AraEventCalibrator::Instance();
+	calibrator->setAtriPedFile(ped_file_name,stationID); //because someone had a brain (!!), this will error handle itself if the pedestal doesn't exist
+	
+	UsefulAtriStationEvent *realAtriEvPtr = new UsefulAtriStationEvent(rawPtr,AraCalType::kLatestCalib);
+
+	int unixTime = (int)rawPtr->unixTime;
+	int unixTimeUs =(int)rawPtr->unixTimeUs;
+	printf("Unixtime is %d \n", unixTime);
+	printf("Unixtime microsecond is %d \n", unixTimeUs);
+
+	stringstream ss1;
+	string xLabel, yLabel;
+	xLabel = "Time (ns)"; yLabel = "Voltage (mV)";
+	vector<string> titlesForGraphs;
+	for (int i = 0; i < 16; i++){
+		ss1.str("");
+		ss1 << "Channel " << i;
+		titlesForGraphs.push_back(ss1.str());
+	}
+	vector <TGraph*> waveforms = makeGraphsFromRF(realAtriEvPtr,16,xLabel,yLabel,titlesForGraphs,doRezero);
+	vector<TGraph*> grWaveformsInt = makeInterpolatedGraphs(waveforms, 0.5, xLabel, yLabel, titlesForGraphs);
+	vector<TGraph*> grWaveformsPadded = makePaddedGraphs(grWaveformsInt, 0, xLabel, yLabel, titlesForGraphs);
+	xLabel = "Frequency (Hz)"; yLabel = "Power Spectral Density (mV/Hz)";
+	vector<TGraph*> grWaveformsPowerSpectrum = makePowerSpectrumGraphs(grWaveformsPadded, xLabel, yLabel, titlesForGraphs);
+
+	bool do_reco=true;
+	if(do_reco){
+		TH2D *map_30m_V;
+		TH2D *map_300m_V;
+		TH2D *map_30m_H;
+		TH2D *map_300m_H;
+		TH2D *map_30m_V_select;
+
+		map_30m_V = theCorrelators[0]->getInterferometricMap_RT_Rezero(settings, detector, realAtriEvPtr, Vpol, 0, 0,-1,doRezero);
+		map_300m_V = theCorrelators[1]->getInterferometricMap_RT_Rezero(settings, detector, realAtriEvPtr, Vpol, 0, 0,-1,doRezero);
+		map_30m_H = theCorrelators[0]->getInterferometricMap_RT_Rezero(settings, detector, realAtriEvPtr, Hpol, 0, 0,-1,doRezero);
+		map_300m_H = theCorrelators[1]->getInterferometricMap_RT_Rezero(settings, detector, realAtriEvPtr, Hpol, 0, 0,-1,doRezero);
+
+		int PeakTheta_Recompute_30m;
+		int PeakTheta_Recompute_300m;
+		int PeakPhi_Recompute_30m;
+		int PeakPhi_Recompute_300m;
+		double PeakCorr_Recompute_30m;
+		double PeakCorr_Recompute_300m;
+		double MinCorr_Recompute_30m;
+		double MinCorr_Recompute_300m;
+		double MeanCorr_Recompute_30m;
+		double MeanCorr_Recompute_300m;
+		double RMSCorr_Recompute_30m;
+		double RMSCorr_Recompute_300m;
+		double PeakSigma_Recompute_30m;
+		double PeakSigma_Recompute_300m;
+		getCorrMapPeak_wStats(map_30m_V,PeakTheta_Recompute_30m,PeakPhi_Recompute_30m,PeakCorr_Recompute_30m,MinCorr_Recompute_30m,MeanCorr_Recompute_30m,RMSCorr_Recompute_30m,PeakSigma_Recompute_30m);
+		getCorrMapPeak_wStats(map_300m_V,PeakTheta_Recompute_300m,PeakPhi_Recompute_300m,PeakCorr_Recompute_300m,MinCorr_Recompute_300m,MeanCorr_Recompute_300m,RMSCorr_Recompute_300m,PeakSigma_Recompute_300m);
+
+		printf("30m theta and phi %d and %d \n", PeakTheta_Recompute_30m, PeakPhi_Recompute_30m);
+		printf("300m theta and phi %d and %d \n", PeakTheta_Recompute_300m, PeakPhi_Recompute_300m);
+
+		// vector <int> chan_list;
+		// chan_list.push_back(5);
+		// chan_list.push_back(6);
+		// chan_list.push_back(7);
+		// map_30m_V_select = theCorrelators[0]->getInterferometricMap_RT_select(settings,detector,realAtriEvPtr,Vpol,0,chan_list,0);
+
+
+		TCanvas *cMaps = new TCanvas("","",2*1100,2*850);
+		cMaps->Divide(2,2);
+			cMaps->cd(1);
+			map_30m_V->Draw("colz");
+			cMaps->cd(2);
+			map_30m_H->Draw("colz");
+			cMaps->cd(3);
+			map_300m_V->Draw("colz");
+			cMaps->cd(4);
+			map_300m_H->Draw("colz");
+			// cMaps->cd(5);
+			// map_30m_V_select->Draw("colz");
+		char save_temp_title[400];		
+		sprintf(save_temp_title,"/users/PAS0654/osu0673/A23_analysis/results/trouble_events/%d.%d.%d_Run%d_Ev%d_Maps_.png",year_now,month_now,day_now,runNum,event);
+		cMaps->SaveAs(save_temp_title);
+		delete cMaps;
+		delete map_30m_V; delete map_300m_V; delete map_30m_H; delete map_300m_H; 
+		// delete map_30m_V_select;
+	}
+
+
+	char save_temp_title[300];
+	sprintf(save_temp_title,"/users/PAS0654/osu0673/A23_analysis/results/trouble_events/%d.%d.%d_Run%d_Ev%d_Waveforms.png",year_now,month_now,day_now,runNum,event);
+	TCanvas *cWave = new TCanvas("","",4*1100,4*850);
+	cWave->Divide(4,4);
+	for(int i=0; i<16; i++){
+		cWave->cd(i+1);
+		waveforms[i]->Draw("AL");
+		waveforms[i]->SetLineWidth(3);
+	}
+	cWave->SaveAs(save_temp_title);
+	delete cWave;
+
+	sprintf(save_temp_title,"/users/PAS0654/osu0673/A23_analysis/results/trouble_events/%d.%d.%d_Run%d_Ev%d_Spectra.png",year_now,month_now,day_now,runNum,event);
+	TCanvas *cSpec = new TCanvas("","",4*1100,4*850);
+	cSpec->Divide(4,4);
+	for(int i=0; i<16; i++){
+		cSpec->cd(i+1);
+		grWaveformsPowerSpectrum[i]->Draw("AL");
+		grWaveformsPowerSpectrum[i]->SetLineWidth(3);
+		gPad->SetLogy();
+	}
+	cSpec->SaveAs(save_temp_title);
+	delete cSpec;
+	for(int i=0; i<16; i++){
+		delete waveforms[i];
+		delete grWaveformsInt[i];
+		delete grWaveformsPadded[i];
+		delete grWaveformsPowerSpectrum[i];
+	}
+	delete realAtriEvPtr;
+	mapFile->Close();
+	delete mapFile;
+	return 0;
 }
