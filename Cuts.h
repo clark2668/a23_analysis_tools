@@ -54,11 +54,24 @@ int hasTimingErrorMultiGraph(vector<TGraph*> grs){
 	return event_has_error;
 }
 
+/*
+	input: station, year, run number
+	output: 0 (is good run), 1 (is bad run)
+
+	function: looks through list of known "bad runs"
+			reports if the run you gave it is bad
+*/
+
 int isBadRun(int station, int year, int run_num){
 
 	int found;
 
+	/*
+	station 2 exclusion
+	*/
+
 	vector <double> station2_exclude;
+		
 		/*
 		2014 surface pulsing
 			originally flagged by 2884, 2895, 2903, 2912, 2916
@@ -91,11 +104,21 @@ int isBadRun(int station, int year, int run_num){
 		*/
 		station2_exclude.push_back(4785); //accidental deep pulser run (http://ara.physics.wisc.edu/docs/0017/001719/003/181001_ARA02AnalysisUpdate.pdf, slide 38)
 		station2_exclude.push_back(4787); //deep pulser run (http://ara.physics.wisc.edu/docs/0017/001724/004/181015_ARA02AnalysisUpdate.pdf, slide 29)
-		station2_exclude.push_back(4795); //accidental deep pulser run (http://ara.physics.wisc.edu/docs/0017/001724/004/181015_ARA02AnalysisUpdate.pdf, slide 29)
-		station2_exclude.push_back(4797); //accidental deep pulser run (http://ara.physics.wisc.edu/docs/0017/001724/004/181015_ARA02AnalysisUpdate.pdf, slide 29)
-		station2_exclude.push_back(4798); //accidental deep pulser run (http://ara.physics.wisc.edu/docs/0017/001724/004/181015_ARA02AnalysisUpdate.pdf, slide 29)
-		station2_exclude.push_back(4799); //accidental deep pulser run (http://ara.physics.wisc.edu/docs/0017/001724/004/181015_ARA02AnalysisUpdate.pdf, slide 29)
-		station2_exclude.push_back(4800); //accidental deep pulser run (http://ara.physics.wisc.edu/docs/0017/001724/004/181015_ARA02AnalysisUpdate.pdf, slide 29)
+		for(int i=4795; i<=4800; i++){ station2_exclude.push_back(i); }
+
+		/*
+		2015 noise source tests
+			January 2015
+			http://ara.icecube.wisc.edu/wiki/index.php/Run_Log_2015
+		*/
+		for(int i=4820; i<=4825; i++){ station2_exclude.push_back(i); }
+		for(int i=4850; i<=4854; i++){ station2_exclude.push_back(i); }
+		for(int i=4749; i<=4936; i++){ station2_exclude.push_back(i); }
+		for(int i=5210; i<=5277; i++){ station2_exclude.push_back(i); }
+
+	/*
+	station 3 exclusion
+	*/
 	
 	vector <double> station3_exclude;
 		/*
@@ -110,29 +133,22 @@ int isBadRun(int station, int year, int run_num){
 
 		/*
 		2015 noise source tests
-		http://ara.icecube.wisc.edu/wiki/index.php/Run_Log_2015
+			January 2015
+			http://ara.icecube.wisc.edu/wiki/index.php/Run_Log_2015
 		*/
-		for(int i=3844; i<=3860; i++){
-			station3_exclude.push_back(i);
-		}
-		for(int i=3881; i<=3891; i++){
-			station3_exclude.push_back(i);
-		}
-		for(int i=3916; i<=3918; i++){
-			station3_exclude.push_back(i);
-		}
-		for(int i=3920; i<=3975; i++){
-			station3_exclude.push_back(i);
-		}
-		for(int i=4009; i<=4073; i++){
-			station3_exclude.push_back(i);
-		}
+		for(int i=3844; i<=3860; i++){ station3_exclude.push_back(i); }
+		for(int i=3881; i<=3891; i++){ station3_exclude.push_back(i); }
+		for(int i=3916; i<=3918; i++){ station3_exclude.push_back(i); }
+		for(int i=3920; i<=3975; i++){ station3_exclude.push_back(i); }
+		for(int i=4009; i<=4073; i++){ station3_exclude.push_back(i); }
 
 
+	/*
+	Check for run exclusion
+	*/
 
 	if(station==2){
 		found = (std::find(station2_exclude.begin(), station2_exclude.end(), run_num) != station2_exclude.end());
-		// if(run_num>=3139 && run_num <=3187) found=true; //cal pulser sweep (http://ara.icecube.wisc.edu/wiki/index.php/Run_Log_2014)
 	}
 	else if(station==3){
 		found = (std::find(station3_exclude.begin(), station3_exclude.end(), run_num) != station3_exclude.end());
