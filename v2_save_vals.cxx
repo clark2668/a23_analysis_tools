@@ -890,9 +890,9 @@ int main(int argc, char **argv)
 						// printf("				old vs new snr in pol %d: %.2f vs %.2f \n",pol,SNRs[pol],SNRs_new[pol] );
 
 
-						isSurf=1; //assume again it's surface
+						isSurfEvent=1; //assume again it's surface
 						if(PeakTheta_Recompute_300m<=37){ //recheck for surface
-							isSurf=0; //mark it as not a surface event
+							isSurfEvent=0;  //mark it as not a surface event
 							
 							//recheck wrms and use the recomputed SNR
 							WFRMS[pol]=1; //assume it will fail
