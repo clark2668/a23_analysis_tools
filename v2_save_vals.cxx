@@ -216,7 +216,6 @@ int main(int argc, char **argv)
 			// if(event%starEvery==0) {
 			// 	std::cout << "	On event "<<event<<endl;
 			// }
-			if(event!=15944) continue;
 
 			isCal=0;
 			isSoft=0;
