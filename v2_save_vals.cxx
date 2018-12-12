@@ -216,7 +216,7 @@ int main(int argc, char **argv)
 			// if(event%starEvery==0) {
 			// 	std::cout << "	On event "<<event<<endl;
 			// }
-			if(event!=16023) continue;
+			if(event!=15944) continue;
 
 			isCal=0;
 			isSoft=0;
@@ -264,15 +264,9 @@ int main(int argc, char **argv)
 			int bestPhi[3];
 
 			for(int pol=0; pol<2; pol++){
-				cout<<"On pol "<<pol<<endl;
 				for(int i=0; i<35; i++){
 					if(i==recoBinSelect){
-						cout<<"On reco bin "<<i<<endl;
-						cout<<"Current peakCorr and bestCorr are "<<peakCorr[i][pol]<<" and "<<bestCorr[pol]<<endl;
 						if(peakCorr[i][pol] > bestCorr[pol]){
-							cout<<"PeakCorr is greater!"<<endl;
-							cout<<"Now best theta is "<<peakTheta[i][pol]<<endl;
-							cout<<"Now best phi is "<<peakPhi[i][pol]<<endl;
 							bestCorr[pol]=peakCorr[i][pol];
 							bestCorrRadiusBin[pol]=i;
 							bestTheta[pol]=peakTheta[i][pol];
@@ -291,7 +285,6 @@ int main(int argc, char **argv)
 
 
 			for(int pol=0; pol<2; pol++){
-				cout<<"best theta pol "<<pol<<" is "<<bestTheta[pol]<<endl;
 				if(bestTheta[pol] > 37) isSurf=true;
 			}
 

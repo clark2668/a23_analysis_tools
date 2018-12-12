@@ -225,7 +225,7 @@ int main(int argc, char **argv)
 	cout<<"Num in final plot "<<num_in_final_plot<<endl;
 	cout<<"Num re-filtered is "<<num_refilt<<endl;
 
-	gStyle->SetOptStat(11);
+	gStyle->SetOptStat(0);
 	gStyle->SetStatY(0.9);
 	gStyle->SetStatX(0.9);
 	gStyle->SetStatW(0.2);
