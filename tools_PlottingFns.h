@@ -30,7 +30,6 @@ using namespace std;
 #include "AraGeomTool.h"
 #include "AraAntennaInfo.h"
 #include "FFTtools.h"
-#include "WaveformFns.h"
 
 //ROOT Includes                                                                                                
 #include "TROOT.h"
@@ -58,6 +57,9 @@ using namespace std;
 #include "TGraph.h"
 #include "TObjArray.h"
 #include "TLine.h"
+
+#include "tools_WaveformFns.h"
+
 
 
 
