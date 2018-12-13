@@ -481,8 +481,6 @@ int main(int argc, char **argv)
 					sort(faceRmsAllForReco_sorted.begin(), faceRmsAllForReco_sorted.end());
 				}
 			} // end threshold scan
-
-			double wavefrontRMS_V_test, wavefrontRMS_H_test;
 				
 			OutputTree->Fill();
 
