@@ -30,9 +30,9 @@
 #include "RayTraceCorrelator.h"
 AraAntPol::AraAntPol_t Vpol = AraAntPol::kVertical;
 AraAntPol::AraAntPol_t Hpol = AraAntPol::kHorizontal;
-#include "PlottingFns.h"
-#include "RecoFns.h"
-#include "inputParameters.h"
+#include "tools_PlottingFns.h"
+#include "tools_RecoFns.h"
+#include "tools_inputParameters.h"
 
 using namespace std;
 

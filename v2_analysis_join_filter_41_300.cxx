@@ -16,7 +16,7 @@
 #include "TFile.h"
 #include "TGraph.h"
 
-#include "inputParameters.h"
+#include "tools_inputParameters.h"
 
 using namespace std;
 

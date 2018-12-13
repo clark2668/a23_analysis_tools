@@ -1,4 +1,4 @@
-#include "inputParameters.h"
+#include "tools_inputParameters.h"
 
 #ifndef OUTPUT_OBJS
 #define OUTPUT_OBJS

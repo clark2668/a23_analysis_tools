@@ -21,7 +21,7 @@
 #include "TCanvas.h"
 #include "TStyle.h"
 #include "TF1.h"
-#include "Cuts.h"
+#include "tools_Cuts.h"
 
 using namespace std;
 

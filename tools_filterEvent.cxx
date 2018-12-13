@@ -22,7 +22,7 @@
 
 //FFTtools
 #include "FFTtools.h"
-#include "filterEvent.h"
+#include "tools_filterEvent.h"
 
 
 using namespace std;

@@ -33,13 +33,13 @@ UsefulAtriStationEvent *realAtriEvPtr;
 #include "AraAntennaInfo.h"
 #include "RayTraceCorrelator.h"
 
-#include "inputParameters.h"
-#include "outputObjects.h"
-#include "runSummaryObjects.h"
-#include "WaveformFns.h"
-#include "PlottingFns.h"
-#include "Constants.h"
-#include "RecoFns.h"
+#include "tools_inputParameters.h"
+#include "tools_outputObjects.h"
+#include "tools_runSummaryObjects.h"
+#include "tools_WaveformFns.h"
+#include "tools_PlottingFns.h"
+#include "tools_Constants.h"
+#include "tools_RecoFns.h"
 
 AraAntPol::AraAntPol_t Vpol = AraAntPol::kVertical;
 AraAntPol::AraAntPol_t Hpol = AraAntPol::kHorizontal;
