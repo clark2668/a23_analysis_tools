@@ -21,43 +21,26 @@
 using namespace std;
 
 //AraRoot Includes                                                                                                              
-#include "RawIcrrStationEvent.h"
 #include "RawAtriStationEvent.h"
 #include "UsefulAraStationEvent.h"
-#include "UsefulIcrrStationEvent.h"
 #include "UsefulAtriStationEvent.h"
 #include "AraGeomTool.h"
 #include "AraAntennaInfo.h"
-//#include "RayTraceCorrelator_test.h"
-
 #include "FFTtools.h"
 
 //ROOT Includes                                                                                                                 
 #include "TROOT.h"
-#include "TRandom3.h"
 #include "TCanvas.h"
 #include "TTree.h"
 #include "TFile.h"
-#include "TButton.h"
-#include "TGroupButton.h"
-#include <TGClient.h>
-#include "TStyle.h"
-#include "TPostScript.h"
 #include "TTree.h"
 #include "math.h"
-#include "TText.h"
 #include "TF1.h"
 #include "TH2F.h"
-#include "TLegend.h"
-#include "TNtuple.h"
-#include "TProfile.h"
-#include "Math/Interpolator.h"
-#include "TImage.h"
-#include "TMarker.h"
-#include "TStyle.h"
+
+//Analysis Includes
 
 #include "tools_Constants.h"
-//#include "PlottingFns.h"
 
 double getRMS( TGraph *plot, int numPointsToInclude);
 double getRMS( double *array, int bin);
