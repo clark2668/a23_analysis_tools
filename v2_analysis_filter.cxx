@@ -32,7 +32,6 @@ UsefulAtriStationEvent *realAtriEvPtr;
 
 #include "AraGeomTool.h"
 #include "AraAntennaInfo.h"
-#include "RayTraceCorrelator.h"
 
 #include "tools_inputParameters.h"
 #include "tools_outputObjects.h"
@@ -42,13 +41,6 @@ UsefulAtriStationEvent *realAtriEvPtr;
 #include "tools_Constants.h"
 #include "tools_RecoFns.h"
 #include "tools_filterEvent.h"
-
-RayTraceCorrelatorType::RayTraceCorrelatorType_t raytrace = RayTraceCorrelatorType::kRayTrace;
-RayTraceCorrelatorType::RayTraceCorrelatorType_t planewave = RayTraceCorrelatorType::kPlaneWave;
-
-AraAntPol::AraAntPol_t Vpol = AraAntPol::kVertical;
-AraAntPol::AraAntPol_t Hpol = AraAntPol::kHorizontal;
-
 
 int main(int argc, char **argv)
 {
