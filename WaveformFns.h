@@ -2145,7 +2145,12 @@ vector<double> getRms_Corr_Regular_Threshold_Remove1(vector<double> BestTimes, v
   return RmsValues;
 }
 
-vector<vector<vector<vector<int> > > > setupFaces(int stationId){
+/*
+  input: stationId (what station is it?)
+  input: dropBadChans (should I drop bad channels? default no)
+*/
+
+vector<vector<vector<vector<int> > > > setupFaces(int stationId, int dropBadChans=0){
 
   vector<vector<vector<vector<int> > > > Pairs; //Pairs_pol_face_pair_ind;
   vector<vector<vector<int> > > faces;
@@ -2325,9 +2330,10 @@ vector<vector<vector<vector<int> > > > setupFaces(int stationId){
     pair.push_back(11); pair.push_back(13);
     face.push_back(pair); pair.clear();
     faces.push_back(face);face.clear();
+
     Pairs.push_back(faces);faces.clear();
 
-  }
+  }//station 2
 
   if (stationId == 3){
 
@@ -2340,18 +2346,22 @@ vector<vector<vector<vector<int> > > > setupFaces(int stationId){
     faces.push_back(face);face.clear();
 
     //Face 2 - side face
-    pair.push_back(0); pair.push_back(4);
-    face.push_back(pair); pair.clear();
-    pair.push_back(3); pair.push_back(7);
-    face.push_back(pair); pair.clear();
-    faces.push_back(face);face.clear();
+    if(!dropBadChans){
+      pair.push_back(0); pair.push_back(4);
+      face.push_back(pair); pair.clear();
+      pair.push_back(3); pair.push_back(7);
+      face.push_back(pair); pair.clear();
+      faces.push_back(face);face.clear();
+    }
 
     //Face 3 - side face
-    pair.push_back(3); pair.push_back(7);
-    face.push_back(pair); pair.clear();
-    pair.push_back(2); pair.push_back(6);
-    face.push_back(pair); pair.clear();
-    faces.push_back(face);face.clear();
+    if(!dropBadChans){
+      pair.push_back(3); pair.push_back(7);
+      face.push_back(pair); pair.clear();
+      pair.push_back(2); pair.push_back(6);
+      face.push_back(pair); pair.clear();
+      faces.push_back(face);face.clear();
+    }
 
     //Face 4 - side face
     pair.push_back(2); pair.push_back(6);
@@ -2361,25 +2371,31 @@ vector<vector<vector<vector<int> > > > setupFaces(int stationId){
     faces.push_back(face);face.clear();
 
     //Face 5 - top face
-    pair.push_back(1); pair.push_back(0);
-    face.push_back(pair); pair.clear();
-    pair.push_back(2); pair.push_back(3);
-    face.push_back(pair); pair.clear();
-    faces.push_back(face);face.clear();
+    if(!dropBadChans){
+      pair.push_back(1); pair.push_back(0);
+      face.push_back(pair); pair.clear();
+      pair.push_back(2); pair.push_back(3);
+      face.push_back(pair); pair.clear();
+      faces.push_back(face);face.clear();
+    }
 
     //Face 6 - bottom face
-    pair.push_back(5); pair.push_back(4);
-    face.push_back(pair); pair.clear();
-    pair.push_back(6); pair.push_back(7);
-    face.push_back(pair); pair.clear();
-    faces.push_back(face);face.clear();
+    if(!dropBadChans){
+      pair.push_back(5); pair.push_back(4);
+      face.push_back(pair); pair.clear();
+      pair.push_back(6); pair.push_back(7);
+      face.push_back(pair); pair.clear();
+      faces.push_back(face);face.clear();
+    }
 
     //Face 7 - cross face
-    pair.push_back(1); pair.push_back(5);
-    face.push_back(pair); pair.clear();
-    pair.push_back(3); pair.push_back(7);
-    face.push_back(pair); pair.clear();
-    faces.push_back(face);face.clear();
+    if(!dropBadChans){
+      pair.push_back(1); pair.push_back(5);
+      face.push_back(pair); pair.clear();
+      pair.push_back(3); pair.push_back(7);
+      face.push_back(pair); pair.clear();
+      faces.push_back(face);face.clear();
+    }
 
     //Face 8 - cross face
     pair.push_back(0); pair.push_back(4);
@@ -2389,32 +2405,40 @@ vector<vector<vector<vector<int> > > > setupFaces(int stationId){
     faces.push_back(face);face.clear();
 
     //Face 9 - slant face
-    pair.push_back(1); pair.push_back(4);
-    face.push_back(pair); pair.clear();
-    pair.push_back(2); pair.push_back(7);
-    face.push_back(pair); pair.clear();
-    faces.push_back(face);face.clear();
+    if(!dropBadChans){
+      pair.push_back(1); pair.push_back(4);
+      face.push_back(pair); pair.clear();
+      pair.push_back(2); pair.push_back(7);
+      face.push_back(pair); pair.clear();
+      faces.push_back(face);face.clear();
+    }
 
     //Face 10 - slant face
-    pair.push_back(5); pair.push_back(0);
-    face.push_back(pair); pair.clear();
-    pair.push_back(6); pair.push_back(3);
-    face.push_back(pair); pair.clear();
-    faces.push_back(face);face.clear();
+    if(!dropBadChans){
+      pair.push_back(5); pair.push_back(0);
+      face.push_back(pair); pair.clear();
+      pair.push_back(6); pair.push_back(3);
+      face.push_back(pair); pair.clear();
+      faces.push_back(face);face.clear();
+    }
 
     //Face 11 - slant face
-    pair.push_back(1); pair.push_back(6);
-    face.push_back(pair); pair.clear();
-    pair.push_back(0); pair.push_back(7);
-    face.push_back(pair); pair.clear();
-    faces.push_back(face);face.clear();
+    if(!dropBadChans){
+      pair.push_back(1); pair.push_back(6);
+      face.push_back(pair); pair.clear();
+      pair.push_back(0); pair.push_back(7);
+      face.push_back(pair); pair.clear();
+      faces.push_back(face);face.clear();
+    }
 
     //Face 12 - slant face
-    pair.push_back(2); pair.push_back(5);
-    face.push_back(pair); pair.clear();
-    pair.push_back(3); pair.push_back(4);
-    face.push_back(pair); pair.clear();
-    faces.push_back(face);face.clear();
+    if(!dropBadChans){
+      pair.push_back(2); pair.push_back(5);
+      face.push_back(pair); pair.clear();
+      pair.push_back(3); pair.push_back(4);
+      face.push_back(pair); pair.clear();
+      faces.push_back(face);face.clear();
+    }
 
     Pairs.push_back(faces);faces.clear();
     
@@ -2427,18 +2451,22 @@ vector<vector<vector<vector<int> > > > setupFaces(int stationId){
     faces.push_back(face);face.clear();
 
     //Face 2 - side face
-    pair.push_back(8); pair.push_back(12);
-    face.push_back(pair); pair.clear();
-    pair.push_back(11); pair.push_back(15);
-    face.push_back(pair); pair.clear();
-    faces.push_back(face);face.clear();
+    if(!dropBadChans){
+      pair.push_back(8); pair.push_back(12);
+      face.push_back(pair); pair.clear();
+      pair.push_back(11); pair.push_back(15);
+      face.push_back(pair); pair.clear();
+      faces.push_back(face);face.clear();
+    }
 
     //Face 3 - side face
-    pair.push_back(11); pair.push_back(15);
-    face.push_back(pair); pair.clear();
-    pair.push_back(10); pair.push_back(14);
-    face.push_back(pair); pair.clear();
-    faces.push_back(face);face.clear();
+    if(!dropBadChans){
+      pair.push_back(11); pair.push_back(15);
+      face.push_back(pair); pair.clear();
+      pair.push_back(10); pair.push_back(14);
+      face.push_back(pair); pair.clear();
+      faces.push_back(face);face.clear();
+    }
 
     //Face 4 - side face
     pair.push_back(10); pair.push_back(14);
@@ -2448,25 +2476,31 @@ vector<vector<vector<vector<int> > > > setupFaces(int stationId){
     faces.push_back(face);face.clear();
 
     //Face 5 - top face
-    pair.push_back(9); pair.push_back(8);
-    face.push_back(pair); pair.clear();
-    pair.push_back(10); pair.push_back(11);
-    face.push_back(pair); pair.clear();
-    faces.push_back(face);face.clear();
+    if(!dropBadChans){
+      pair.push_back(9); pair.push_back(8);
+      face.push_back(pair); pair.clear();
+      pair.push_back(10); pair.push_back(11);
+      face.push_back(pair); pair.clear();
+      faces.push_back(face);face.clear();
+    }
 
     //Face 6 - bottom face
-    pair.push_back(13); pair.push_back(12);
-    face.push_back(pair); pair.clear();
-    pair.push_back(14); pair.push_back(15);
-    face.push_back(pair); pair.clear();
-    faces.push_back(face);face.clear();
+    if(!dropBadChans){
+      pair.push_back(13); pair.push_back(12);
+      face.push_back(pair); pair.clear();
+      pair.push_back(14); pair.push_back(15);
+      face.push_back(pair); pair.clear();
+      faces.push_back(face);face.clear();
+    }
 
     //Face 7 - cross face
-    pair.push_back(9); pair.push_back(13);
-    face.push_back(pair); pair.clear();
-    pair.push_back(11); pair.push_back(15);
-    face.push_back(pair); pair.clear();
-    faces.push_back(face);face.clear();
+    if(!dropBadChans){
+      pair.push_back(9); pair.push_back(13);
+      face.push_back(pair); pair.clear();
+      pair.push_back(11); pair.push_back(15);
+      face.push_back(pair); pair.clear();
+      faces.push_back(face);face.clear();
+    }
 
     //Face 8 - cross face
     pair.push_back(8); pair.push_back(12);
@@ -2476,35 +2510,44 @@ vector<vector<vector<vector<int> > > > setupFaces(int stationId){
     faces.push_back(face);face.clear();
 
     //Face 9 - slant face
-    pair.push_back(9); pair.push_back(12);
-    face.push_back(pair); pair.clear();
-    pair.push_back(10); pair.push_back(15);
-    face.push_back(pair); pair.clear();
-    faces.push_back(face);face.clear();
+    if(!dropBadChans){
+      pair.push_back(9); pair.push_back(12);
+      face.push_back(pair); pair.clear();
+      pair.push_back(10); pair.push_back(15);
+      face.push_back(pair); pair.clear();
+      faces.push_back(face);face.clear();
+    }
 
     //Face 10 - slant face
-    pair.push_back(13); pair.push_back(8);
-    face.push_back(pair); pair.clear();
-    pair.push_back(14); pair.push_back(11);
-    face.push_back(pair); pair.clear();
-    faces.push_back(face);face.clear();
+    if(!dropBadChans){
+      pair.push_back(13); pair.push_back(8);
+      face.push_back(pair); pair.clear();
+      pair.push_back(14); pair.push_back(11);
+      face.push_back(pair); pair.clear();
+      faces.push_back(face);face.clear();
+    }
 
     //Face 11 - slant face
-    pair.push_back(9); pair.push_back(14);
-    face.push_back(pair); pair.clear();
-    pair.push_back(8); pair.push_back(15);
-    face.push_back(pair); pair.clear();
-    faces.push_back(face);face.clear();
+    if(!dropBadChans){
+      pair.push_back(9); pair.push_back(14);
+      face.push_back(pair); pair.clear();
+      pair.push_back(8); pair.push_back(15);
+      face.push_back(pair); pair.clear();
+      faces.push_back(face);face.clear();
+    }
 
     //Face 12 - slant face
-    pair.push_back(10); pair.push_back(13);
-    face.push_back(pair); pair.clear();
-    pair.push_back(11); pair.push_back(12);
-    face.push_back(pair); pair.clear();
-    faces.push_back(face);face.clear();
+    if(!dropBadChans){
+      pair.push_back(10); pair.push_back(13);
+      face.push_back(pair); pair.clear();
+      pair.push_back(11); pair.push_back(12);
+      face.push_back(pair); pair.clear();
+      faces.push_back(face);face.clear();
+    }
+    
     Pairs.push_back(faces);faces.clear();
 
-  }
+  } //station 3
 
   return Pairs;
 }
