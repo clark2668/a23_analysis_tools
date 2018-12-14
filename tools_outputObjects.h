@@ -34,6 +34,7 @@ double detectorCenter[3];
 
 // Simulation parameters
 int flavor;
+int global_trig;
 int nu_nubar;
 double energy;
 double posnu[3];
