@@ -142,6 +142,8 @@ int isBadRun(int station, int year, int run_num){
 		for(int i=3920; i<=3975; i++){ station3_exclude.push_back(i); }
 		for(int i=4009; i<=4073; i++){ station3_exclude.push_back(i); }
 
+		station3_exclude.push_back(3977); // looks like ICL events
+
 
 	/*
 	Check for run exclusion
