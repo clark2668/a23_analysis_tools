@@ -158,6 +158,8 @@ int main(int argc, char **argv)
 		for(int event=0; event<trees[0]->GetEntries(); event++){
 		//for(int event=0; event<25; event++){
 
+			if(isBadEvent(station, year, runNum, event)) continue;
+
 			trees[0]->GetEvent(event);
 			trees[1]->GetEvent(event);
 			trees[2]->GetEvent(event);
