@@ -54,6 +54,13 @@ int hasTimingErrorMultiGraph(vector<TGraph*> grs){
 	return event_has_error;
 }
 
+int isBadEvent(int station, int year, int run_num, int evt_num){
+
+	int result=0;
+	if(evt_num<3) result=1;
+	return result;
+}
+
 /*
 	input: station, year, run number
 	output: 0 (is good run), 1 (is bad run)
@@ -130,6 +137,8 @@ int isBadRun(int station, int year, int run_num){
 		station3_exclude.push_back(3811); //deep pulser run
 			station3_exclude.push_back(3810); //elminated by proximity to deep pulser run
 			station3_exclude.push_back(3820); //elminated by proximity to deep pulser run
+			station3_exclude.push_back(3821); //elminated by proximity to deep pulser run
+			station3_exclude.push_back(3822); //elminated by proximity to deep pulser run
 
 		/*
 		2015 noise source tests
@@ -141,6 +150,10 @@ int isBadRun(int station, int year, int run_num){
 		for(int i=3916; i<=3918; i++){ station3_exclude.push_back(i); }
 		for(int i=3920; i<=3975; i++){ station3_exclude.push_back(i); }
 		for(int i=4009; i<=4073; i++){ station3_exclude.push_back(i); }
+
+		/*
+		Other random
+		*/
 
 		station3_exclude.push_back(3977); // looks like ICL events
 
