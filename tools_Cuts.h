@@ -54,6 +54,14 @@ int hasTimingErrorMultiGraph(vector<TGraph*> grs){
 	return event_has_error;
 }
 
+int hasShortWaveformMultiGraph(vector <TGraph*> grs){
+	int event_has_error=0;
+	for(int i=0; i<grs.size(); i++){
+		if(grs[i]->GetN()<550.) event_has_error++;
+	}
+	return event_has_error;
+}
+
 int isBadEvent(int station, int year, int run_num, int evt_num){
 
 	int result=0;
