@@ -20,7 +20,6 @@ using namespace std;
 			which otherwise causes the interpolator to fail
 			is called by hasTimingErrorMultiGraph
 */
-
 int hasTimingErrorGraph(TGraph *gr){
 	Double_t *xVals = gr->GetX();
 	Double_t *yVals = gr->GetX();
@@ -41,7 +40,6 @@ int hasTimingErrorGraph(TGraph *gr){
 	function: checks to see if ever x_j < x_j+1
 			which otherwise causes the interpolator to fail
 */
-
 int hasTimingErrorMultiGraph(vector<TGraph*> grs){
 	int event_has_error=0;
 	for(int i=0; i<grs.size(); i++){
@@ -63,7 +61,6 @@ int hasShortWaveformMultiGraph(vector <TGraph*> grs){
 }
 
 int isBadEvent(int station, int year, int run_num, int evt_num){
-
 	int result=0;
 	if(evt_num<3) result=1;
 	return result;
@@ -76,7 +73,6 @@ int isBadEvent(int station, int year, int run_num, int evt_num){
 	function: looks through list of known "bad runs"
 			reports if the run you gave it is bad
 */
-
 int isBadRun(int station, int year, int run_num){
 
 	int found;
@@ -88,6 +84,14 @@ int isBadRun(int station, int year, int run_num){
 	vector <double> station2_exclude;
 
 		/*2014*/
+
+			/*
+			2014 rooftop pulsing
+			http://ara.icecube.wisc.edu/wiki/index.php/Run_Log_2014
+			*/
+			station2_exclude.push_back(3120);
+			station2_exclude.push_back(3242);
+
 
 			/*
 			2014 surface pulsing
@@ -113,6 +117,21 @@ int isBadRun(int station, int year, int run_num){
 				station2_exclude.push_back(2915); //jan 18 2014 surface pulser runs //exclusion by proximity
 			station2_exclude.push_back(2916); //jan 20 2014 surface pulser runs //actual problem causer
 				station2_exclude.push_back(2918); //jan 20 2014 surface pulser runs
+
+
+			/*
+			2014 Cal pulser sweep
+				http://ara.icecube.wisc.edu/wiki/index.php/Run_Log_2014
+			*/
+			for(int i=3139; i<=3162; i++){ station2_exclude.push_back(i); }
+			for(int i=3164; i<=3187; i++){ station2_exclude.push_back(i); }
+			for(int i=3289; i<=3312; i++){ station2_exclude.push_back(i); }
+
+			/*
+			2014 Trigger Length Window Sweep
+			*/
+			for(int i=3578; i<=3598; i++){ station2_exclude.push_back(i); }
+
 
 		/*2015*/
 
@@ -140,6 +159,20 @@ int isBadRun(int station, int year, int run_num){
 	*/
 	
 	vector <double> station3_exclude;
+
+		/*2014*/
+
+			/*
+			2014 Rooftop Pulser
+			*/
+			station3_exclude.push_back(2235);
+			station3_exclude.push_back(2328);
+
+			/*
+			2014 Cal Pulser Sweep
+			*/
+			for(int i=2251; i<=2274; i++){ station3_exclude.push_back(i); }
+			for(int i=2376; i<=2399; i++){ station3_exclude.push_back(i); }
 
 		/*2015*/
 
