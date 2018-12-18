@@ -3130,6 +3130,22 @@ TGraph *makeSpectrum_mVPerRootHz(TGraph *grWave){
 
 }
 
+TGraph* getNormalisedGraph(TGraph *grIn)
+{
+    Double_t rms=grIn->GetRMS(2);
+    Double_t mean=grIn->GetMean(2);
+    Double_t *xVals = grIn->GetX();
+    Double_t *yVals = grIn->GetY();
+    Int_t numPoints = grIn->GetN();
+    Double_t *newY = new Double_t [numPoints];
+    for(int i=0;i<numPoints;i++) {
+        newY[i]=(yVals[i]-mean)/rms;
+    }
+    TGraph *grOut = new TGraph(numPoints,xVals,newY);
+    delete [] newY;
+    return grOut;
+}
+
 /*
 void getWavefrontRMS(vector<TGraph*> graphs_raw, vector<double> waveformRMS, 
 		       int stationID, vector< vector<double> > ant_loc,
