@@ -87,7 +87,7 @@ int isBadRun(int station, int year, int run_num){
 
 			/*
 			2014 rooftop pulsing
-			http://ara.icecube.wisc.edu/wiki/index.php/Run_Log_2014
+				http://ara.icecube.wisc.edu/wiki/index.php/Run_Log_2014
 			*/
 			station2_exclude.push_back(3120);
 			station2_exclude.push_back(3242);
@@ -129,6 +129,7 @@ int isBadRun(int station, int year, int run_num){
 
 			/*
 			2014 Trigger Length Window Sweep
+				http://ara.icecube.wisc.edu/wiki/index.php/Run_Log_2014
 			*/
 			for(int i=3578; i<=3598; i++){ station2_exclude.push_back(i); }
 
@@ -164,12 +165,14 @@ int isBadRun(int station, int year, int run_num){
 
 			/*
 			2014 Rooftop Pulser
+				http://ara.icecube.wisc.edu/wiki/index.php/Run_Log_2014
 			*/
 			station3_exclude.push_back(2235);
 			station3_exclude.push_back(2328);
 
 			/*
 			2014 Cal Pulser Sweep
+				http://ara.icecube.wisc.edu/wiki/index.php/Run_Log_2014
 			*/
 			for(int i=2251; i<=2274; i++){ station3_exclude.push_back(i); }
 			for(int i=2376; i<=2399; i++){ station3_exclude.push_back(i); }
