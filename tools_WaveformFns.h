@@ -79,6 +79,27 @@ void getMaximum(TGraph * plot, double &x_max, double &y_max){
   return;
 }
 
+double findMaximumY(TGraph *grIn, double& xMax, double& yMax){
+    int nIn = grIn->GetN();
+    double x, y;
+    double maxY = -1000.;
+    double maxX = -1000.;
+    double maxI = -1000.;
+    for (int i = 0; i < nIn; i++){
+        grIn->GetPoint(i, x, y);
+        if (y > maxY){
+            maxY = y;
+            maxX = x;
+            maxI = i;
+        }
+    }
+    
+    xMax = maxX;
+    yMax = maxY;
+    
+    return maxI;
+}
+
 
 
 void getMinimum(TGraph * plot, double &x_min, double &y_min){
