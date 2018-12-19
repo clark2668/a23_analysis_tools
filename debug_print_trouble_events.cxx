@@ -184,12 +184,14 @@ int main(int argc, char **argv)
 		for(int event=0; event<trees[0]->GetEntries(); event++){
 		//for(int event=0; event<25; event++){
 
+			if(isBadEvent(station, year, runNum, event)) continue;
+
 			trees[0]->GetEvent(event);
 			trees[1]->GetEvent(event);
 			trees[2]->GetEvent(event);
 			num_total++;
 
-			for(int pol=0; pol<1; pol++){
+			for(int pol=0; pol<2; pol++){
 				PeakCorr_vs_SNR_all[pol]->Fill(snr_val[pol],corr_val[pol]);
 				
 				if(!isCal){ //cut cal pulsers
@@ -210,7 +212,7 @@ int main(int argc, char **argv)
 									if(!isSurf){
 
 										bool condition = false;
-										if(snr_val[pol]>=28. && pol==0) condition=true;
+										if(snr_val[pol]>=10. && pol==1) condition=true;
 										// if(corr_val[pol]>0.12) condition=true;
 										// condition=false;
 
@@ -460,8 +462,10 @@ int PlotThisEvent(int station, int year, int runNum, int event, Settings *settin
 
 	int unixTime = (int)rawPtr->unixTime;
 	int unixTimeUs =(int)rawPtr->unixTimeUs;
+	int timeStamp = (int)rawPtr->timeStamp;
 	printf("Unixtime is %d \n", unixTime);
 	printf("Unixtime microsecond is %d \n", unixTimeUs);
+	printf("timeStamp is %d \n", timeStamp);
 
 	stringstream ss1;
 	string xLabel, yLabel;
@@ -505,18 +509,27 @@ int PlotThisEvent(int station, int year, int runNum, int event, Settings *settin
 		double RMSCorr_Recompute_300m;
 		double PeakSigma_Recompute_30m;
 		double PeakSigma_Recompute_300m;
-		getCorrMapPeak_wStats(map_30m_V,PeakTheta_Recompute_30m,PeakPhi_Recompute_30m,PeakCorr_Recompute_30m,MinCorr_Recompute_30m,MeanCorr_Recompute_30m,RMSCorr_Recompute_30m,PeakSigma_Recompute_30m);
-		getCorrMapPeak_wStats(map_300m_V,PeakTheta_Recompute_300m,PeakPhi_Recompute_300m,PeakCorr_Recompute_300m,MinCorr_Recompute_300m,MeanCorr_Recompute_300m,RMSCorr_Recompute_300m,PeakSigma_Recompute_300m);
+		getCorrMapPeak_wStats(map_30m_H,PeakTheta_Recompute_30m,PeakPhi_Recompute_30m,PeakCorr_Recompute_30m,MinCorr_Recompute_30m,MeanCorr_Recompute_30m,RMSCorr_Recompute_30m,PeakSigma_Recompute_30m);
+		getCorrMapPeak_wStats(map_300m_H,PeakTheta_Recompute_300m,PeakPhi_Recompute_300m,PeakCorr_Recompute_300m,MinCorr_Recompute_300m,MeanCorr_Recompute_300m,RMSCorr_Recompute_300m,PeakSigma_Recompute_300m);
 
 		printf("30m theta and phi %d and %d \n", PeakTheta_Recompute_30m, PeakPhi_Recompute_30m);
 		printf("300m theta and phi %d and %d \n", PeakTheta_Recompute_300m, PeakPhi_Recompute_300m);
 
 		// vector <int> chan_list;
+		// chan_list.push_back(0);
+		// chan_list.push_back(1);
+		// chan_list.push_back(2);
+		// chan_list.push_back(4);
 		// chan_list.push_back(5);
 		// chan_list.push_back(6);
-		// chan_list.push_back(7);
-		// map_30m_V_select = theCorrelators[0]->getInterferometricMap_RT_select(settings,detector,realAtriEvPtr,Vpol,0,chan_list,0);
-
+		// chan_list.push_back(8);
+		// chan_list.push_back(9);
+		// chan_list.push_back(10);
+		// chan_list.push_back(12);
+		// chan_list.push_back(13);
+		// chan_list.push_back(14);
+		// map_300m_V = theCorrelators[1]->getInterferometricMap_RT_select(settings,detector,realAtriEvPtr,Vpol,0,chan_list,0);
+		// map_300m_H = theCorrelators[1]->getInterferometricMap_RT_select(settings,detector,realAtriEvPtr,Hpol,0,chan_list,0);
 
 		TCanvas *cMaps = new TCanvas("","",2*1100,2*850);
 		cMaps->Divide(2,2);
