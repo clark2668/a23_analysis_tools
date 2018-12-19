@@ -40,14 +40,14 @@ using namespace std;
 int main(int argc, char **argv)
 {
 
-	if(argc<3){
-		cout<< "Usage\n" << argv[0] << " <station> <year> <ValForCuts filename>"<<endl;;
+	if(argc<5){
+		cout<< "Usage\n" << argv[0] << " <station> <year> <run num> <event>"<<endl;;
 		return -1;
 	}
 	int station = atoi(argv[1]);
 	int year = atoi(argv[2]);
 	int runNum = atoi(argv[3]);
-	int event = atoi(arv[2]);
+	int event = atoi(argv[4]);
 	
 	time_t time_now = time(0); //get the time now                                                                                                                                                                  
 	tm *time = localtime(&time_now);
@@ -56,17 +56,6 @@ int main(int argc, char **argv)
 	int day_now = time -> tm_mday;
 
 	gStyle->SetOptStat(11);
-
-	//set up the ray tracer
-	Settings *settings = new Settings();
-	string setupfile = "setup.txt";
-	settings->ReadFile(setupfile);
-	cout << "Read " << setupfile << " file!" << endl;
-	settings->NOFZ=1;
-	Detector *detector=0;
-	RayTraceCorrelator *theCorrelators[2];
-	theCorrelators[0] =  new RayTraceCorrelator(station, 41., settings, 1, 4); //41 m, cal puser
-	theCorrelators[1] =  new RayTraceCorrelator(station, 300., settings, 1, 4);//300 m, far reco
 
 	char run_file_name[400];
 	if(year==2013){
@@ -120,14 +109,26 @@ int main(int argc, char **argv)
 		ss1 << "Channel " << i;
 		titlesForGraphs.push_back(ss1.str());
 	}
+	int doRezero=0;
 	vector <TGraph*> waveforms = makeGraphsFromRF(realAtriEvPtr,16,xLabel,yLabel,titlesForGraphs,doRezero);
 	vector<TGraph*> grWaveformsInt = makeInterpolatedGraphs(waveforms, 0.5, xLabel, yLabel, titlesForGraphs);
 	vector<TGraph*> grWaveformsPadded = makePaddedGraphs(grWaveformsInt, 0, xLabel, yLabel, titlesForGraphs);
 	xLabel = "Frequency (Hz)"; yLabel = "Power Spectral Density (mV/Hz)";
 	vector<TGraph*> grWaveformsPowerSpectrum = makePowerSpectrumGraphs(grWaveformsPadded, xLabel, yLabel, titlesForGraphs);
 
-	bool do_reco=true;
+	bool do_reco=false;
 	if(do_reco){
+		//set up the ray tracer
+		Settings *settings = new Settings();
+		string setupfile = "setup.txt";
+		settings->ReadFile(setupfile);
+		cout << "Read " << setupfile << " file!" << endl;
+		settings->NOFZ=1;
+		Detector *detector=0;
+		RayTraceCorrelator *theCorrelators[2];
+		theCorrelators[0] =  new RayTraceCorrelator(station, 41., settings, 1, 4); //41 m, cal puser
+		theCorrelators[1] =  new RayTraceCorrelator(station, 300., settings, 1, 4);//300 m, far reco
+
 		TH2D *map_30m_V;
 		TH2D *map_300m_V;
 		TH2D *map_30m_H;
@@ -158,22 +159,6 @@ int main(int argc, char **argv)
 
 		printf("30m theta and phi %d and %d \n", PeakTheta_Recompute_30m, PeakPhi_Recompute_30m);
 		printf("300m theta and phi %d and %d \n", PeakTheta_Recompute_300m, PeakPhi_Recompute_300m);
-
-		// vector <int> chan_list;
-		// chan_list.push_back(0);
-		// chan_list.push_back(1);
-		// chan_list.push_back(2);
-		// chan_list.push_back(4);
-		// chan_list.push_back(5);
-		// chan_list.push_back(6);
-		// chan_list.push_back(8);
-		// chan_list.push_back(9);
-		// chan_list.push_back(10);
-		// chan_list.push_back(12);
-		// chan_list.push_back(13);
-		// chan_list.push_back(14);
-		// map_300m_V = theCorrelators[1]->getInterferometricMap_RT_select(settings,detector,realAtriEvPtr,Vpol,0,chan_list,0);
-		// map_300m_H = theCorrelators[1]->getInterferometricMap_RT_select(settings,detector,realAtriEvPtr,Hpol,0,chan_list,0);
 
 		TCanvas *cMaps = new TCanvas("","",2*1100,2*850);
 		cMaps->Divide(2,2);
@@ -216,9 +201,30 @@ int main(int argc, char **argv)
 		grWaveformsPowerSpectrum[i]->Draw("AL");
 		grWaveformsPowerSpectrum[i]->SetLineWidth(3);
 		gPad->SetLogy();
+		grWaveformsPowerSpectrum[i]->GetYaxis()->SetRangeUser(10.,1e7);
 	}
 	cSpec->SaveAs(save_temp_title);
 	delete cSpec;
+
+	vector <TGraph*> more_spec;
+	for(int i=0; i<16; i++){
+		more_spec.push_back(FFTtools::makePowerSpectrumMilliVoltsNanoSecondsdB(grWaveformsPadded[i]));
+		more_spec[i]->GetXaxis()->SetTitle("Frequency");
+		more_spec[i]->GetYaxis()->SetTitle("Power (dB)");
+		more_spec[i]->SetLineWidth(3);
+		more_spec[i]->GetYaxis()->SetRangeUser(0,80);
+		more_spec[i]->SetTitle("");
+	}
+	TCanvas *cnow = new TCanvas("","",3*1100,850);
+	cnow->Divide(3,1);
+	for(int i=1; i<4; i++){
+		cnow->cd(i);
+		more_spec[i]->Draw("AL");
+	}
+	sprintf(save_temp_title,"/users/PAS0654/osu0673/A23_analysis/results/single_events/%d.%d.%d_Run%d_Ev%d_Spectra_Special.png",year_now,month_now,day_now,runNum,event);
+	cnow->SaveAs(save_temp_title);
+	delete cnow;
+
 	for(int i=0; i<16; i++){
 		delete waveforms[i];
 		delete grWaveformsInt[i];
