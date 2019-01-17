@@ -1,9 +1,8 @@
 //////////////////////////////////////////////////////////////////////////////                                                 
-/////  AraCuts.cxx                                                       /////                                                  
+/////  tools_PlottingFns.cxx                                             /////                                                  
 /////                                                                    /////                                                  
-/////  Description:                                                      /////                                                  
-/////     Class for making a variety of cuts on Ara Data                 /////                                                  
-/////  Author: CGP, adapted from ACG, class structure from RJN            /////                                                 
+/////  Description:                                                      /////
+/////           Class for doing plotting                                 /////                                         
 //////////////////////////////////////////////////////////////////////////////  
 
 #ifndef PLOTTINGFNS_H
