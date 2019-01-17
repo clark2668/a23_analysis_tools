@@ -72,7 +72,7 @@ void saveHist(TH1* hist, string filename);
 
 void deleteGraphVector(vector<TGraph*> graphs);
 
-vector<TGraph*> makeGraphsFromRF(UsefulAtriStationEvent* realAtriEvPtr, int numGraphs, string xlabel, string ylabel, vector<string> titles, bool doRezero);
+vector<TGraph*> makeGraphsFromRF(UsefulAtriStationEvent* realAtriEvPtr, int numGraphs, string xlabel, string ylabel, vector<string> titles);
 vector<TGraph*> makeInterpolatedGraphs(vector<TGraph*> graphsIn, double intTimestep, string xlabel, string ylabel, vector<string> titles);
 
 
@@ -194,7 +194,7 @@ void saveNGraphs_2Tlines(vector<TGraph*> grs, string filename, int numGraphs, ve
 
 
 
-vector<TGraph*> makeGraphsFromRF(UsefulAtriStationEvent* realAtriEvPtr, int numGraphs, string xlabel, string ylabel, vector<string> titles, bool doRezero=false){
+vector<TGraph*> makeGraphsFromRF(UsefulAtriStationEvent* realAtriEvPtr, int numGraphs, string xlabel, string ylabel, vector<string> titles){
 
   //  TObjArray* graphArray = new TObjArray();
 
@@ -203,7 +203,7 @@ vector<TGraph*> makeGraphsFromRF(UsefulAtriStationEvent* realAtriEvPtr, int numG
   //  TGraph* graphs[numGraphsConst];
 
   for (int i = 0; i < numGraphs; i++){
-	  TGraph* gr = realAtriEvPtr->getGraphFromRFChan(i,doRezero);
+	  TGraph* gr = realAtriEvPtr->getGraphFromRFChan(i);
     gr->GetXaxis()->SetTitle(xlabel.c_str());
     gr->GetYaxis()->SetTitle(ylabel.c_str());
     gr->SetTitle(titles[i].c_str());

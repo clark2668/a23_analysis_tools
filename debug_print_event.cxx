@@ -109,8 +109,7 @@ int main(int argc, char **argv)
 		ss1 << "Channel " << i;
 		titlesForGraphs.push_back(ss1.str());
 	}
-	int doRezero=0;
-	vector <TGraph*> waveforms = makeGraphsFromRF(realAtriEvPtr,16,xLabel,yLabel,titlesForGraphs,doRezero);
+	vector <TGraph*> waveforms = makeGraphsFromRF(realAtriEvPtr,16,xLabel,yLabel,titlesForGraphs);
 	vector<TGraph*> grWaveformsInt = makeInterpolatedGraphs(waveforms, 0.5, xLabel, yLabel, titlesForGraphs);
 	vector<TGraph*> grWaveformsPadded = makePaddedGraphs(grWaveformsInt, 0, xLabel, yLabel, titlesForGraphs);
 	xLabel = "Frequency (Hz)"; yLabel = "Power Spectral Density (mV/Hz)";
@@ -135,10 +134,10 @@ int main(int argc, char **argv)
 		TH2D *map_300m_H;
 		TH2D *map_30m_V_select;
 
-		map_30m_V = theCorrelators[0]->getInterferometricMap_RT_Rezero(settings, detector, realAtriEvPtr, Vpol, 0, 0,-1,doRezero);
-		map_300m_V = theCorrelators[1]->getInterferometricMap_RT_Rezero(settings, detector, realAtriEvPtr, Vpol, 0, 0,-1,doRezero);
-		map_30m_H = theCorrelators[0]->getInterferometricMap_RT_Rezero(settings, detector, realAtriEvPtr, Hpol, 0, 0,-1,doRezero);
-		map_300m_H = theCorrelators[1]->getInterferometricMap_RT_Rezero(settings, detector, realAtriEvPtr, Hpol, 0, 0,-1,doRezero);
+		map_30m_V = theCorrelators[0]->getInterferometricMap_RT_Rezero(settings, detector, realAtriEvPtr, Vpol, 0, 0,-1);
+		map_300m_V = theCorrelators[1]->getInterferometricMap_RT_Rezero(settings, detector, realAtriEvPtr, Vpol, 0, 0,-1);
+		map_30m_H = theCorrelators[0]->getInterferometricMap_RT_Rezero(settings, detector, realAtriEvPtr, Hpol, 0, 0,-1);
+		map_300m_H = theCorrelators[1]->getInterferometricMap_RT_Rezero(settings, detector, realAtriEvPtr, Hpol, 0, 0,-1);
 
 		int PeakTheta_Recompute_30m;
 		int PeakTheta_Recompute_300m;
