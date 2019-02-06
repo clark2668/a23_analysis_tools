@@ -22,7 +22,6 @@ using namespace std;
 */
 bool hasTimingErrorGraph(TGraph *gr){
 	Double_t *xVals = gr->GetX();
-	Double_t *yVals = gr->GetX();
 	bool has_error=0;
 	for(int i=1; i<gr->GetN(); i++){
 		if(xVals[i]<xVals[i-1]){
@@ -60,9 +59,9 @@ bool hasTimingErrorMultiGraph(vector<TGraph*> grs){
 */
 
 bool hasTooFewBlocksMultiGraph(vector <TGraph*> grs){
-	int event_has_error=0;
+	bool event_has_error=0;
 	for(int i=0; i<grs.size(); i++){
-		if(grs[i]->GetN()<100.) event_has_error++;
+		if(grs[i]->GetN()<100.) event_has_error=true;
 	}
 	return event_has_error;
 }
@@ -78,7 +77,9 @@ bool hasTooFewBlocksMultiGraph(vector <TGraph*> grs){
 bool hasDigitizerIssue(vector <TGraph*> grs){
 	bool hasTimingError = hasTimingErrorMultiGraph(grs);
 	bool hasTooFewBlocks = hasTooFewBlocksMultiGraph(grs);
-	if(hasTimingError || hasTooFewBlocks) return true;
+	bool has_error=false;
+	if(hasTimingError || hasTooFewBlocks) has_error=true;
+	return has_error;
 }
 
 /*
