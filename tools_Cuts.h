@@ -20,13 +20,13 @@ using namespace std;
 			which otherwise causes the interpolator to fail
 			is called by hasTimingErrorMultiGraph
 */
-int hasTimingErrorGraph(TGraph *gr){
+bool hasTimingErrorGraph(TGraph *gr){
 	Double_t *xVals = gr->GetX();
 	Double_t *yVals = gr->GetX();
-	int has_error=0;
+	bool has_error=0;
 	for(int i=1; i<gr->GetN(); i++){
 		if(xVals[i]<xVals[i-1]){
-			has_error=1;
+			has_error=true;
 			break;
 		}
 	}
@@ -40,12 +40,12 @@ int hasTimingErrorGraph(TGraph *gr){
 	function: checks to see if ever x_j < x_j+1
 			which otherwise causes the interpolator to fail
 */
-int hasTimingErrorMultiGraph(vector<TGraph*> grs){
-	int event_has_error=0;
+bool hasTimingErrorMultiGraph(vector<TGraph*> grs){
+	bool event_has_error=0;
 	for(int i=0; i<grs.size(); i++){
-		int this_has_error = hasTimingErrorGraph(grs[i]);
-		if(this_has_error==1){
-			event_has_error==1;
+		bool this_has_error = hasTimingErrorGraph(grs[i]);
+		if(this_has_error){
+			event_has_error=true;
 			break;
 		}
 	}

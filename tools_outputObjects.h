@@ -10,6 +10,7 @@ bool isCalpulser;
 bool isSoftTrigger;
 bool isSimulation = false;
 double thirdVPeakOverRMS[3];
+bool hasTimingError=false;
 
 // Waveform - channel summary parameters
 double VPeak[16];
