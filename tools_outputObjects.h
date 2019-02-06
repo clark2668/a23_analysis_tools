@@ -28,6 +28,7 @@ double polarizationRatio;
 // Face RMS
 //double rms_faces[2][12];
 double rms_pol_thresh_face[2][thresholdSteps][numFaces];
+double rms_pol_thresh_face_drop[2][thresholdSteps][numFaces];
 //double thirdLowestFaceRms[3];
 
 // Geometry parameters

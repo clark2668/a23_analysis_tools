@@ -17,7 +17,8 @@ const double thresholdEnd = thresholdMin + thresholdStep*(double)thresholdSteps;
 
 int numSearchPeaks = 2;
 const int numFaces = 12;
-int numFaces_v = numFaces;
+int numFaces_A2_drop = 6;
+int numFaces_A3_drop = 3;
 
 const int nGraphs = 16;
 
