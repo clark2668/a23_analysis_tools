@@ -52,6 +52,42 @@ bool hasTimingErrorMultiGraph(vector<TGraph*> grs){
 	return event_has_error;
 }
 
+/*
+	input: vector of graphs for an event
+	output: 0 (has no error), 1 (yes, has error)
+
+	function: checks to see if any waveform is < 128 samples (<2 blocks, unusable
+*/
+
+bool hasTooFewBlocksMultiGraph(vector <TGraph*> grs){
+	int event_has_error=0;
+	for(int i=0; i<grs.size(); i++){
+		if(grs[i]->GetN()<100.) event_has_error++;
+	}
+	return event_has_error;
+}
+
+/*
+	input: vector of graphs for an event
+	output: 0 (has no error), 1 (yes, has error)
+
+	function: checks to see if any waveform is < 128 samples (<2 blocks, unusable
+				and, checks to see if it has at timing error, which also makes it unusable
+*/
+
+bool hasDigitizerIssue(vector <TGraph*> grs){
+	bool hasTimingError = hasTimingErrorMultiGraph(grs);
+	bool hasTooFewBlocks = hasTooFewBlocksMultiGraph(grs);
+	if(hasTimingError || hasTooFewBlocks) return true;
+}
+
+/*
+	input: vector of graphs for an event
+	output: 0 (has no error), 1 (has less than 550 points error)
+
+	function: checks to see if any waveform is < 550 samples
+*/
+
 int hasShortWaveformMultiGraph(vector <TGraph*> grs){
 	int event_has_error=0;
 	for(int i=0; i<grs.size(); i++){
