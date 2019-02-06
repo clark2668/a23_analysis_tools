@@ -17,8 +17,12 @@ const double thresholdEnd = thresholdMin + thresholdStep*(double)thresholdSteps;
 
 int numSearchPeaks = 2;
 const int numFaces = 12;
-int numFaces_A2_drop = 6;
-int numFaces_A3_drop = 3;
+const int numFaces_A2_drop = 6;
+const int numFaces_A3_drop = 3;
+//need repeated variables to make ROOT happy during output, go figure....
+int numFaces_save=numFaces;
+int numFaces_A2_drop_save =numFaces_A2_drop;
+int numFaces_A3_drop_save=numFaces_A3_drop;
 
 const int nGraphs = 16;
 
