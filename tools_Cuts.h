@@ -52,16 +52,29 @@ bool hasTimingErrorMultiGraph(vector<TGraph*> grs){
 }
 
 /*
+	input: point to graph for an event
+	output: 0 (has no error), 1 (yes, has error)
+
+	function: checks to see if any waveform is < 128 samples (<2 blocks, unusable)
+*/
+
+bool hasTooFewBlocksGraph(TGraph *gr){
+	bool result=false;
+	if(gr->GetN()<100) result=true;
+	return result; 
+}
+
+/*
 	input: vector of graphs for an event
 	output: 0 (has no error), 1 (yes, has error)
 
-	function: checks to see if any waveform is < 128 samples (<2 blocks, unusable
+	function: checks to see if any waveform is < 128 samples (<2 blocks, unusable)
 */
 
 bool hasTooFewBlocksMultiGraph(vector <TGraph*> grs){
 	bool event_has_error=0;
 	for(int i=0; i<grs.size(); i++){
-		if(grs[i]->GetN()<100.) event_has_error=true;
+		if(hasTooFewBlocksGraph(grs[i])) event_has_error=true;
 	}
 	return event_has_error;
 }
