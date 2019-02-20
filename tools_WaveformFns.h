@@ -3191,7 +3191,7 @@ double cumulativePowerBelowfromSpectrum(TGraph *spec, double freq){
   return cumulative_power_below_freq/cumulative_power;
 }
 
-double cumulativePowerBelowfromGraph(TGraph *grIn, double freq){
+double cumulativePowerBelowfromWaveform(TGraph *grIn, double freq){
   TGraph *grInt = FFTtools::getInterpolatedGraph(grIn,0.5);
   TGraph *grPad = FFTtools::padWaveToLength(grInt,2048);
   TGraph *spec = FFTtools::makePowerSpectrumMilliVoltsNanoSeconds(grPad);
