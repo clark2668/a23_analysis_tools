@@ -3179,7 +3179,19 @@ TGraph* getNormalisedGraph(TGraph *grIn)
     return grOut;
 }
 
-double cumulativePowerBelow(TGraph *grIn, double freq){
+double cumulativePowerBelowfromSpectrum(TGraph *spec, double freq){
+  double cumulative_power=0.;
+  double cumulative_power_below_freq=0.;
+  double *oldX = spec->GetX();
+  double *oldY = spec->GetY();
+  for(int i=0; i<spec->GetN(); i++){
+    cumulative_power+=oldY[i];
+    if(oldX[i]<=freq) cumulative_power_below_freq+=oldY[i];
+  }
+  return cumulative_power_below_freq/cumulative_power;
+}
+
+double cumulativePowerBelowfromGraph(TGraph *grIn, double freq){
   TGraph *grInt = FFTtools::getInterpolatedGraph(grIn,0.5);
   TGraph *grPad = FFTtools::padWaveToLength(grInt,2048);
   TGraph *spec = FFTtools::makePowerSpectrumMilliVoltsNanoSeconds(grPad);
