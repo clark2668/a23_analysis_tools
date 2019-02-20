@@ -3179,6 +3179,26 @@ TGraph* getNormalisedGraph(TGraph *grIn)
     return grOut;
 }
 
+double cumulativePowerBelow(TGraph *grIn, double freq){
+  TGraph *grInt = FFTtools::getInterpolatedGraph(grIn,0.5);
+  TGraph *grPad = FFTtools::padWaveToLength(grInt,2048);
+  TGraph *spec = FFTtools::makePowerSpectrumMilliVoltsNanoSeconds(grPad);
+  double cumulative_power=0.;
+  double cumulative_power_below_freq=0.;
+  double *oldX = spec->GetX();
+  double *oldY = spec->GetY();
+  for(int i=0; i<spec->GetN(); i++){
+    cumulative_power+=oldY[i];
+    if(oldX[i]<=freq) cumulative_power_below_freq+=oldY[i];
+  }
+  delete spec;
+  delete grPad;
+  delete grInt;
+  return cumulative_power_below_freq/cumulative_power;
+}
+
+
+
 /*
 void getWavefrontRMS(vector<TGraph*> graphs_raw, vector<double> waveformRMS, 
 		       int stationID, vector< vector<double> > ant_loc,
