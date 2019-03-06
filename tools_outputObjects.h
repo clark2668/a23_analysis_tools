@@ -27,9 +27,19 @@ double polarizationRatio;
 
 // Face RMS
 //double rms_faces[2][12];
-double rms_pol_thresh_face[2][thresholdSteps][numFaces];
-double rms_pol_thresh_face_drop[2][thresholdSteps][numFaces];
+//double rms_pol_thresh_face[2][thresholdSteps][numFaces];
+//double rms_pol_thresh_face_drop[2][thresholdSteps][numFaces];
 //double thirdLowestFaceRms[3];
+
+double rms_pol_thresh_face_V[thresholdSteps][numFaces];
+double rms_pol_thresh_face_H[thresholdSteps][numFaces];
+
+double rms_pol_thresh_face_V_drop_A2[thresholdSteps][numFaces];
+double rms_pol_thresh_face_H_drop_A2[thresholdSteps][numFaces_A2_drop];
+
+double rms_pol_thresh_face_V_drop_A3[thresholdSteps][numFaces_A3_drop];
+double rms_pol_thresh_face_H_drop_A3[thresholdSteps][numFaces_A3_drop];
+
 
 // Geometry parameters
 double detectorCenter[3];
