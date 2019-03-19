@@ -119,8 +119,17 @@ int isBadRun(int station, int year, int run_num){
 			*/
 			for(int i=4820; i<=4825; i++){ station2_exclude.push_back(i); }
 			for(int i=4850; i<=4854; i++){ station2_exclude.push_back(i); }
-			for(int i=4749; i<=4936; i++){ station2_exclude.push_back(i); }
+			for(int i=4879; i<=4936; i++){ station2_exclude.push_back(i); }
 			for(int i=5210; i<=5277; i++){ station2_exclude.push_back(i); }
+
+			/*
+			2015 surface pulsing
+				January 2015
+				http://ara.physics.wisc.edu/cgi-bin/DocDB/ShowDocument?docid=1339 (slide 5)
+			*/
+			station2_exclude.push_back(4872);
+			station2_exclude.push_back(4873);
+			station2_exclude.push_back(4876);
 
 	/*
 	station 3 exclusion
@@ -168,6 +177,14 @@ int isBadRun(int station, int year, int run_num){
 			for(int i=3916; i<=3918; i++){ station3_exclude.push_back(i); }
 			for(int i=3920; i<=3975; i++){ station3_exclude.push_back(i); }
 			for(int i=4009; i<=4073; i++){ station3_exclude.push_back(i); }
+
+			/*
+			2015 surface pulsing
+				January 2015
+				http://ara.physics.wisc.edu/cgi-bin/DocDB/ShowDocument?docid=1339 (slide 5)
+			*/
+			station3_exclude.push_back(3977);
+			station3_exclude.push_back(3978);
 
 			/*
 			Other random
