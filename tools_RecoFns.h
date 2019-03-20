@@ -1,10 +1,11 @@
 ////////////////////////////////////////////////////////////////////////////// 
-/////  WaveformFns.h                                                     /////  
+/////  tools_RecoFns.h                                                   /////  
 /////                                                                    /////  
 /////  Description:                                                      ///// 
-/////     Functions for making a variety of cuts on Ara Data             ///// 
-/////  Author: CGP, adapted from ACG, class structure from RJN           ///// 
+/////     Functions extracting info from interferometric maps            ///// 
+/////  Author: CGP                                                       ///// 
 ////////////////////////////////////////////////////////////////////////////// 
+
 //includes                                                                                                             
 using namespace std;
 #include "TH2D.h"                                                                                                              
