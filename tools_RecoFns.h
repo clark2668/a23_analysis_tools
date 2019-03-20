@@ -108,3 +108,15 @@ void getCorrMapPeak_wStats( TH2D *theCorrMap_input, int &peakTheta, int &peakPhi
 
 
 }
+
+
+void getCorrMapPeak_wStats_simple( TH2D *theCorrMap_input, int &peakTheta, int &peakPhi, double &peakCorr) {
+  
+  int peakZ;
+  
+  theCorrMap_input->GetMaximumBin(peakPhi, peakTheta, peakZ);
+  peakCorr = theCorrMap_input->GetMaximum();
+  
+  peakTheta = peakTheta - 90;
+  peakPhi = peakPhi - 180;
+}
