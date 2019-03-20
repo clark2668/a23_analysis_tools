@@ -131,6 +131,13 @@ int isBadRun(int station, int year, int run_num){
 			station2_exclude.push_back(4873);
 			station2_exclude.push_back(4876);
 
+			/*
+			2015 ICL pulsing
+				December 2015
+				http://ara.physics.wisc.edu/cgi-bin/DocDB/ShowDocument?docid=1269 (page 7)
+			*/
+			station2_exclude.push_back(6527);
+
 	/*
 	station 3 exclusion
 	*/
@@ -158,7 +165,7 @@ int isBadRun(int station, int year, int run_num){
 			/*
 			2015 surface or deep pulsing
 				got through cuts
-				happened jan5-6
+				happened jan 5-6
 				waveforms clearly show double pulses or things consistent with surface pulsing
 			*/
 			station3_exclude.push_back(3811); //deep pulser run
@@ -185,6 +192,13 @@ int isBadRun(int station, int year, int run_num){
 			*/
 			station3_exclude.push_back(3977);
 			station3_exclude.push_back(3978);
+
+			/*
+			2015 ICL pulsing
+				December 2015
+				http://ara.physics.wisc.edu/cgi-bin/DocDB/ShowDocument?docid=1269 (page 7)
+			*/
+			station3_exclude.push_back(6041);
 
 			/*
 			Other random
