@@ -1,14 +1,15 @@
-////////////////////////////////////////////////////////////////////////////// 
-/////  tools_RecoFns.h                                                   /////  
-/////                                                                    /////  
-/////  Description:                                                      ///// 
-/////     Functions extracting info from interferometric maps            ///// 
-/////  Author: CGP                                                       ///// 
-////////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////////
+/////  tools_RecoFns.h                                                   /////
+/////                                                                    /////
+/////  Description:                                                      /////
+/////     Functions extracting info from interferometric maps            /////
+/////  Author: CGP                                                       /////
+//////////////////////////////////////////////////////////////////////////////
 
-//includes                                                                                                             
+//includes
+#include "TH2D.h"
+
 using namespace std;
-#include "TH2D.h"                                                                                                              
 
 void getCorrMapPeak_wStats( TH2D *theCorrMap_input, int &peakTheta, int &peakPhi, double &peakCorr, double &minCorr, double &meanCorr, double &rmsCorr, double &peakSigma) {
 	
