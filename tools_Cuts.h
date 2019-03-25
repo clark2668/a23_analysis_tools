@@ -27,12 +27,6 @@ int hasShortWaveformMultiGraph(vector <TGraph*> grs){
 	return event_has_error;
 }
 
-int isBadEvent(int station, int year, int run_num, int evt_num){
-	int result=0;
-	if(evt_num<3) result=1;
-	return result;
-}
-
 /*
 	input: station, year, run number
 	output: 0 (is good run), 1 (is bad run)
