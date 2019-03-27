@@ -28,13 +28,13 @@ int hasShortWaveformMultiGraph(vector <TGraph*> grs){
 }
 
 /*
-	input: station, year, run number
+	input: station, run number
 	output: 0 (is good run), 1 (is bad run)
 
 	function: looks through list of known "bad runs"
 			reports if the run you gave it is bad
 */
-int isBadRun(int station, int year, int run_num){
+int isBadRun(int station, int run_num){
 
 	int found;
 
