@@ -603,9 +603,20 @@ vector<TGraph*> makeSumGraphs(vector<TGraph*> graphsIn, int graphBegin, int grap
 	Things like beautifying graphs, etc.
 */
 
-void SetAxisLabels(TH1D *h, string xlabel, string ylabel){
-	h->GetYaxis()->SetTitle(ylabel.c_str());
-	h->GetXaxis()->SetTitle(xlabel.c_str());
+void SetAxisLabels(TH1D *h1, string xlabel, string ylabel){
+	h1->GetXaxis()->SetTitle(xlabel.c_str());
+	h1->GetYaxis()->SetTitle(ylabel.c_str());
+}
+
+void SetAxisLabels(TH2D *h2, string xlabel, string ylabel, string zlabel){
+	h2->GetXaxis()->SetTitle(xlabel.c_str());
+	h2->GetYaxis()->SetTitle(ylabel.c_str());
+	h2->GetZaxis()->SetTitle(zlabel.c_str());
+}
+
+void SetAxisLabels(TGraph *gr, string xlabel, string ylabel){
+	gr->GetXaxis()->SetTitle(xlabel.c_str());
+	gr->GetYaxis()->SetTitle(ylabel.c_str());
 }
 
 
