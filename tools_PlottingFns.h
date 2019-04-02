@@ -191,6 +191,10 @@ void saveNGraphs_2Tlines(vector<TGraph*> grs, string filename, int numGraphs, ve
   delete c1;
 }
 
+void SetAxisLabels(TH1D *h, string xlabel, string ylabel){
+  h->GetYaxis()->SetTitle(ylabel.c_str());
+  h->GetXaxis()->SetTitle(xlabel.c_str());
+}
 
 
 vector<TGraph*> makeGraphsFromRF(UsefulAtriStationEvent* realAtriEvPtr, int numGraphs, string xlabel, string ylabel, vector<string> titles){
