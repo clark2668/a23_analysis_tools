@@ -42,28 +42,6 @@ int getChansfromPair(AraGeomTool * geomTool, int stationNum, int polarization, i
   return -1;
 }
 
-
-
-/*
-int getPairNum(AraGeomTool *geomTool, int stationNum, int polarization, int polnum1, int polnum2){
- 
-  
-  for (int i = 0; i < 16; i++){
-    AraAntPol::AraAntPol_t pol = getPolByRFChan(i, stationNum);
-    int polnum = getAntNumByRFChan(i, stationNum);
-    if (polnum == polnum1
-
-  }
-
-  }
-  
-  
-
-}
-*/
-
-
-
 int getRunNumber_event (const char *runfile){
 
   string file = string( runfile );
