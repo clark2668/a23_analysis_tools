@@ -538,25 +538,25 @@ vector<double> CWCut_TB(vector <TGraph*> waveforms, vector <TGraph*> baselines, 
 						matchedFreqs++;
 						matched_ant=true;
 						//now check all of the bad frequencies in this secondary antenna
-												for (int jj2 = 0; jj2 < int(badFreqsBroad[j].size()); jj2++){
-													//if it's trouble make frequencies are w/in 40 MHz, then we want to record that
-													if ((abs(badFreqs[j][jj] - badFreqsBroad[j][jj2]) < freqRangeBroad)){
-														broad_freqs2++;
-													}
-												}
-												//if there are frequencies over the broad threshold w/in 40 MHz
-												//then we want to know if the number of contaminated bins/number of bins in 40 MHz < 50%
-												//if it's larger, then it's broadband, and we shouldn't touch it!
-												if(freqRangeBroad_bins!=0){
-													if(double(broad_freqs2-1)/double(int(freqRangeBroad_bins)-1) > 0.5){
-														broad_band2=true;
-													}
-												}
-												//if the first ant was *not* broadband, and *neither* was this one
-												//then we should say "yeah, we found something narrow, please notch me"
-												if((broad_band1==false) && (broad_band2==false)){
-													matchedFreqsFull++;
-												} //were the trouble frequencies for both ants independently not broadband
+						for (int jj2 = 0; jj2 < int(badFreqsBroad[j].size()); jj2++){
+							//if it's trouble make frequencies are w/in 40 MHz, then we want to record that
+							if ((abs(badFreqs[j][jj] - badFreqsBroad[j][jj2]) < freqRangeBroad)){
+								broad_freqs2++;
+							}
+						}
+						//if there are frequencies over the broad threshold w/in 40 MHz
+						//then we want to know if the number of contaminated bins/number of bins in 40 MHz < 50%
+						//if it's larger, then it's broadband, and we shouldn't touch it!
+						if(freqRangeBroad_bins!=0){
+							if(double(broad_freqs2-1)/double(int(freqRangeBroad_bins)-1) > 0.5){
+								broad_band2=true;
+							}
+						}
+						//if the first ant was *not* broadband, and *neither* was this one
+						//then we should say "yeah, we found something narrow, please notch me"
+						if((broad_band1==false) && (broad_band2==false)){
+							matchedFreqsFull++;
+						} //were the trouble frequencies for both ants independently not broadband
 					} //was the second ant's bad frequency within 5 MHz of the first antennas bad frequency?
 				} //loop over second antennas bad freqs
 			}//loop over second antenna
@@ -571,19 +571,6 @@ vector<double> CWCut_TB(vector <TGraph*> waveforms, vector <TGraph*> baselines, 
 			}
 		}//loop over trouble frequencies for antenna 1
 	} //loop over antenna 1
-
-	// TCanvas *c = new TCanvas("","",1100,850);
-	// c->Divide(4,4);
-	// for(int i=0; i<16; i++){
-	//   c->cd(i+1);
-	//   newFFTs[i]->Draw("ALP");
-	//   newBaselines[i]->Draw("Lsame");
-	//   newBaselines[i]->SetLineColor(kRed);
-	//   newFFTs[i]->GetYaxis()->SetRangeUser(0,50);
-	// }
-	// char save_title[300];
-	// sprintf(save_title,"test_inside.png");
-	// c->SaveAs(save_title);
 
 	for(int i=0; i<16; i++){
 		delete baseline_clone[i];
