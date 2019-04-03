@@ -602,6 +602,19 @@ vector<double> CWCut_TB(vector <TGraph*> waveforms, vector <TGraph*> baselines, 
     }//loop over trouble frequencies for antenna 1
   } //loop over antenna 1
 
+  // TCanvas *c = new TCanvas("","",1100,850);
+  // c->Divide(4,4);
+  // for(int i=0; i<16; i++){
+  //   c->cd(i+1);
+  //   newFFTs[i]->Draw("ALP");
+  //   newBaselines[i]->Draw("Lsame");
+  //   newBaselines[i]->SetLineColor(kRed);
+  //   newFFTs[i]->GetYaxis()->SetRangeUser(0,50);
+  // }
+  // char save_title[300];
+  // sprintf(save_title,"test_inside.png");
+  // c->SaveAs(save_title);
+
   for(int i=0; i<16; i++){
     delete baseline_clone[i];
     delete newFFTs[i];
