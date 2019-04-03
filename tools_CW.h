@@ -17,112 +17,108 @@
 #include <FFTtools.h>
 
 int getChansfromPair(AraGeomTool * geomTool, int stationNum, int polarization, int pair, int &ch1, int &ch2){
-  //  int chan1, chan2;
-  int pairnum = 0;
-  for (int i = 0; i < 15; i++){
-    AraAntPol::AraAntPol_t pol1 = geomTool->getPolByRFChan(i, stationNum);
-    if (int(pol1) == polarization){
-      for (int i2 = i+1; i2 < 16; i2++){
-	AraAntPol::AraAntPol_t pol2 = geomTool->getPolByRFChan(i2, stationNum);
-	//	cout << pol1 << " : " << pol2 << endl;
-	if (int(pol2) == polarization){
-	  if (pairnum == pair){
-	    ch1 = i;
-	    ch2 = i2;
-	    return pairnum;
-	  }
-	  pairnum++;
+	
+	int pairnum = 0;
+	for (int i = 0; i < 15; i++){
+		AraAntPol::AraAntPol_t pol1 = geomTool->getPolByRFChan(i, stationNum);
+		if (int(pol1) == polarization){
+			for (int i2 = i+1; i2 < 16; i2++){
+				AraAntPol::AraAntPol_t pol2 = geomTool->getPolByRFChan(i2, stationNum);
+				//	cout << pol1 << " : " << pol2 << endl;
+				if (int(pol2) == polarization){
+					if (pairnum == pair){
+						ch1 = i;
+						ch2 = i2;
+						return pairnum;
+					}
+					pairnum++;
+				}
+			}
+		}
 	}
-      }
-    }
-  }
-  cout << "No chans from pair num" << endl;
-  ch1 = -1;
-  ch2 = -1;
-  return -1;
+	cout << "No chans from pair num" << endl;
+	ch1 = -1;
+	ch2 = -1;
+	return -1;
 }
 
 int getRunNumber_event (const char *runfile){
 
-  string file = string( runfile );
-  string chRun = "event";
-  size_t foundRun=file.find(chRun);
-  string strRunNum = file.substr (foundRun + 5, foundRun + 9);
-  int runNum = atoi(strRunNum.c_str());
+	string file = string( runfile );
+	string chRun = "event";
+	size_t foundRun=file.find(chRun);
+	string strRunNum = file.substr (foundRun + 5, foundRun + 9);
+	int runNum = atoi(strRunNum.c_str());
 
-  return runNum;
+	return runNum;
 
 }
 
 int padGraph (TGraph *gr, int padLimit){
 
-  int nPointsStart = gr->GetN();
+	int nPointsStart = gr->GetN();
 
-  if (padLimit > nPointsStart){
+	if (padLimit > nPointsStart){
 
-    double x0, y0;
-    gr->GetPoint(nPointsStart-2, x0, y0);
-    double x1, y1;
-    gr->GetPoint(nPointsStart-1, x1, y1);
-    double x_diff = x1-x0;
-    
-    
-    int nNewPoints = padLimit - nPointsStart;
-    double x, y;
-    for (int i = 0; i < nNewPoints; i++){
-      int n_points = gr->GetN();
-      gr->GetPoint(n_points-1, x, y);
-      gr->SetPoint(n_points, x+x_diff, 0.);
-    }
-  }
+		double x0, y0;
+		gr->GetPoint(nPointsStart-2, x0, y0);
+		double x1, y1;
+		gr->GetPoint(nPointsStart-1, x1, y1);
+		double x_diff = x1-x0;
+		
+		int nNewPoints = padLimit - nPointsStart;
+		double x, y;
+		for (int i = 0; i < nNewPoints; i++){
+			int n_points = gr->GetN();
+			gr->GetPoint(n_points-1, x, y);
+			gr->SetPoint(n_points, x+x_diff, 0.);
+		}
+	}
 
-  int nPointsFinal = gr->GetN();
-  return nPointsFinal; 
-  
+	int nPointsFinal = gr->GetN();
+	return nPointsFinal; 
+	
 }
 
 TGraph * getFFTAmplitude(TGraph *gr, double lowFreqLimit = 0., double highFreqLimit = 1000.);
 
 TGraph * getFFTAmplitude(TGraph *gr, double lowFreqLimit, double highFreqLimit){
 
+	double *getX = gr->GetX();
+	double *getY = gr->GetY();
 
-  double *getX = gr->GetX();
-  double *getY = gr->GetY();
+	double deltaT = getX[1] - getX[0];
+	int length = gr->GetN();
 
-  double deltaT = getX[1] - getX[0];
-  int length = gr->GetN();
+	FFTWComplex *theFFT = FFTtools::doFFT(length, getY);
 
-  FFTWComplex *theFFT = FFTtools::doFFT(length, getY);
+	int newLength = (length/2)+1;
+	double deltaF = 1/(deltaT*length);
+	deltaF*=1e3;
 
-  int newLength = (length/2)+1;
-  double deltaF = 1/(deltaT*length);
-  deltaF*=1e3;
+	const int points = newLength;
 
-  const int points = newLength;
+	double magFFT[points];
+	double frequencyArray[points];
 
-  double magFFT[points];
-  double frequencyArray[points];
+	for (int i = 0; i < newLength; i++){
+		if (i==0) frequencyArray[i]=0;
+		if (i > 0) frequencyArray[i]=frequencyArray[i-1]+deltaF;
+		double real2 = theFFT[i].re*theFFT[i].re;
+		double im2 = theFFT[i].im*theFFT[i].im;
 
+		if (frequencyArray[i] >= lowFreqLimit && frequencyArray[i] <= highFreqLimit) {
+			magFFT[i] = real2+im2;
+			magFFT[i] = sqrt(magFFT[i]);
+		}
+		else {
+			magFFT[i] = 0;
+		}
+	}
 
+	TGraph *grOut = new TGraph(points, frequencyArray, magFFT);
 
-  for (int i = 0; i < newLength; i++){
-    if (i==0) frequencyArray[i]=0;
-    if (i > 0) frequencyArray[i]=frequencyArray[i-1]+deltaF;
-    double real2 = theFFT[i].re*theFFT[i].re;
-    double im2 = theFFT[i].im*theFFT[i].im;
-
-    if (frequencyArray[i] >= lowFreqLimit && frequencyArray[i] <= highFreqLimit) {
-      magFFT[i] = real2+im2;
-      magFFT[i] = sqrt(magFFT[i]);
-    }
-    else {
-      magFFT[i] = 0;
-    }
-  }
-
-  TGraph *grOut = new TGraph(points, frequencyArray, magFFT);
-
-  return grOut;
+	return grOut;
 
 }
 
@@ -131,472 +127,468 @@ TGraph * getFFTPhase(TGraph *gr, double lowFreqLimit = 0., double highFreqLimit 
 TGraph * getFFTPhase(TGraph *gr, double lowFreqLimit, double highFreqLimit){
 
 
-  double *getX = gr->GetX();
-  double *getY = gr->GetY();
+	double *getX = gr->GetX();
+	double *getY = gr->GetY();
 
-  double deltaT = getX[1] - getX[0];
-  int length = gr->GetN();
+	double deltaT = getX[1] - getX[0];
+	int length = gr->GetN();
 
-  FFTWComplex *theFFT = FFTtools::doFFT(length, getY);
+	FFTWComplex *theFFT = FFTtools::doFFT(length, getY);
 
-  int newLength = (length/2)+1;
-  double deltaF = 1/(deltaT*length);
-  deltaF*=1e3;
+	int newLength = (length/2)+1;
+	double deltaF = 1/(deltaT*length);
+	deltaF*=1e3;
 
-  const int points = newLength;
+	const int points = newLength;
 
-  double magFFT[points];
-  double frequencyArray[points];
-  double phaseFFT[points];
+	double magFFT[points];
+	double frequencyArray[points];
+	double phaseFFT[points];
 
-  for (int i = 0; i < newLength; i++){
-    if (i==0) frequencyArray[i]=0;
-    if (i > 0) frequencyArray[i]=frequencyArray[i-1]+deltaF;
-    double real = theFFT[i].re;
-    double im = theFFT[i].im;
-    double real2 = real*real;
-    double im2 = im*im;
-    complex<double> fft(real, im);
+	for (int i = 0; i < newLength; i++){
+		if (i==0) frequencyArray[i]=0;
+		if (i > 0) frequencyArray[i]=frequencyArray[i-1]+deltaF;
+		double real = theFFT[i].re;
+		double im = theFFT[i].im;
+		double real2 = real*real;
+		double im2 = im*im;
+		complex<double> fft(real, im);
 
-    if (frequencyArray[i] >= lowFreqLimit && frequencyArray[i] <= highFreqLimit) {
-      magFFT[i] = real2+im2;
-      magFFT[i] = sqrt(magFFT[i]);
-      phaseFFT[i] = arg(fft);
-      //      phaseFFT[i] = ata;
-    }
-    else {
-      magFFT[i] = 0;
-    }
-  }
+		if (frequencyArray[i] >= lowFreqLimit && frequencyArray[i] <= highFreqLimit) {
+			magFFT[i] = real2+im2;
+			magFFT[i] = sqrt(magFFT[i]);
+			phaseFFT[i] = arg(fft);
+		}
+		else {
+			magFFT[i] = 0;
+		}
+	}
 
-  TGraph *grOut = new TGraph(points, frequencyArray, phaseFFT);
+	TGraph *grOut = new TGraph(points, frequencyArray, phaseFFT);
 
-  delete [] theFFT;
+	delete [] theFFT;
 
-  return grOut;
+	return grOut;
 
 }
 
 TGraph * getPhaseDifference (TGraph* gr1, TGraph * gr2){
-  int length1 = gr1->GetN();
-  int length2 = gr2->GetN();
+	int length1 = gr1->GetN();
+	int length2 = gr2->GetN();
 
-  double x1, y1, x2, y2;
+	double x1, y1, x2, y2;
 
-  //  double *frequencyArray = gr1->GetX();
-  TGraph *grOut = new TGraph();
+	TGraph *grOut = new TGraph();
 
-  for (int i = 0; i < length1; i++){
-    gr1->GetPoint(i, x1, y1);
-    gr2->GetPoint(i, x2, y2);
-    double phase_diff = y2-y1;
+	for (int i = 0; i < length1; i++){
+		gr1->GetPoint(i, x1, y1);
+		gr2->GetPoint(i, x2, y2);
+		double phase_diff = y2-y1;
 
-    grOut->SetPoint(i, x1, phase_diff);
-  }
-  return grOut;
+		grOut->SetPoint(i, x1, phase_diff);
+	}
+	return grOut;
 
 }
 
-//double getMedian(TGraph* gr, double lowFreqLimit = 150., double highFreqLimit = 1000.);
 double getMedian(TGraph* gr, double lowFreqLimit, double highFreqLimit, double &upper95, double &lower95, double &sigma){
-  int npoints = gr->GetN();
-  //cout<<"Npoints in get median is "<<npoints<<endl;
-  vector < double > vec;
-  double x, y;
-  for (int i = 0; i < npoints; i++){
-    gr->GetPoint(i, x, y);
-    //    cout << x << " : " << y << endl;
-    if (x > lowFreqLimit && x < highFreqLimit){
-      vec.push_back(y);
-    }
-  }
-  std::sort(vec.begin(), vec.end());
-  int vec_size = int(vec.size());
-  double median;
-  int middle; 
-  if (vec_size%2 == 0){
-    middle = vec_size/2;
-    //cout << middle << endl;
-    median = (vec[middle]+vec[middle-1])/2.;
-  } else {
-    middle = int((vec_size-1)/2);
-    median = vec[middle];
-  }
-  int upper95index = middle + int(double(vec_size)/2.*0.95);
+	int npoints = gr->GetN();
+	// cout<<"Npoints in get median is "<<npoints<<endl;
+	vector < double > vec;
+	double x, y;
+	for (int i = 0; i < npoints; i++){
+		gr->GetPoint(i, x, y);
+		// cout << x << " : " << y << endl;
+		if (x > lowFreqLimit && x < highFreqLimit){
+			vec.push_back(y);
+		}
+	}
+	std::sort(vec.begin(), vec.end());
+	int vec_size = int(vec.size());
+	double median;
+	int middle; 
+	if (vec_size%2 == 0){
+		middle = vec_size/2;
+		// cout << middle << endl;
+		median = (vec[middle]+vec[middle-1])/2.;
+	} else {
+		middle = int((vec_size-1)/2);
+		median = vec[middle];
+	}
+	int upper95index = middle + int(double(vec_size)/2.*0.95);
 
-  upper95 = vec[upper95index];
+	upper95 = vec[upper95index];
 
-  sigma = (upper95 - median)/1.64;
-  //  cout << "vec_size:upper95index:sigma :::: " << vec_size << " : " << upper95index << " : " << sigma << endl;;
+	sigma = (upper95 - median)/1.64;
+	// cout << "vec_size:upper95index:sigma :::: " << vec_size << " : " << upper95index << " : " << sigma << endl;;
 
-  return median;
+	return median;
 }
 
 TGraph *getPhaseVariance( vector<deque<TGraph*> > vdGrPhaseDiff ){
-  int numEvents = vdGrPhaseDiff[0].size();
-  int numPairs = vdGrPhaseDiff.size();
+	int numEvents = vdGrPhaseDiff[0].size();
+	int numPairs = vdGrPhaseDiff.size();
 
-  vector<TGraph*> vgPhaseVariance; vgPhaseVariance.resize(numPairs);
-  vector<TGraph*> vgSigmaVariance; vgSigmaVariance.resize(numPairs);
-  for (int pairIndex = 0; pairIndex < numPairs; pairIndex++){
-    vgPhaseVariance[pairIndex] = new TGraph();
-    vgSigmaVariance[pairIndex] = new TGraph();
-  }
+	vector<TGraph*> vgPhaseVariance; vgPhaseVariance.resize(numPairs);
+	vector<TGraph*> vgSigmaVariance; vgSigmaVariance.resize(numPairs);
+	for (int pairIndex = 0; pairIndex < numPairs; pairIndex++){
+		vgPhaseVariance[pairIndex] = new TGraph();
+		vgSigmaVariance[pairIndex] = new TGraph();
+	}
 
-  for (int pairIndex = 0; pairIndex < numPairs; pairIndex++){
-    double x[numEvents];
-    double y[numEvents];
-    int npoints = vdGrPhaseDiff[pairIndex][0]->GetN();
-    
-    for (int ii = 0; ii < npoints; ii++){
-      complex<double> complex_sum (0,0);
-      for (int i = 0; i < numEvents; i++){
-	vdGrPhaseDiff[pairIndex][i]->GetPoint(ii, x[i], y[i]);
-	double real = cos(y[i]);
-	double im = sin(y[i]);
-	//			    cout << y[i] << " :::: " << real << " : " << im << endl;
-	complex<double> y_com (real, im);
-	complex_sum = complex_sum + y_com;
-      }
-      double phase_variance = 1. - abs(complex_sum)/double(numEvents);
-      vgPhaseVariance[pairIndex]->SetPoint(ii, x[0], phase_variance);
-    }
-    
-    double upper95, lower95, sigma;
-    double median = getMedian(vgPhaseVariance[pairIndex], 120., 1000., upper95, lower95, sigma);
-    int npoints_temp = vgPhaseVariance[pairIndex]->GetN();
-    double x0,y0;
-    
-    
-    for(int i = 0; i < npoints_temp; i++){
-      vgPhaseVariance[pairIndex]->GetPoint(i,x0,y0);
-      if (x0 > 120. && x0 < 1000.){
-	int npoints_sigma = vgSigmaVariance[pairIndex]->GetN();
-	double sigma_i = (median - y0)/sigma;
-	vgSigmaVariance[pairIndex]->SetPoint(npoints_sigma, x0, sigma_i);
-      }
-    }
-  }
-  
-  TGraph* gSigmaVarianceAvg = new TGraph();
-  int npoints_temp = vgSigmaVariance[0]->GetN();
-  for (int i = 0; i < npoints_temp; i++){
-    double average = 0.;
-    double x1,y1;
-    for (int pairIndex = 0; pairIndex < numPairs; pairIndex++){
-      vgSigmaVariance[pairIndex]->GetPoint(i,x1,y1);
-      average = average + y1;
-    }
-    average = average / (double)numPairs;
-    gSigmaVarianceAvg->SetPoint(i, x1, average);
-  }
-  
-  for ( int i = 0; i < numPairs; i++){
-    delete vgPhaseVariance[i];
-    delete vgSigmaVariance[i];
-  }
-  
-  return gSigmaVarianceAvg;
+	for (int pairIndex = 0; pairIndex < numPairs; pairIndex++){
+		double x[numEvents];
+		double y[numEvents];
+		int npoints = vdGrPhaseDiff[pairIndex][0]->GetN();
+		
+		for (int ii = 0; ii < npoints; ii++){
+			complex<double> complex_sum (0,0);
+			for (int i = 0; i < numEvents; i++){
+				vdGrPhaseDiff[pairIndex][i]->GetPoint(ii, x[i], y[i]);
+				double real = cos(y[i]);
+				double im = sin(y[i]);
+				// cout << y[i] << " :::: " << real << " : " << im << endl;
+				complex<double> y_com (real, im);
+				complex_sum = complex_sum + y_com;
+			}
+			double phase_variance = 1. - abs(complex_sum)/double(numEvents);
+			vgPhaseVariance[pairIndex]->SetPoint(ii, x[0], phase_variance);
+		}
+		
+		double upper95, lower95, sigma;
+		double median = getMedian(vgPhaseVariance[pairIndex], 120., 1000., upper95, lower95, sigma);
+		int npoints_temp = vgPhaseVariance[pairIndex]->GetN();
+		double x0,y0;
+		
+		for(int i = 0; i < npoints_temp; i++){
+			vgPhaseVariance[pairIndex]->GetPoint(i,x0,y0);
+			if (x0 > 120. && x0 < 1000.){
+				int npoints_sigma = vgSigmaVariance[pairIndex]->GetN();
+				double sigma_i = (median - y0)/sigma;
+				vgSigmaVariance[pairIndex]->SetPoint(npoints_sigma, x0, sigma_i);
+			}
+		}
+	}
+	
+	TGraph* gSigmaVarianceAvg = new TGraph();
+	int npoints_temp = vgSigmaVariance[0]->GetN();
+	for (int i = 0; i < npoints_temp; i++){
+		double average = 0.;
+		double x1,y1;
+		for (int pairIndex = 0; pairIndex < numPairs; pairIndex++){
+			vgSigmaVariance[pairIndex]->GetPoint(i,x1,y1);
+			average = average + y1;
+		}
+		average = average / (double)numPairs;
+		gSigmaVarianceAvg->SetPoint(i, x1, average);
+	}
+	
+	for ( int i = 0; i < numPairs; i++){
+		delete vgPhaseVariance[i];
+		delete vgSigmaVariance[i];
+	}
+	
+	return gSigmaVarianceAvg;
 
 }
 
 vector<double> CWCut_TB(vector <TGraph*> waveforms, vector <TGraph*> baselines, int pol, double dBCut, double dBCutBroad, int station, int num_coinc){
-  double lowFreqLimit=120.;
-  double highFreqLimit=900.;
-  double halfrange = (highFreqLimit - lowFreqLimit)/2.;
-  double halfway = double(lowFreqLimit + halfrange);
-  const int numAnts = 16;
-  double deltaTInt = 0.6;
+	double lowFreqLimit=120.;
+	double highFreqLimit=900.;
+	double halfrange = (highFreqLimit - lowFreqLimit)/2.;
+	double halfway = double(lowFreqLimit + halfrange);
+	const int numAnts = 16;
+	double deltaTInt = 0.6;
 
-  vector < vector < double> > badFreqs;
-  badFreqs.resize(numAnts);
-  vector < vector < double> > badFreqsBroad;
-  badFreqsBroad.resize(numAnts);
+	vector < vector < double> > badFreqs;
+	badFreqs.resize(numAnts);
+	vector < vector < double> > badFreqsBroad;
+	badFreqsBroad.resize(numAnts);
 
-  TGraph *baseline_clone[numAnts];
-  vector <TGraph*> newFFTs;
-  vector <TGraph*> newBaselines;
+	TGraph *baseline_clone[numAnts];
+	vector <TGraph*> newFFTs;
+	vector <TGraph*> newBaselines;
 
-  double deltaF_save;
+	double deltaF_save;
 
-  AraGeomTool *geomTool = AraGeomTool::Instance();
+	AraGeomTool *geomTool = AraGeomTool::Instance();
 
-  for(int ant=0; ant<numAnts; ant++){
+	for(int ant=0; ant<numAnts; ant++){
 
-    double magFFT[2000];
-    double magFFTBegin[2000];
-    double frequencyArray[2000];
-    for(int i=0; i<2000; i++){
-      magFFT[i]=0;
-      frequencyArray[i]=-1;
-    }
+		double magFFT[2000];
+		double magFFTBegin[2000];
+		double frequencyArray[2000];
+		for(int i=0; i<2000; i++){
+			magFFT[i]=0;
+			frequencyArray[i]=-1;
+		}
 
-    int WaveformLength = 2048; //big, unfortunately...
-    //what comes next is a not-so-obvious (imo) way of padding the waveform
-    TGraph *chan1Int = FFTtools::getInterpolatedGraph(waveforms[ant],deltaTInt);
-    double *getX = chan1Int->GetX();
-    double deltaT = getX[1]-getX[0];
-    while(chan1Int->GetN() < WaveformLength){
-      double lastX = 0.;
-      double lastY = 0.;
-      chan1Int->GetPoint(chan1Int->GetN()-1,lastX,lastY);
-      chan1Int->SetPoint(chan1Int->GetN(), lastX + deltaT, 0 );
-    }
-    double *getY = chan1Int->GetY();
-    int length=chan1Int->GetN();
-    FFTWComplex *theFFT=FFTtools::doFFT(length,getY);
+		int WaveformLength = 2048; // big, unfortunately...
+		// what comes next is a not-so-obvious (imo) way of padding the waveform
+		TGraph *chan1Int = FFTtools::getInterpolatedGraph(waveforms[ant],deltaTInt);
+		double *getX = chan1Int->GetX();
+		double deltaT = getX[1]-getX[0];
+		while(chan1Int->GetN() < WaveformLength){
+			double lastX = 0.;
+			double lastY = 0.;
+			chan1Int->GetPoint(chan1Int->GetN()-1,lastX,lastY);
+			chan1Int->SetPoint(chan1Int->GetN(), lastX + deltaT, 0 );
+		}
+		double *getY = chan1Int->GetY();
+		int length=chan1Int->GetN();
+		FFTWComplex *theFFT=FFTtools::doFFT(length,getY);
 
-    int newLength=(length/2)+1;
-    double deltaF=1/(deltaT*length); //Hz
-    deltaF*=1e3; //MHz
-    deltaF_save=deltaF;
+		int newLength=(length/2)+1;
+		double deltaF=1/(deltaT*length); //Hz
+		deltaF*=1e3; //MHz
+		deltaF_save=deltaF;
 
-    for(int i=1;i<newLength;i++) {
-      if (i==0) frequencyArray[i]=0.;
-      if (i>0) frequencyArray[i]=frequencyArray[i-1]+deltaF;
-      if (frequencyArray[i]>=lowFreqLimit && frequencyArray[i]<=highFreqLimit){
-        magFFT[i]+=theFFT[i].re*theFFT[i].re+theFFT[i].im*theFFT[i].im;
-      }
-      else{
-        magFFT[i]=-1000;
-      }
-    }
-    delete chan1Int;
-    delete [] theFFT;
+		for(int i=1;i<newLength;i++) {
+			if (i==0) frequencyArray[i]=0.;
+			if (i>0) frequencyArray[i]=frequencyArray[i-1]+deltaF;
+			if (frequencyArray[i]>=lowFreqLimit && frequencyArray[i]<=highFreqLimit){
+				magFFT[i]+=theFFT[i].re*theFFT[i].re+theFFT[i].im*theFFT[i].im;
+			}
+			else{
+				magFFT[i]=-1000;
+			}
+		}
+		delete chan1Int;
+		delete [] theFFT;
 
-    for(int i=0;i<newLength;i++) {
-      if (frequencyArray[i]>=lowFreqLimit && frequencyArray[i]<=highFreqLimit){
-        magFFT[i]=10*log10(sqrt(magFFT[i]));
-      }
-      else magFFT[i]=-1000;
-    }
-    
-    //need to copy the baselines into new graphs
-    double xx, yy;
-    double bXreal[newLength];
-    double bYreal[newLength];
+		for(int i=0;i<newLength;i++) {
+			if (frequencyArray[i]>=lowFreqLimit && frequencyArray[i]<=highFreqLimit){
+				magFFT[i]=10*log10(sqrt(magFFT[i]));
+			}
+			else magFFT[i]=-1000;
+		}
+		
+		//need to copy the baselines into new graphs
+		double xx, yy;
+		double bXreal[newLength];
+		double bYreal[newLength];
 
-    baseline_clone[ant] = new TGraph();
+		baseline_clone[ant] = new TGraph();
 
-    for (int i3 = 0; i3 < newLength; i3++){
-      baselines[ant]->GetPoint(i3, xx, yy);
-      baseline_clone[ant]->SetPoint(i3, xx, yy);
-      bXreal[i3] = xx;
-      bYreal[i3] = yy;
-    }
-    double *bY = baselines[ant]->GetY();
-    double *bX = baselines[ant]->GetX();
-    int n = baselines[ant]->GetN();
+		for (int i3 = 0; i3 < newLength; i3++){
+			baselines[ant]->GetPoint(i3, xx, yy);
+			baseline_clone[ant]->SetPoint(i3, xx, yy);
+			bXreal[i3] = xx;
+			bYreal[i3] = yy;
+		}
+		double *bY = baselines[ant]->GetY();
+		double *bX = baselines[ant]->GetX();
+		int n = baselines[ant]->GetN();
 
-    double *bY_unmodified=baseline_clone[ant]->GetY();
-    double *bX_unmodified=baseline_clone[ant]->GetX();
-    int n_unmodified=baseline_clone[ant]->GetN();
+		double *bY_unmodified=baseline_clone[ant]->GetY();
+		double *bX_unmodified=baseline_clone[ant]->GetX();
+		int n_unmodified=baseline_clone[ant]->GetN();
 
-    
-    // Calculate mean baseline
-    //get baseline average so we can bump FFT around
-    double mean=0;    
-    double meanBaseline=0;
-    int navg=0;
-    int nfirsthalfavg=0;
-    int nsecondhalfavg=0;
-    double firstHalfMeanBaseline=0;
-    double secondHalfMeanBaseline=0;
-    double firstHalfMean=0;
-    double secondHalfMean=0;
+		
+		// Calculate mean baseline
+		//get baseline average so we can bump FFT around
+		double mean=0;    
+		double meanBaseline=0;
+		int navg=0;
+		int nfirsthalfavg=0;
+		int nsecondhalfavg=0;
+		double firstHalfMeanBaseline=0;
+		double secondHalfMeanBaseline=0;
+		double firstHalfMean=0;
+		double secondHalfMean=0;
 
-    for (int i=0;i<n;i++){
-      if (bX[i]>=lowFreqLimit && bX[i]<highFreqLimit){
-        meanBaseline+=bY[i];
-        navg++;
-      }
-      if (bX[i]>=lowFreqLimit && bX[i]<halfway){
-        firstHalfMeanBaseline+=bY[i];
-        nfirsthalfavg++;
-      }
-      if (bX[i]>=halfway && bX[i]<highFreqLimit){
-        secondHalfMeanBaseline+=bY[i];
-        nsecondhalfavg++;
-      }
-    }
-    meanBaseline=meanBaseline/double(navg);
-    firstHalfMeanBaseline=firstHalfMeanBaseline/double(nfirsthalfavg);
-    secondHalfMeanBaseline=secondHalfMeanBaseline/double(nsecondhalfavg);
+		for (int i=0;i<n;i++){
+			if (bX[i]>=lowFreqLimit && bX[i]<highFreqLimit){
+				meanBaseline+=bY[i];
+				navg++;
+			}
+			if (bX[i]>=lowFreqLimit && bX[i]<halfway){
+				firstHalfMeanBaseline+=bY[i];
+				nfirsthalfavg++;
+			}
+			if (bX[i]>=halfway && bX[i]<highFreqLimit){
+				secondHalfMeanBaseline+=bY[i];
+				nsecondhalfavg++;
+			}
+		}
+		meanBaseline=meanBaseline/double(navg);
+		firstHalfMeanBaseline=firstHalfMeanBaseline/double(nfirsthalfavg);
+		secondHalfMeanBaseline=secondHalfMeanBaseline/double(nsecondhalfavg);
 
-    navg=0;
-    nfirsthalfavg=0;
-    nsecondhalfavg=0;
+		navg=0;
+		nfirsthalfavg=0;
+		nsecondhalfavg=0;
 
-    //get average of graph in question
-    for (int i=0;i<newLength;i++){
-      if (frequencyArray[i]>=lowFreqLimit && frequencyArray[i]<highFreqLimit){
-        mean+=magFFT[i];
-        navg++;
-      }
-      if (frequencyArray[i]>=lowFreqLimit && frequencyArray[i]<halfway){
-        firstHalfMean+=magFFT[i];
-        nfirsthalfavg++;
-      }
-      if (frequencyArray[i]>=halfway && frequencyArray[i]<highFreqLimit){
-        secondHalfMean+=magFFT[i];
-        nsecondhalfavg++;
-      }
-    }
-    mean=mean/double(navg);
-    firstHalfMean=firstHalfMean/double(nfirsthalfavg);
-    secondHalfMean=secondHalfMean/double(nsecondhalfavg); 
+		//get average of graph in question
+		for (int i=0;i<newLength;i++){
+			if (frequencyArray[i]>=lowFreqLimit && frequencyArray[i]<highFreqLimit){
+				mean+=magFFT[i];
+				navg++;
+			}
+			if (frequencyArray[i]>=lowFreqLimit && frequencyArray[i]<halfway){
+				firstHalfMean+=magFFT[i];
+				nfirsthalfavg++;
+			}
+			if (frequencyArray[i]>=halfway && frequencyArray[i]<highFreqLimit){
+				secondHalfMean+=magFFT[i];
+				nsecondhalfavg++;
+			}
+		}
+		mean=mean/double(navg);
+		firstHalfMean=firstHalfMean/double(nfirsthalfavg);
+		secondHalfMean=secondHalfMean/double(nsecondhalfavg); 
 
-    //now bump the average to the baseline average and apply a tilt correction to baseline
-    double deltaMean=mean-meanBaseline;
-    double deltaMeanFirst=firstHalfMean-firstHalfMeanBaseline-deltaMean;
-    double deltaMeanSecond=secondHalfMean-secondHalfMeanBaseline-deltaMean;
-    double slope=(deltaMeanFirst-deltaMeanSecond)/halfrange;
+		//now bump the average to the baseline average and apply a tilt correction to baseline
+		double deltaMean=mean-meanBaseline;
+		double deltaMeanFirst=firstHalfMean-firstHalfMeanBaseline-deltaMean;
+		double deltaMeanSecond=secondHalfMean-secondHalfMeanBaseline-deltaMean;
+		double slope=(deltaMeanFirst-deltaMeanSecond)/halfrange;
 
-    for (int i=0;i<newLength;i++){
-      magFFTBegin[i]=magFFT[i];
-      magFFT[i]=magFFT[i]-deltaMean;
-    }
-    for (int ctr=0;ctr<n;ctr++){
-      if (bX[ctr]>=lowFreqLimit && bX[ctr]<highFreqLimit){
-        bYreal[ctr]=bYreal[ctr]-slope*(bXreal[ctr]-halfway);
-      }
-    }
-    
-    //now see if any peaks are ndB above the baseline.
-    double deltaMag[newLength];
-    
-    int j;
-    for (int i=0;i<newLength;i++){
-      if (frequencyArray[i]>lowFreqLimit+2 && frequencyArray[i]<highFreqLimit-2){
-        for (j=0;j<n;j++){
-          if (bX[j]>frequencyArray[i]) break; // finds bin where frequencies match
-        }
-        deltaMag[i]=magFFT[i]-bYreal[j]; // changed
-      }
-      else deltaMag[i]=-1000;
-    }
+		for (int i=0;i<newLength;i++){
+			magFFTBegin[i]=magFFT[i];
+			magFFT[i]=magFFT[i]-deltaMean;
+		}
+		for (int ctr=0;ctr<n;ctr++){
+			if (bX[ctr]>=lowFreqLimit && bX[ctr]<highFreqLimit){
+				bYreal[ctr]=bYreal[ctr]-slope*(bXreal[ctr]-halfway);
+			}
+		}
+		
+		//now see if any peaks are ndB above the baseline.
+		double deltaMag[newLength];
+		
+		int j;
+		for (int i=0;i<newLength;i++){
+			if (frequencyArray[i]>lowFreqLimit+2 && frequencyArray[i]<highFreqLimit-2){
+				for (j=0;j<n;j++){
+					if (bX[j]>frequencyArray[i]) break; // finds bin where frequencies match
+				}
+				deltaMag[i]=magFFT[i]-bYreal[j]; // changed
+			}
+			else deltaMag[i]=-1000;
+		}
 
-    TGraph *magFFTgraph = new TGraph(2000,frequencyArray,magFFT);
-    TGraph *newBaseline = new TGraph(2000,frequencyArray,bYreal);
-    newFFTs.push_back(magFFTgraph);
-    newBaselines.push_back(newBaseline);
+		TGraph *magFFTgraph = new TGraph(2000,frequencyArray,magFFT);
+		TGraph *newBaseline = new TGraph(2000,frequencyArray,bYreal);
+		newFFTs.push_back(magFFTgraph);
+		newBaselines.push_back(newBaseline);
 
-    int index;
-    for (int bin = 0; bin < newLength; bin++){
-      if (deltaMag[bin] > dBCut){
-        badFreqs[ant].push_back(frequencyArray[bin]);
-      }
-      if (deltaMag[bin] > dBCutBroad){
-        badFreqsBroad[ant].push_back(frequencyArray[bin]);
-      }
-    }
-  } //loop over antennas
+		int index;
+		for (int bin = 0; bin < newLength; bin++){
+			if (deltaMag[bin] > dBCut){
+				badFreqs[ant].push_back(frequencyArray[bin]);
+			}
+			if (deltaMag[bin] > dBCutBroad){
+				badFreqsBroad[ant].push_back(frequencyArray[bin]);
+			}
+		}
+	} //loop over antennas
 
-  vector< vector <double> > freqMatching;
-  double freqRangeBroad=40.;
-  double freqRangeBroad_bins = freqRangeBroad/deltaF_save; //number of bins spanned by 40 MHz
-  vector<double> FreqToNotch;
+	vector< vector <double> > freqMatching;
+	double freqRangeBroad=40.;
+	double freqRangeBroad_bins = freqRangeBroad/deltaF_save; //number of bins spanned by 40 MHz
+	vector<double> FreqToNotch;
 
-  for(int i=0; i<numAnts-1; i++){
-    int i_pol = geomTool->getStationInfo(station)->getAntennaInfo(i)->polType;
-    if(i_pol!=pol) continue; //check polarization
-    for(int ii=0; ii<int(badFreqs[i].size()); ii++){ //loop over the bad frequencies for this antenna
-      int matchedFreqs=1;
-      int matchedFreqsFull=0;
-      bool broad_band1=false;
-      bool broad_band2=false;
-      int broad_freqs1=0;
-      int broad_freqs2=0;
+	for(int i=0; i<numAnts-1; i++){
+		int i_pol = geomTool->getStationInfo(station)->getAntennaInfo(i)->polType;
+		if(i_pol!=pol) continue; //check polarization
+		for(int ii=0; ii<int(badFreqs[i].size()); ii++){ //loop over the bad frequencies for this antenna
+			int matchedFreqs=1;
+			int matchedFreqsFull=0;
+			bool broad_band1=false;
+			bool broad_band2=false;
+			int broad_freqs1=0;
+			int broad_freqs2=0;
 
-      //loop over the other frequencies which were tagged as being above the "broad" threshold in this channel
-      for(int ii2=0; ii2<int(badFreqsBroad[i].size()); ii2++){
-        //if that frequency is w/in freqRangeBroad window
-        if((abs(badFreqs[i][ii] - badFreqsBroad[i][ii2]) < freqRangeBroad)){
-          broad_freqs1++;
-        }
-      }
+			//loop over the other frequencies which were tagged as being above the "broad" threshold in this channel
+			for(int ii2=0; ii2<int(badFreqsBroad[i].size()); ii2++){
+				//if that frequency is w/in freqRangeBroad window
+				if((abs(badFreqs[i][ii] - badFreqsBroad[i][ii2]) < freqRangeBroad)){
+					broad_freqs1++;
+				}
+			}
 
-      //if there are frequencies over the broad threshold w/in 40 MHz
-      //then we want to know if the number of contaminated bins/number of bins in 40 MHz < 50%
-      //if it's larger, then it's broadband, and we shouldn't touch it!
-      if( (freqRangeBroad_bins) != 0){
-        if(double(broad_freqs1-1)/double(int(freqRangeBroad_bins)-1) > 0.5){
-          broad_band1=true;
-        }
-        else{
-          matchedFreqsFull++;
-        }
-      }
-      else{
-        matchedFreqsFull++;
-      }
+			//if there are frequencies over the broad threshold w/in 40 MHz
+			//then we want to know if the number of contaminated bins/number of bins in 40 MHz < 50%
+			//if it's larger, then it's broadband, and we shouldn't touch it!
+			if( (freqRangeBroad_bins) != 0){
+				if(double(broad_freqs1-1)/double(int(freqRangeBroad_bins)-1) > 0.5){
+					broad_band1=true;
+				}
+				else{
+					matchedFreqsFull++;
+				}
+			}
+			else{
+				matchedFreqsFull++;
+			}
 
-      //now loop over all the other antennas in the array
-      for(int j=i+1; j<numAnts; j++){
-        int j_pol = geomTool->getStationInfo(station)->getAntennaInfo(j)->polType;
-        if(j_pol!=i_pol) continue; //check polarization agreement
-        bool matched_ant = false;
-        //check all of their bad frequencies
-        for(int jj=0; (jj<int(badFreqs[j].size()) && matched_ant==false); jj++){
-          //if their bad frequencies happens within 5 MHz of the first bad frequency
-          //we know something is up
-          if((abs(badFreqs[i][ii] - badFreqs[j][jj]) < 5.)){
+			//now loop over all the other antennas in the array
+			for(int j=i+1; j<numAnts; j++){
+				int j_pol = geomTool->getStationInfo(station)->getAntennaInfo(j)->polType;
+				if(j_pol!=i_pol) continue; //check polarization agreement
+				bool matched_ant = false;
+				//check all of their bad frequencies
+				for(int jj=0; (jj<int(badFreqs[j].size()) && matched_ant==false); jj++){
+					//if their bad frequencies happens within 5 MHz of the first bad frequency
+					//we know something is up
+					if((abs(badFreqs[i][ii] - badFreqs[j][jj]) < 5.)){
 
-            broad_freqs2=0;
-            matchedFreqs++;
-            matched_ant=true;
-            //now check all of the bad frequencies in this secondary antenna
-                        for (int jj2 = 0; jj2 < int(badFreqsBroad[j].size()); jj2++){
-                          //if it's trouble make frequencies are w/in 40 MHz, then we want to record that
-                          if ((abs(badFreqs[j][jj] - badFreqsBroad[j][jj2]) < freqRangeBroad)){
-                            broad_freqs2++;
-                          }
-                        }
-                        //if there are frequencies over the broad threshold w/in 40 MHz
-            //then we want to know if the number of contaminated bins/number of bins in 40 MHz < 50%
-            //if it's larger, then it's broadband, and we shouldn't touch it!
-                        if(freqRangeBroad_bins!=0){
-                          if(double(broad_freqs2-1)/double(int(freqRangeBroad_bins)-1) > 0.5){
-                            broad_band2=true;
-                          }
-                        }
-                        //if the first ant was *not* broadband, and *neither* was this one
-                        //then we should say "yeah, we found something narrow, please notch me"
-                        if((broad_band1==false) && (broad_band2==false)){
-                          matchedFreqsFull++;
-                        } //were the trouble frequencies for both ants independently not broadband
-          } //was the second ant's bad frequency within 5 MHz of the first antennas bad frequency?
-        } //loop over second antennas bad freqs
-      }//loop over second antenna
-      if(matchedFreqsFull>=num_coinc){
-        double new_freq=badFreqs[i][ii];
-        for(int k=0; k<FreqToNotch.size(); k++){
-          if(abs(new_freq)-FreqToNotch[k] < 0.01)
-            new_freq=false;
-        }
-        if(new_freq)
-          FreqToNotch.push_back(badFreqs[i][ii]);
-      }
-    }//loop over trouble frequencies for antenna 1
-  } //loop over antenna 1
+						broad_freqs2=0;
+						matchedFreqs++;
+						matched_ant=true;
+						//now check all of the bad frequencies in this secondary antenna
+												for (int jj2 = 0; jj2 < int(badFreqsBroad[j].size()); jj2++){
+													//if it's trouble make frequencies are w/in 40 MHz, then we want to record that
+													if ((abs(badFreqs[j][jj] - badFreqsBroad[j][jj2]) < freqRangeBroad)){
+														broad_freqs2++;
+													}
+												}
+												//if there are frequencies over the broad threshold w/in 40 MHz
+												//then we want to know if the number of contaminated bins/number of bins in 40 MHz < 50%
+												//if it's larger, then it's broadband, and we shouldn't touch it!
+												if(freqRangeBroad_bins!=0){
+													if(double(broad_freqs2-1)/double(int(freqRangeBroad_bins)-1) > 0.5){
+														broad_band2=true;
+													}
+												}
+												//if the first ant was *not* broadband, and *neither* was this one
+												//then we should say "yeah, we found something narrow, please notch me"
+												if((broad_band1==false) && (broad_band2==false)){
+													matchedFreqsFull++;
+												} //were the trouble frequencies for both ants independently not broadband
+					} //was the second ant's bad frequency within 5 MHz of the first antennas bad frequency?
+				} //loop over second antennas bad freqs
+			}//loop over second antenna
+			if(matchedFreqsFull>=num_coinc){
+				double new_freq=badFreqs[i][ii];
+				for(int k=0; k<FreqToNotch.size(); k++){
+					if(abs(new_freq)-FreqToNotch[k] < 0.01)
+						new_freq=false;
+				}
+				if(new_freq)
+					FreqToNotch.push_back(badFreqs[i][ii]);
+			}
+		}//loop over trouble frequencies for antenna 1
+	} //loop over antenna 1
 
-  // TCanvas *c = new TCanvas("","",1100,850);
-  // c->Divide(4,4);
-  // for(int i=0; i<16; i++){
-  //   c->cd(i+1);
-  //   newFFTs[i]->Draw("ALP");
-  //   newBaselines[i]->Draw("Lsame");
-  //   newBaselines[i]->SetLineColor(kRed);
-  //   newFFTs[i]->GetYaxis()->SetRangeUser(0,50);
-  // }
-  // char save_title[300];
-  // sprintf(save_title,"test_inside.png");
-  // c->SaveAs(save_title);
+	// TCanvas *c = new TCanvas("","",1100,850);
+	// c->Divide(4,4);
+	// for(int i=0; i<16; i++){
+	//   c->cd(i+1);
+	//   newFFTs[i]->Draw("ALP");
+	//   newBaselines[i]->Draw("Lsame");
+	//   newBaselines[i]->SetLineColor(kRed);
+	//   newFFTs[i]->GetYaxis()->SetRangeUser(0,50);
+	// }
+	// char save_title[300];
+	// sprintf(save_title,"test_inside.png");
+	// c->SaveAs(save_title);
 
-  for(int i=0; i<16; i++){
-    delete baseline_clone[i];
-    delete newFFTs[i];
-    delete newBaselines[i];
-  }
-  return FreqToNotch;
+	for(int i=0; i<16; i++){
+		delete baseline_clone[i];
+		delete newFFTs[i];
+		delete newBaselines[i];
+	}
+	return FreqToNotch;
 }
