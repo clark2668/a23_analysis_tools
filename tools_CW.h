@@ -294,7 +294,7 @@ TGraph *getPhaseVariance( vector<deque<TGraph*> > vdGrPhaseDiff ){
 
 vector<double> CWCut_TB(vector <TGraph*> waveforms, vector <TGraph*> baselines, int pol, double dBCut, double dBCutBroad, int station, int num_coinc){
 	double lowFreqLimit=120.;
-	double highFreqLimit=900.;
+	double highFreqLimit=850.;
 	double halfrange = (highFreqLimit - lowFreqLimit)/2.;
 	double halfway = double(lowFreqLimit + halfrange);
 	const int numAnts = 16;
