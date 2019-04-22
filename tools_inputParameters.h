@@ -5,7 +5,7 @@
 int calpulserRunMode = 0;
 int filterMode = 0;
 
-double interpolationTimeStep = 0.6;
+double interpolationTimeStep = 0.5;
 const int first50ns = (int)(50./interpolationTimeStep);
 int numBinsToIntegrate = (int)(5./interpolationTimeStep);
 
