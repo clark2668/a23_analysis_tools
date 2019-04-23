@@ -292,7 +292,7 @@ TGraph *getPhaseVariance( vector<deque<TGraph*> > vdGrPhaseDiff ){
 
 }
 
-vector<double> CWCut_TB(vector <TGraph*> waveforms, vector <TGraph*> baselines, int pol, double dBCut, double dBCutBroad, int station, int num_coinc){
+vector<double> CWCut_TB(vector <TGraph*> waveforms, vector <TGraph*> baselines, int pol, double dBCut, double dBCutBroad, int station, int num_coinc, vector<int> chan_exclusion_list){
 	double lowFreqLimit=120.;
 	double highFreqLimit=850.;
 	double halfrange = (highFreqLimit - lowFreqLimit)/2.;
@@ -491,7 +491,16 @@ vector<double> CWCut_TB(vector <TGraph*> waveforms, vector <TGraph*> baselines, 
 
 	for(int i=0; i<numAnts-1; i++){
 		int i_pol = geomTool->getStationInfo(station)->getAntennaInfo(i)->polType;
-		if(i_pol!=pol) continue; //check polarization
+		if(
+			i_pol!=pol
+			||
+			(std::find(chan_exclusion_list.begin(), chan_exclusion_list.end(), i) != chan_exclusion_list.end())
+		)
+		{
+			// check the polarization agreement
+			// and to make sure this isn't in the excluded channel list+
+			continue;
+		}
 		for(int ii=0; ii<int(badFreqs[i].size()); ii++){ //loop over the bad frequencies for this antenna
 			int matchedFreqs=1;
 			int matchedFreqsFull=0;
@@ -526,7 +535,16 @@ vector<double> CWCut_TB(vector <TGraph*> waveforms, vector <TGraph*> baselines, 
 			//now loop over all the other antennas in the array
 			for(int j=i+1; j<numAnts; j++){
 				int j_pol = geomTool->getStationInfo(station)->getAntennaInfo(j)->polType;
-				if(j_pol!=i_pol) continue; //check polarization agreement
+				if(
+					j_pol!=i_pol
+					||
+					(std::find(chan_exclusion_list.begin(), chan_exclusion_list.end(), j) != chan_exclusion_list.end())
+				)
+				{
+					// check the polarization agreement
+					// and to make sure this isn't in the excluded channel list
+					continue;
+				}
 				bool matched_ant = false;
 				//check all of their bad frequencies
 				for(int jj=0; (jj<int(badFreqs[j].size()) && matched_ant==false); jj++){
