@@ -126,18 +126,21 @@ int isBadRun(int station, int run_num){
 			station2_exclude.push_back(4876);
 
 			/*
+			2015 Pulser Lift
+				December 2015
+				http://ara.physics.wisc.edu/cgi-bin/DocDB/ShowDocument?docid=1269 (page 2)
+				Run number from private communication with John Kelley
+			*/
+			station2_exclude.push_back(6513);
+
+			/*
 			2015 ICL pulsing
 				December 2015
 				http://ara.physics.wisc.edu/cgi-bin/DocDB/ShowDocument?docid=1269 (page 7)
 			*/
 			station2_exclude.push_back(6527);
 
-			/*
-			2015 Pulser Lift
-				December 2015
-				
-			*/
-			station2_exclude.push_back(6513);
+
 
 	/*
 	station 3 exclusion
