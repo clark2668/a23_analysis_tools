@@ -89,10 +89,19 @@ int isBadRun(int station, int run_num){
 			for(int i=3289; i<=3312; i++){ station2_exclude.push_back(i); }
 
 			/*
+			2014 L2 Scaler Masking Issue
+				Cal pulsers sysemtatically do not reconstruct correctly, rate is only 1 Hz
+				Excluded because configuration was not "science good"
+			*/
+			for(int i=3464; i<=3504; i++){ station2_exclude.push_back(i); }
+
+			/*
 			2014 Trigger Length Window Sweep
 				http://ara.icecube.wisc.edu/wiki/index.php/Run_Log_2014
 			*/
 			for(int i=3578; i<=3598; i++){ station2_exclude.push_back(i); }
+
+
 
 
 		/*2015*/
@@ -140,6 +149,28 @@ int isBadRun(int station, int run_num){
 			*/
 			station2_exclude.push_back(6527);
 
+
+		/*2016*/
+
+			/*
+			2016 cal pulser sweep
+				January 2015
+				http://ara.icecube.wisc.edu/wiki/index.php/Run_Log_2016
+			*/
+			for(int i=7625; i<=7686; i++){ station2_exclude.push_back(i); }
+
+
+		/*Other*/
+
+			/*
+			D1 Glitches
+				Identified by MYL as having glitches after long periods of downtime
+			*/
+			station2_exclude.push_back(3);
+			station2_exclude.push_back(11);
+			station2_exclude.push_back(59);
+			station2_exclude.push_back(60);
+			station2_exclude.push_back(71);			
 
 
 	/*
