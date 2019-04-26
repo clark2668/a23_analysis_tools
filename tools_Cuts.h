@@ -132,6 +132,13 @@ int isBadRun(int station, int run_num){
 			*/
 			station2_exclude.push_back(6527);
 
+			/*
+			2015 Pulser Lift
+				December 2015
+				
+			*/
+			station2_exclude.push_back(6513);
+
 	/*
 	station 3 exclusion
 	*/
