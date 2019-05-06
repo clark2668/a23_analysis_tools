@@ -79,6 +79,8 @@ int isBadRun(int station, int run_num){
 			station2_exclude.push_back(2916); //jan 20 2014 surface pulser runs //actual problem causer
 				station2_exclude.push_back(2918); //jan 20 2014 surface pulser runs
 
+			station2_exclude.push_back(2938); //surface pulsing from m richman (identified by MYL http://ara.physics.wisc.edu/cgi-bin/DocDB/ShowDocument?docid=1889 slide 14)
+			station2_exclude.push_back(2939); //surface pulsing from m richman (identified by MYL http://ara.physics.wisc.edu/cgi-bin/DocDB/ShowDocument?docid=1889 slide 14)
 
 			/*
 			2014 Cal pulser sweep
@@ -130,6 +132,7 @@ int isBadRun(int station, int run_num){
 				January 2015
 				http://ara.physics.wisc.edu/cgi-bin/DocDB/ShowDocument?docid=1339 (slide 5)
 			*/
+			station2_exclude.push_back(4876); // Identified by MYL http://ara.physics.wisc.edu/cgi-bin/DocDB/ShowDocument?docid=1889 slide 14
 			station2_exclude.push_back(4872);
 			station2_exclude.push_back(4873);
 			station2_exclude.push_back(4876);
