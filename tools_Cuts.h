@@ -132,10 +132,9 @@ int isBadRun(int station, int run_num){
 				January 2015
 				http://ara.physics.wisc.edu/cgi-bin/DocDB/ShowDocument?docid=1339 (slide 5)
 			*/
-			station2_exclude.push_back(4876); // Identified by MYL http://ara.physics.wisc.edu/cgi-bin/DocDB/ShowDocument?docid=1889 slide 14
 			station2_exclude.push_back(4872);
 			station2_exclude.push_back(4873);
-			station2_exclude.push_back(4876);
+			station2_exclude.push_back(4876); // Identified by MYL http://ara.physics.wisc.edu/cgi-bin/DocDB/ShowDocument?docid=1889 slide 14			
 
 			/*
 			2015 Pulser Lift
