@@ -600,8 +600,8 @@ vector<double> CWCut_TB(vector <TGraph*> waveforms, vector <TGraph*> baselines, 
 		}
 		char save_temp_title[300];
 		sprintf(save_temp_title,"%s/trouble_events/Run%d_Ev%d_CWBaseline.png",plotPath,runNum,eventNum);
+		c->SaveAs(save_temp_title);
 		delete c;
-		cout<<"Got here"<<endl;
 	}
 
 	for(int i=0; i<16; i++){
