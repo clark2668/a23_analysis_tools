@@ -11,9 +11,7 @@
 
 // time
 #include <ctime>
-
 #include <AraGeomTool.h>
-
 #include <FFTtools.h>
 
 int getChansfromPair(AraGeomTool * geomTool, int stationNum, int polarization, int pair, int &ch1, int &ch2){
@@ -292,8 +290,7 @@ TGraph *getPhaseVariance( vector<deque<TGraph*> > vdGrPhaseDiff ){
 
 }
 
-vector<double> CWCut_TB(vector <TGraph*> waveforms, vector <TGraph*> baselines, int pol, double dBCut, double dBCutBroad, int station, int num_coinc, vector<int> chan_exclusion_list){
-	double lowFreqLimit=120.;
+vector<double> CWCut_TB(vector <TGraph*> waveforms, vector <TGraph*> baselines, int pol, double dBCut, double dBCutBroad, int station, int num_coinc, vector<int> chan_exclusion_list, int runNum, int eventNum, bool print=false){	double lowFreqLimit=120.;
 	double highFreqLimit=850.;
 	double halfrange = (highFreqLimit - lowFreqLimit)/2.;
 	double halfway = double(lowFreqLimit + halfrange);
@@ -589,6 +586,23 @@ vector<double> CWCut_TB(vector <TGraph*> waveforms, vector <TGraph*> baselines, 
 			}
 		}//loop over trouble frequencies for antenna 1
 	} //loop over antenna 1
+
+	if(print){
+		char *plotPath(getenv("PLOT_PATH"));
+		if (plotPath == NULL) std::cout << "Warning! $PLOT_PATH is not set!" << endl;
+		TCanvas *c = new TCanvas("","",1100,850);
+		c->Divide(4,4);
+		for(int i=0; i<16; i++){
+			c->cd(i+1);
+			newFFTs[i]->Draw("ALP");
+			newBaselines[i]->Draw("same");
+			newBaselines[i]->SetLineColor(kRed);
+		}
+		char save_temp_title[300];
+		sprintf(save_temp_title,"%s/trouble_events/Run%d_Ev%d_CWBaseline.png",plotPath,runNum,eventNum);
+		delete c;
+		cout<<"Got here"<<endl;
+	}
 
 	for(int i=0; i<16; i++){
 		delete baseline_clone[i];
