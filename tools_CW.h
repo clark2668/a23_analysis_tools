@@ -233,7 +233,6 @@ TGraph *getPhaseVariance( vector<deque<TGraph*> > vdGrPhaseDiff ){
 		vgPhaseVariance[pairIndex] = new TGraph();
 		vgSigmaVariance[pairIndex] = new TGraph();
 	}
-
 	for (int pairIndex = 0; pairIndex < numPairs; pairIndex++){
 		double x[numEvents];
 		double y[numEvents];
@@ -257,7 +256,7 @@ TGraph *getPhaseVariance( vector<deque<TGraph*> > vdGrPhaseDiff ){
 		double median = getMedian(vgPhaseVariance[pairIndex], 120., 1000., upper95, lower95, sigma);
 		int npoints_temp = vgPhaseVariance[pairIndex]->GetN();
 		double x0,y0;
-		
+
 		for(int i = 0; i < npoints_temp; i++){
 			vgPhaseVariance[pairIndex]->GetPoint(i,x0,y0);
 			if (x0 > 120. && x0 < 1000.){
@@ -267,7 +266,6 @@ TGraph *getPhaseVariance( vector<deque<TGraph*> > vdGrPhaseDiff ){
 			}
 		}
 	}
-	
 	TGraph* gSigmaVarianceAvg = new TGraph();
 	int npoints_temp = vgSigmaVariance[0]->GetN();
 	for (int i = 0; i < npoints_temp; i++){
@@ -280,7 +278,6 @@ TGraph *getPhaseVariance( vector<deque<TGraph*> > vdGrPhaseDiff ){
 		average = average / (double)numPairs;
 		gSigmaVarianceAvg->SetPoint(i, x1, average);
 	}
-	
 	for ( int i = 0; i < numPairs; i++){
 		delete vgPhaseVariance[i];
 		delete vgSigmaVariance[i];
@@ -290,12 +287,13 @@ TGraph *getPhaseVariance( vector<deque<TGraph*> > vdGrPhaseDiff ){
 
 }
 
-vector<double> CWCut_TB(vector <TGraph*> waveforms, vector <TGraph*> baselines, int pol, double dBCut, double dBCutBroad, int station, int num_coinc, vector<int> chan_exclusion_list, int runNum, int eventNum, bool print=false){	double lowFreqLimit=120.;
+vector<double> CWCut_TB(vector <TGraph*> waveforms, vector <TGraph*> baselines, int pol, double dBCut, double dBCutBroad, int station, int num_coinc, vector<int> chan_exclusion_list, int runNum, int eventNum, bool print=false){
+	double lowFreqLimit=120.;
 	double highFreqLimit=850.;
 	double halfrange = (highFreqLimit - lowFreqLimit)/2.;
 	double halfway = double(lowFreqLimit + halfrange);
 	const int numAnts = 16;
-	double deltaTInt = 0.6;
+	double deltaTInt = 0.5;
 
 	vector < vector < double> > badFreqs;
 	badFreqs.resize(numAnts);
@@ -597,6 +595,7 @@ vector<double> CWCut_TB(vector <TGraph*> waveforms, vector <TGraph*> baselines, 
 			newFFTs[i]->Draw("ALP");
 			newBaselines[i]->Draw("same");
 			newBaselines[i]->SetLineColor(kRed);
+			newFFTs[i]->GetYaxis()->SetRangeUser(0,50);
 		}
 		char save_temp_title[300];
 		sprintf(save_temp_title,"%s/trouble_events/Run%d_Ev%d_CWBaseline.png",plotPath,runNum,eventNum);
