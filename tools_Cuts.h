@@ -28,6 +28,26 @@ int hasShortWaveformMultiGraph(vector <TGraph*> grs){
 }
 
 /*
+	input: station, unixTime
+	output: 0 (is good time), 1 (is bad time)
+
+	function: checks if the livetime is bad
+*/
+
+int isBadLivetime(int station, int unixTime){
+
+	bool isBadLivetime=false;
+	if(station==2){
+		// will do something for A2
+	}
+	else if(station==3){
+		// will do something for A3
+	}
+	return isBadLivetime;
+
+}
+
+/*
 	input: station, run number
 	output: 0 (is good run), 1 (is bad run)
 
