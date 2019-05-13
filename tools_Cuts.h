@@ -38,7 +38,15 @@ int isBadLivetime(int station, int unixTime){
 
 	bool isBadLivetime=false;
 	if(station==2){
-		// will do something for A2
+
+		/*
+			Anthropogenic movement on Jan 3 2015 between 15:40-15:50 UTC
+			Observed in run 4775
+		*/
+		if(unixTime>=1420299600 && unixTime<=1420300200){
+			isBadLivetime=true;
+
+		}
 	}
 	else if(station==3){
 		// will do something for A3
