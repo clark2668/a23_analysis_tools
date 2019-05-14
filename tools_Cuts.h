@@ -28,7 +28,7 @@ int hasShortWaveformMultiGraph(vector <TGraph*> grs){
 }
 
 /*
-	input: station, unixTime
+	input: station, unixTime (UTC)
 	output: 0 (is good time), 1 (is bad time)
 
 	function: checks if the livetime is bad
