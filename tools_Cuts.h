@@ -43,7 +43,7 @@ int isBadLivetime(int station, int unixTime){
 			Anthropogenic movement on Jan 3 2015 between 15:40-15:50 UTC
 			Observed in run 4775
 		*/
-		if(unixTime>=1420299600 && unixTime<=1420300200){
+		if(unixTime>=1420317600 && unixTime<=1420318200){
 			isBadLivetime=true;
 
 		}
