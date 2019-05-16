@@ -9,6 +9,9 @@
 #include <algorithm>
 
 #include "TGraph.h"
+#include "TMath.h"
+
+#include "AraGeomTool.h"
 
 using namespace std;
 /*
@@ -20,7 +23,7 @@ using namespace std;
 void getCalCutPlotBoundary(int station, int config, int CP, int pol, bool inBins, int &startX, int &stopX, int &startY, int &stopY){
 	if(station==2){
 		if(config==1){
-			if(CP==5){
+			if(CP==6){
 				if(pol==0){
 					startX=55;
 					stopX=75;
@@ -39,10 +42,9 @@ void getCalCutPlotBoundary(int station, int config, int CP, int pol, bool inBins
 }
 
 void getCalFitRange(int station, int config, int CP, int pol, double &startPhi, double &stopPhi, double &startTheta, double &stopTheta){
-
 	if(station==2){
 		if(config==1){
-			if(CP==5){
+			if(CP==6){
 				if(pol==0){
 					startPhi=62.;
 					stopPhi=70.;
@@ -52,6 +54,31 @@ void getCalFitRange(int station, int config, int CP, int pol, double &startPhi, 
 			}
 		}
 	}
+}
+
+void getRealLocation(int station, int CP, int pol, double &theta, double &phi){
+	
+	int which_cal_ant = CP-5; //cal pulsers ar CP5 and CP6, but have indexes 0 and 1...
+
+	AraGeomTool *araGeom = AraGeomTool::Instance();
+
+	//compute the average depth of the station
+	double antenna_average[3]={0.};
+	for(int i=0; i<16; i++){
+		for(int ii=0; ii<3; ii++){
+			antenna_average[ii]+=(araGeom->getStationInfo(station)->getAntennaInfo(i)->antLocation[ii]);
+		}
+	}
+	for(int ii=0; ii<3; ii++){
+		antenna_average[ii]/=16.;
+	}
+	double X = araGeom->getStationInfo(station)->getCalAntennaInfo(which_cal_ant)->antLocation[0];
+	double Y = araGeom->getStationInfo(station)->getCalAntennaInfo(which_cal_ant)->antLocation[1];
+	double Z = araGeom->getStationInfo(station)->getCalAntennaInfo(which_cal_ant)->antLocation[2];
+	phi = TMath::ATan2(Y-antenna_average[1],X-antenna_average[0])*TMath::RadToDeg();
+	double depth_diff = Z-antenna_average[2];
+	double horz_dist = sqrt(pow((X-antenna_average[0]),2.0)+pow((Y-antenna_average[1]),2.0));
+	theta = TMath::ATan2(depth_diff,horz_dist)*TMath::RadToDeg();
 }
 
 /*
