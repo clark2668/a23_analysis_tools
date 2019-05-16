@@ -14,16 +14,20 @@
 #include "AraGeomTool.h"
 
 using namespace std;
+
 /*
-	Returns the bins for plotting the cal pulser cut
-	if "inBins" is true, the answer will be reported as a bin number from 0->360/0->180
-	if "inBins" is false, the answer will be reported as a number in degrees from -180->180/-90->90
+	input: station, config, pulser, pol, startX, stopX, startY, stopY (the last four are the bounds of the projection region for projecting the TH2D into TH1D)
+	output: changes the value of thetas and phis
+
+	function: Returns the bins for plotting the cal pulser cut
+				if "inBins" is true, the answer will be reported as a bin number from 0->360/0->180
+			if "inBins" is false, the answer will be reported as a number in degrees from -180->180/-90->90
 */
 
-void getCalCutPlotBoundary(int station, int config, int CP, int pol, bool inBins, int &startX, int &stopX, int &startY, int &stopY){
+void getCalCutPlotBoundary(int station, int config, int pulser, int pol, bool inBins, int &startX, int &stopX, int &startY, int &stopY){
 	if(station==2){
 		if(config==1){
-			if(CP==6){
+			if(pulser==6){
 				if(pol==0){
 					startX=55;
 					stopX=75;
@@ -41,10 +45,18 @@ void getCalCutPlotBoundary(int station, int config, int CP, int pol, bool inBins
 	}
 }
 
-void getCalFitRange(int station, int config, int CP, int pol, double &startPhi, double &stopPhi, double &startTheta, double &stopTheta){
+/*
+	input: station, config, pulser, pol, startPhi, stopPhi, startTheta, stopTheta (the last four are the bounds of the fit region for computing the cut)
+	output: changes the value of thetas and phis
+
+	function:  looks up the boundaries for the gaussian fits used to set the cal pulser cut boxes
+*/
+
+
+void getCalFitRange(int station, int config, int pulser, int pol, double &startPhi, double &stopPhi, double &startTheta, double &stopTheta){
 	if(station==2){
 		if(config==1){
-			if(CP==6){
+			if(pulser==6){
 				if(pol==0){
 					startPhi=62.;
 					stopPhi=70.;
@@ -56,9 +68,24 @@ void getCalFitRange(int station, int config, int CP, int pol, double &startPhi, 
 	}
 }
 
-void getRealLocation(int station, int CP, int pol, double &theta, double &phi){
+/*
+	input: station, pulser (5 or 6), polarization, theta and phi
+	output: changes the value of theta and phi to where the cal pulser is
+
+	function: computes the "truth" theta and phi of the cal pulser
+*/
+
+void getRealLocation(int station, int pulser, int pol, double &theta, double &phi){
 	
-	int which_cal_ant = CP-5; //cal pulsers ar CP5 and CP6, but have indexes 0 and 1...
+	int cal_ant_index;
+	if(pulser==5){
+		if(pol==0) cal_ant_index=1;
+		else if(pol==1) cal_ant_index=0;
+	}
+	else if(pulser==6){
+		if(pol==0) cal_ant_index=3;
+		else if(pol==1) cal_ant_index=4;
+	}
 
 	AraGeomTool *araGeom = AraGeomTool::Instance();
 
@@ -72,9 +99,9 @@ void getRealLocation(int station, int CP, int pol, double &theta, double &phi){
 	for(int ii=0; ii<3; ii++){
 		antenna_average[ii]/=16.;
 	}
-	double X = araGeom->getStationInfo(station)->getCalAntennaInfo(which_cal_ant)->antLocation[0];
-	double Y = araGeom->getStationInfo(station)->getCalAntennaInfo(which_cal_ant)->antLocation[1];
-	double Z = araGeom->getStationInfo(station)->getCalAntennaInfo(which_cal_ant)->antLocation[2];
+	double X = araGeom->getStationInfo(station)->getCalAntennaInfo(cal_ant_index)->antLocation[0];
+	double Y = araGeom->getStationInfo(station)->getCalAntennaInfo(cal_ant_index)->antLocation[1];
+	double Z = araGeom->getStationInfo(station)->getCalAntennaInfo(cal_ant_index)->antLocation[2];
 	phi = TMath::ATan2(Y-antenna_average[1],X-antenna_average[0])*TMath::RadToDeg();
 	double depth_diff = Z-antenna_average[2];
 	double horz_dist = sqrt(pow((X-antenna_average[0]),2.0)+pow((Y-antenna_average[1]),2.0));
