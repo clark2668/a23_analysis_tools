@@ -26,16 +26,27 @@ using namespace std;
 
 void getCalCutPlotBoundary(int station, int config, int pulser, int pol, bool inBins, int &startX, int &stopX, int &startY, int &stopY){
 	if(station==2){
-		if(config==1){
-			if(pulser==6){
-				if(pol==0){
-					startX=55;
-					stopX=75;
+		if(pulser==5){
+			if(pol==0){
+				if(config==2){
+					startX=-35;
+					stopX=-15;
+					startY=-35;
+					stopY=-15;
+				}
+			}	
+		}
+		if(pulser==6){
+			if(pol==0){
+				if(config==1 || config==2 || config==3 || config==4){
+					startX=58;
+					stopX=72;
 					startY=-4;
 					stopY=14;
 				}
 			}
 		}
+
 	}
 	if(inBins){
 		startX+=180;
@@ -55,9 +66,19 @@ void getCalCutPlotBoundary(int station, int config, int pulser, int pol, bool in
 
 void getCalFitRange(int station, int config, int pulser, int pol, double &startPhi, double &stopPhi, double &startTheta, double &stopTheta){
 	if(station==2){
-		if(config==1){
-			if(pulser==6){
-				if(pol==0){
+		if(pulser==5){
+			if(pol==0){
+				if(config==2){
+					startPhi=-30.;
+					stopPhi=-18.;
+					startTheta=-30.;
+					stopTheta=-16.;
+				}
+			}
+		}
+		if(pulser==6){
+			if(pol==0){
+				if(config==1 || config==2 || config==3 || config==4){
 					startPhi=62.;
 					stopPhi=70.;
 					startTheta=2.;
