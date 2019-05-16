@@ -11,6 +11,48 @@
 #include "TGraph.h"
 
 using namespace std;
+/*
+	Returns the bins for plotting the cal pulser cut
+	if "inBins" is true, the answer will be reported as a bin number from 0->360/0->180
+	if "inBins" is false, the answer will be reported as a number in degrees from -180->180/-90->90
+*/
+
+void getCalCutPlotBoundary(int station, int config, int CP, int pol, bool inBins, int &startX, int &stopX, int &startY, int &stopY){
+	if(station==2){
+		if(config==1){
+			if(CP==5){
+				if(pol==0){
+					startX=55;
+					stopX=75;
+					startY=-4;
+					stopY=14;
+				}
+			}
+		}
+	}
+	if(inBins){
+		startX+=180;
+		stopX+=180;
+		startY+=90;
+		stopY+=90;
+	}
+}
+
+void getCalFitRange(int station, int config, int CP, int pol, double &startPhi, double &stopPhi, double &startTheta, double &stopTheta){
+
+	if(station==2){
+		if(config==1){
+			if(CP==5){
+				if(pol==0){
+					startPhi=62.;
+					stopPhi=70.;
+					startTheta=2.;
+					stopTheta=10.;
+				}
+			}
+		}
+	}
+}
 
 /*
 	input: vector of graphs for an event
@@ -43,8 +85,13 @@ int isBadLivetime(int station, int unixTime){
 			Anthropogenic movement on Jan 3 2015 between 15:40-15:50 UTC
 			Observed in run 4775
 		*/
-		if(unixTime>=1420317600 && unixTime<=1420318200){
-			isBadLivetime=true;
+		if( 
+			(unixTime>=1389381600 && unixTime<=1389384000) || // from run 2868
+			(unixTime>=1420317600 && unixTime<=1420318200) || // from run 4775
+			(unixTime>=1449189600 && unixTime<=1449190200) // from run 6507
+		)
+			{
+				isBadLivetime=true;
 
 		}
 	}
