@@ -290,9 +290,6 @@ int isBadLivetime(int station, int unixTime){
 			// (unixTime>=1476221400 && unixTime<=1476222300) || // from run 8069 balloon 22hr
 			// (unixTime>=1476479700 && unixTime<=1476481800) || // from run 8084 balloon 22hr
 
-
-
-
 		)
 			{
 				isBadLivetime=true;
