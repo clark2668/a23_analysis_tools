@@ -315,7 +315,70 @@ int isBadLivetime(int station, int unixTime){
 			(unixTime>=1393652400 && unixTime<=1393660800) || // from run 2235, repeated bursts over ~2 hrs
 			(unixTime>=1394846400 && unixTime<=1394856000) || // from run 2328, repeated bursts over ~2.5 hours
 			(unixTime>=1395437400 && unixTime<=1395438600) || // from run 2363, 22 hour balloon launch
-			(unixTime>=1397856300 && unixTime<=1397857800)  // from run 2526, 22 hour balloon launch
+			(unixTime>=1397856300 && unixTime<=1397857800) || // from run 2526, 22 hour balloon launch
+
+			// config 2
+			(unixTime>=1390176600 && unixTime<=1390182000) || // from run 3533 
+
+			// config 3
+			(unixTime>=1409954100 && unixTime<=1409956200) || // from run 3216, 22 hour balloon launch
+			(unixTime>=1409986800 && unixTime<=1409988600) || // from run 3217 
+			(unixTime>=1412026200 && unixTime<=1412028000) || // from run 3332 
+			(unixTime>=1412284920 && unixTime<=1412287020) || // from run 3347, 22 hour balloon launch
+			(unixTime>=1412544120 && unixTime<=1412546400) || // from run 3362, 22 hour balloon launch
+			(unixTime>=1412803620 && unixTime<=1412805780) || // from run 3377, 22 hour balloon launch
+			(unixTime>=1414083600 && unixTime<=1414086300) || // from run 3449 , 2 spikes
+			(unixTime>=1414674000 && unixTime<=1414675500) || // from run 3478 
+			(unixTime>=1415380500 && unixTime<=1415381400) || // from run 3520
+			(unixTime>=1415460600 && unixTime<=1415461500) || // from run 3524 
+			(unixTime>=1415742000 && unixTime<=1415744100) || // from run 3540 22hr balloon
+			(unixTime>=1416207300 && unixTime<=1416209700) || // from run 3568 2 small spikes
+			(unixTime>=1416457800 && unixTime<=1416459000) || // from run 3579
+			(unixTime>=1416909600 && unixTime<=1416910680) || // from run 3605
+			(unixTime>=1416951000 && unixTime<=1416952500) || // from run 3608 22hr balloon
+			(unixTime>=1417676400 && unixTime<=1417679400) || // from run 3647 
+			(unixTime>=1417742400 && unixTime<=1417743600) || // from run 3651 
+			(unixTime>=1417836600 && unixTime<=1417839300) || // from run 3656 
+
+			(unixTime>=1421723400 && unixTime<=1421723940) || // from run 3910 
+			(unixTime>=1421750700 && unixTime<=1421751720) || // from run 3912 
+			(unixTime>=1422048900 && unixTime<=1422049800) || // from run 3987 , 22 hour balloon launch
+			(unixTime>=1424819880 && unixTime<=1424820720) || // from run 4200
+			(unixTime>=1428529500 && unixTime<=1428531000) || // from run 4412, 22 hour balloon launch
+			(unixTime>=1429094400 && unixTime<=1429095600) || // from run 4445 
+			(unixTime>=1429733400 && unixTime<=1429734600) || // from run 4482 
+			(unixTime>=1431034500 && unixTime<=1431036900) || // from run 4557 , 22 hour balloon launch
+			(unixTime>=1433365500 && unixTime<=1433367900) || // from run 4693 
+			(unixTime>=1435755600 && unixTime<=1435756500) || // from run 4829 
+			(unixTime>=1435791000 && unixTime<=1435791600) || // from run 4832 
+			(unixTime>=1436393700 && unixTime<=1436395500) || // from run 4867 
+			(unixTime>=1476740100 && unixTime<=1476741300) || // from run 7658 
+			(unixTime>=1477511400 && unixTime<=1477518300) || // from run 7704, big spike followed by nothing at all 
+			(unixTime>=1477604700 && unixTime<=1477605900) || // from run 7709,  22 hour balloon launch
+			(unixTime>=1477950300 && unixTime<=1477951500) || // from run 7729 
+			(unixTime>=1479231600 && unixTime<=1479235800) || // from run 7802  , big spike followed by nothing at all
+
+			//config 4
+			(unixTime>=1448959200 && unixTime<=1448960100) || // from run 6009 
+			(unixTime>=1449610500 && unixTime<=1449611400) || // from run 6046 22 hour balloon launch
+			(unixTime>=1450119900 && unixTime<=1450120500) || // from run 6077 possible 22 hour balloon launch
+			(unixTime>=1450536360 && unixTime<=1450536720) || // from run 6098 spike is at end of time
+			(unixTime>=1452116100 && unixTime<=1452116700) || // from run 6188 end of time and possible balloon launch
+			(unixTime>=1452196800 && unixTime<=1452198600) || // from run 6193 could be balloon
+			(unixTime>=1452213600 && unixTime<=1452214200) || // from run 6194 
+			(unixTime>=1452282300 && unixTime<=1452282900) || // from run 6198 could be balloon
+			(unixTime>=1452298500 && unixTime<=1452299100) || // from run 6199 spike is at end of measured time
+			(unixTime>=1452385800 && unixTime<=1452386400) || // from run 6203 spike is at end of measured time
+			(unixTime>=1452457800 && unixTime<=1452458700) || // from run 6206 spike is at end of measured time, could be balloon
+			(unixTime>=1452494100 && unixTime<=1452494700) || // from run 6208 spike is at end of measured time
+			(unixTime>=1452544980 && unixTime<=1452545580) || // from run 6212 could be balloon
+			(unixTime>=1452561120 && unixTime<=1452561480) || // from run 6213 spike is at end of measured time
+			(unixTime>=1452637020 && unixTime<=1452637260) || // from run 6219 spike is at end of measured time, could be balloon
+			(unixTime>=1452715320 && unixTime<=1452715680) || // from run 6223 spike is at end of measured time
+			(unixTime>=1452972660 && unixTime<=1452973020) || // from run 6239 spike is at end of measured time
+			(unixTime>=1453325400 && unixTime<=1453326300) || // from run 6259 could be balloon
+			(unixTime>=1453930500 && unixTime<=1453931100) || // from run 6295 could be balloon
+			(unixTime>=1454535000 && unixTime<=1454536200)  // from run 6328 could be balloon
 		)
 			{
 				isBadLivetime=true;
