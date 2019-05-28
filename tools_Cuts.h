@@ -156,8 +156,6 @@ int isBadLivetime(int station, int unixTime){
 	bool isBadLivetime=false;
 	if(station==2){
 
-		/*
-		*/
 		if( 
 			// Livetime flagged as bad by my me
 			(unixTime>=1389381600 && unixTime<=1389384000) || // from run 2868
@@ -293,11 +291,38 @@ int isBadLivetime(int station, int unixTime){
 		)
 			{
 				isBadLivetime=true;
-
 		}
 	}
 	else if(station==3){
-		// will do something for A3
+
+		if( 
+
+			// config 1 from undergrads
+			(unixTime>=1380234300 && unixTime<=1380235500) || // from run 1538, 22 hour balloon launch
+			(unixTime>=1381008600 && unixTime<=1381010400) || // from run 1584, 22 hour balloon launch
+			(unixTime>=1382476200 && unixTime<=1382477400) || // from run 1670, 22 hour balloon launch-ish
+			(unixTime>=1382687400 && unixTime<=1382688600) || // from run 1682
+			(unixTime>=1382712600 && unixTime<=1382713800) || // from run 1684, 15 hour spike
+			(unixTime>=1382972700 && unixTime<=1382973300) || // from run 1698, 15 hour spike
+			(unixTime>=1383688800 && unixTime<=1383691500) || // from run 1739, 22 hour balloon launch
+			(unixTime>=1384060200 && unixTime<=1384060800) || // from run 1761
+			(unixTime>=1384208700 && unixTime<=1384209900) || // from run 1770, 22 hour balloon launch
+			(unixTime>=1384486200 && unixTime<=1384492800) || // from run 1786, repeated bursts over ~2 hrs
+			(unixTime>=1389399600 && unixTime<=1389400800) || // from run 1980
+			(unixTime>=1389744000 && unixTime<=1389747600) || // from run 2001, lots of activity, sweeps in phi
+			(unixTime>=1390176600 && unixTime<=1390182000) || // from run 2025
+			(unixTime>=1391027700 && unixTime<=1391028900) || // from run 2079, 22 hour balloon launch, but early?
+			(unixTime>=1393652400 && unixTime<=1393660800) || // from run 2235, repeated bursts over ~2 hrs
+			(unixTime>=1394846400 && unixTime<=1394856000) || // from run 2328, repeated bursts over ~2.5 hours
+			(unixTime>=1395437400 && unixTime<=1395438600) || // from run 2363, 22 hour balloon launch
+			(unixTime>=1397856300 && unixTime<=1397857800)  // from run 2526, 22 hour balloon launch
+		)
+			{
+				isBadLivetime=true;
+
+		}
+
+
 	}
 	return isBadLivetime;
 
