@@ -1950,8 +1950,7 @@ double  getPolarizationRatio(vector<TGraph*> waveforms, vector<int> polarization
   return ratio;
 }
 
-void getThirdVPeakOverRMS(vector<double> vPeakOverRms, vector<int> polarizations, vector<double> &ThirdVpeakOverRms){
-
+void getThirdVPeakOverRMS(vector<double> vPeakOverRms, vector<int> polarizations, vector<int> antenna_numbers, vector<int> chan_exclusion_list, vector<double> &ThirdVpeakOverRms){
   ThirdVpeakOverRms.resize(3);
 
   vector<double> vPeakOverRms_V;
@@ -1959,13 +1958,15 @@ void getThirdVPeakOverRMS(vector<double> vPeakOverRms, vector<int> polarizations
   vector<double> vPeakOverRms_Total;
 
   for (int chan = 0; chan < vPeakOverRms.size(); chan++){
-    if (polarizations[chan] == 0){
-      vPeakOverRms_V.push_back(vPeakOverRms[chan]);
+    if(std::find(chan_exclusion_list.begin(), chan_exclusion_list.end(), chan) == chan_exclusion_list.end()){ //if this channel is *not* excluded
+      if (polarizations[chan] == 0){
+        vPeakOverRms_V.push_back(vPeakOverRms[chan]);
+      }
+      if (polarizations[chan] == 1){
+        vPeakOverRms_H.push_back(vPeakOverRms[chan]);
+      }
+      vPeakOverRms_Total.push_back(vPeakOverRms[chan]);
     }
-    if (polarizations[chan] == 1){
-      vPeakOverRms_H.push_back(vPeakOverRms[chan]);
-    }
-    vPeakOverRms_Total.push_back(vPeakOverRms[chan]);
   }
   
   sort(vPeakOverRms_V.begin(), vPeakOverRms_V.end());
