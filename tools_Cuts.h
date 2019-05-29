@@ -48,6 +48,34 @@ void getCalCutPlotBoundary(int station, int config, int pulser, int pol, bool in
 		}
 
 	}
+
+
+
+		if(station==3){
+		if(pulser==5){
+			if(pol==0){
+				if(config==1 || config==2 || config==3 || config==4){
+					startX=-50;
+					stopX=100;
+					startY=-80;
+					stopY=20;
+					
+				}
+			}	
+		}
+		if(pulser==6){
+			if(pol==0){
+				if(config==1 || config==2 || config==3 || config==4){
+					startX=62;
+					stopX=72;
+					startY=-20;
+					stopY=10;
+					
+				}
+			}
+		}
+
+	}
 	if(inBins){
 		startX+=180;
 		stopX+=180;
@@ -79,14 +107,42 @@ void getCalFitRange(int station, int config, int pulser, int pol, double &startP
 		if(pulser==6){
 			if(pol==0){
 				if(config==1 || config==2 || config==3 || config==4){
-					startPhi=62.;
-					stopPhi=70.;
-					startTheta=2.;
-					stopTheta=10.;
+					startPhi=-40.;
+					stopPhi=60.;
+					startTheta=0.;
+					stopTheta=-60.;
 				}
 			}
 		}
 	}
+
+
+	if(station==3){
+		if(pulser==5){
+			if(pol==0){
+				if(config==1 || config==2 || config==3 || config==4){
+					startPhi=62.;
+					stopPhi=72.;
+					startTheta=-20.;
+					stopTheta=-10.;
+
+			       
+					
+				}
+			}
+		}
+		if(pulser==6){
+			if(pol==0){
+				if(config==1 || config==2 || config==3 || config==4){
+					startPhi=62.;
+					stopPhi=72.;
+					startTheta=-20.;
+					stopTheta=-10.;
+				}
+			}
+		}
+	}
+	
 }
 
 /*
@@ -97,7 +153,7 @@ void getCalFitRange(int station, int config, int pulser, int pol, double &startP
 */
 
 void getRealLocation(int station, int pulser, int pol, double &theta, double &phi){
-	
+
 	int cal_ant_index;
 	if(pulser==5){
 		if(pol==0) cal_ant_index=1;
@@ -117,12 +173,15 @@ void getRealLocation(int station, int pulser, int pol, double &theta, double &ph
 			antenna_average[ii]+=(araGeom->getStationInfo(station)->getAntennaInfo(i)->antLocation[ii]);
 		}
 	}
+	
 	for(int ii=0; ii<3; ii++){
 		antenna_average[ii]/=16.;
 	}
+
 	double X = araGeom->getStationInfo(station)->getCalAntennaInfo(cal_ant_index)->antLocation[0];
 	double Y = araGeom->getStationInfo(station)->getCalAntennaInfo(cal_ant_index)->antLocation[1];
 	double Z = araGeom->getStationInfo(station)->getCalAntennaInfo(cal_ant_index)->antLocation[2];
+
 	phi = TMath::ATan2(Y-antenna_average[1],X-antenna_average[0])*TMath::RadToDeg();
 	double depth_diff = Z-antenna_average[2];
 	double horz_dist = sqrt(pow((X-antenna_average[0]),2.0)+pow((Y-antenna_average[1]),2.0));
