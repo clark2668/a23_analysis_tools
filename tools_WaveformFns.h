@@ -1958,7 +1958,7 @@ void getThirdVPeakOverRMS(vector<double> vPeakOverRms, vector<int> polarizations
   vector<double> vPeakOverRms_Total;
 
   for (int chan = 0; chan < vPeakOverRms.size(); chan++){
-    if(std::find(chan_exclusion_list.begin(), chan_exclusion_list.end(), chan) == chan_exclusion_list.end()){ //if this channel is *not* excluded
+    if(std::find(chan_exclusion_list.begin(), chan_exclusion_list.end(), antenna_numbers[chan]) == chan_exclusion_list.end()){ //if this channel is *not* excluded
       if (polarizations[chan] == 0){
         vPeakOverRms_V.push_back(vPeakOverRms[chan]);
       }
