@@ -523,6 +523,17 @@ string getProcessedFilename_recoRadius(int stationID, char* outputdir, char* run
 	return ss.str();
 }
 
+string getProcessedFilename_recoRadius(int stationID, char* outputdir, int runNum, int radius){
+	
+	stringstream ss;
+	ss.str("");
+	ss << outputdir << "/processed_station_" << stationID << "_run_" << runNum << "_recoRadius_" << radius << ".root";
+
+	return ss.str();
+}
+
+
+
 
 string getNoiseFilename(int stationID, char* outputdir, char* runfile ){
 	
