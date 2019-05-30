@@ -11,6 +11,7 @@ bool isSoftTrigger;
 bool isSimulation = false;
 double thirdVPeakOverRMS[3];
 bool hasDigitizerError=false;
+int runNumOut;
 
 // Waveform - channel summary parameters
 double VPeak[16];
