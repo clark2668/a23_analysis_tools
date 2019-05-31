@@ -15,6 +15,10 @@
 
 using namespace std;
 
+int getA3BadRunBoundary(){
+	return 2873;
+}
+
 /*
 	input: station, config, pulser, pol, startX, stopX, startY, stopY (the last four are the bounds of the projection region for projecting the TH2D into TH1D)
 	output: changes the value of thetas and phis
