@@ -16,7 +16,7 @@
 using namespace std;
 
 int getA3BadRunBoundary(){
-	return 2873;
+	return 1901;
 }
 
 /*
@@ -331,6 +331,8 @@ int isBadLivetime(int station, int unixTime){
 			(unixTime>=1412284920 && unixTime<=1412287020) || // from run 3347, 22 hour balloon launch
 			(unixTime>=1412544120 && unixTime<=1412546400) || // from run 3362, 22 hour balloon launch
 			(unixTime>=1412803620 && unixTime<=1412805780) || // from run 3377, 22 hour balloon launch
+			(unixTime>=1413897900 && unixTime<=1413899100) || // from run 3439
+			(unixTime>=1413914400 && unixTime<=1413922200) || // from run 3440 big wide weird above ground
 			(unixTime>=1414083600 && unixTime<=1414086300) || // from run 3449 , 2 spikes
 			(unixTime>=1414674000 && unixTime<=1414675500) || // from run 3478 
 			(unixTime>=1415380500 && unixTime<=1415381400) || // from run 3520
@@ -343,13 +345,25 @@ int isBadLivetime(int station, int unixTime){
 			(unixTime>=1417676400 && unixTime<=1417679400) || // from run 3647 
 			(unixTime>=1417742400 && unixTime<=1417743600) || // from run 3651 
 			(unixTime>=1417836600 && unixTime<=1417839300) || // from run 3656 
-
+			(unixTime>=1420317000 && unixTime<=1420318200) || // from run 3800 
+			(unixTime>=1420493700 && unixTime<=1420494600) || // from run 3810 22hr balloon
+			(unixTime>=1420513200 && unixTime<=1420515000) || // from run 3811
+			(unixTime>=1420598700 && unixTime<=1420600500) || // from run 3816 
+			(unixTime>=1420857900 && unixTime<=1420859700) || // from run 3830 
+			(unixTime>=1421019000 && unixTime<=1421020200) || // from run 3840 22hr balloon maybe?
+			(unixTime>=1421101800 && unixTime<=1421103600) || // from run 3863 22hr balloon
 			(unixTime>=1421723400 && unixTime<=1421723940) || // from run 3910 
 			(unixTime>=1421750700 && unixTime<=1421751720) || // from run 3912 
+			(unixTime>=1421868600 && unixTime<=1421881200) || // from run 3977 looks intentional
+			(unixTime>=1421881200 && unixTime<=1421884680) || // from run 3978 continuation of thing above
 			(unixTime>=1422048900 && unixTime<=1422049800) || // from run 3987 , 22 hour balloon launch
+			(unixTime>=1422307200 && unixTime<=1422308100) || // from run 3995 22hr balloon
+			(unixTime>=1423660800 && unixTime<=1423661700) || // from run 4132
 			(unixTime>=1424819880 && unixTime<=1424820720) || // from run 4200
 			(unixTime>=1428529500 && unixTime<=1428531000) || // from run 4412, 22 hour balloon launch
 			(unixTime>=1429094400 && unixTime<=1429095600) || // from run 4445 
+			(unixTime>=1429615800 && unixTime<=1429617600) || // from run 4473 
+			(unixTime>=1429616700 && unixTime<=1429627500) || // from run 4474
 			(unixTime>=1429733400 && unixTime<=1429734600) || // from run 4482 
 			(unixTime>=1431034500 && unixTime<=1431036900) || // from run 4557 , 22 hour balloon launch
 			(unixTime>=1433365500 && unixTime<=1433367900) || // from run 4693 
@@ -361,6 +375,7 @@ int isBadLivetime(int station, int unixTime){
 			(unixTime>=1477604700 && unixTime<=1477605900) || // from run 7709,  22 hour balloon launch
 			(unixTime>=1477950300 && unixTime<=1477951500) || // from run 7729 
 			(unixTime>=1479231600 && unixTime<=1479235800) || // from run 7802  , big spike followed by nothing at all
+
 
 			//config 4
 			(unixTime>=1448959200 && unixTime<=1448960100) || // from run 6009 
@@ -382,7 +397,19 @@ int isBadLivetime(int station, int unixTime){
 			(unixTime>=1452972660 && unixTime<=1452973020) || // from run 6239 spike is at end of measured time
 			(unixTime>=1453325400 && unixTime<=1453326300) || // from run 6259 could be balloon
 			(unixTime>=1453930500 && unixTime<=1453931100) || // from run 6295 could be balloon
-			(unixTime>=1454535000 && unixTime<=1454536200)  // from run 6328 could be balloon
+			(unixTime>=1454535000 && unixTime<=1454536200) || // from run 6328 could be balloon
+			(unixTime>=1454911200 && unixTime<=1454911800) || // from run 6349 spike is at end of measured time could match below
+			(unixTime>=1454911200 && unixTime<=1454912100) || // from run 6350 spike is at start of measured time could match above
+			(unixTime>=1455746400 && unixTime<=1455747300) || // from run 6397 could be balloon
+			(unixTime>=1456374300 && unixTime<=1456374900) || // from run 6433 
+			(unixTime>=1457559300 && unixTime<=1457560500) || // from run 6501 could be balloon
+			(unixTime>=1460843100 && unixTime<=1460844600) || // from run 6618 spike is at start of measured time, could be balloon
+			(unixTime>=1467927840 && unixTime<=1467929640) || // from run 7052 could be balloon
+			(unixTime>=1473371280 && unixTime<=1473372180) || // from run 7458 could be balloon
+			(unixTime>=1475186100 && unixTime<=1475187000) || // from run 7562 could be balloon
+			(unixTime>=1475530500 && unixTime<=1475531700) || // from run 7584 could be balloon
+			(unixTime>=1476221400 && unixTime<=1476222600) // from run 7625 could be balloon
+
 		)
 			{
 				isBadLivetime=true;
@@ -570,7 +597,7 @@ int isBadRun(int station, int run_num){
 			/*
 			2015 surface or deep pulsing
 				got through cuts
-				happened jan 5-6
+				happened jan 5-6, some jan 8
 				waveforms clearly show double pulses or things consistent with surface pulsing
 			*/
 			station3_exclude.push_back(3811); //deep pulser run
@@ -578,6 +605,7 @@ int isBadRun(int station, int run_num){
 				station3_exclude.push_back(3820); //elminated by proximity to deep pulser run
 				station3_exclude.push_back(3821); //elminated by proximity to deep pulser run
 				station3_exclude.push_back(3822); //elminated by proximity to deep pulser run
+			station3_exclude.push_back(3823); //deep pulser, observation of 10% iterator event numbers 496, 518, 674, 985, 1729, 2411
 
 			/*
 			2015 noise source tests
