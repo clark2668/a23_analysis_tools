@@ -3180,9 +3180,10 @@ TGraph* getNormalisedGraph(TGraph *grIn)
     return grOut;
 }
 
-double cumulativePowerBelowfromSpectrum(TGraph *spec, double freq){
+double cumulativePowerBelowfromSpectrum(TGraph *spec, double freq, double &cumulative_power_below_freq){
   double cumulative_power=0.;
-  double cumulative_power_below_freq=0.;
+  // double cumulative_power_below_freq=0.;
+  cumulative_power_below_freq=0.;
   double *oldX = spec->GetX();
   double *oldY = spec->GetY();
   for(int i=0; i<spec->GetN(); i++){
@@ -3190,6 +3191,32 @@ double cumulativePowerBelowfromSpectrum(TGraph *spec, double freq){
     if(oldX[i]<=freq) cumulative_power_below_freq+=oldY[i];
   }
   return cumulative_power_below_freq/cumulative_power;
+}
+
+double cumulativePowerAbovefromSpectrum(TGraph *spec, double freq, double &cumulative_power_above_freq){
+  double cumulative_power=0.;
+  // double cumulative_power_above_freq=0.;
+  cumulative_power_above_freq=0.;
+  double *oldX = spec->GetX();
+  double *oldY = spec->GetY();
+  for(int i=0; i<spec->GetN(); i++){
+    cumulative_power+=oldY[i];
+    if(oldX[i]>=freq) cumulative_power_above_freq+=oldY[i];
+  }
+  return cumulative_power_above_freq/cumulative_power;
+}
+
+double cumulativePowerBetweenfromSpectrum(TGraph *spec, double freqLow, double freqHigh, double &cumulative_power_between){
+  double cumulative_power=0.;
+  // double cumulative_power_between=0.;
+  cumulative_power_between=0.;
+  double *oldX = spec->GetX();
+  double *oldY = spec->GetY();
+  for(int i=0; i<spec->GetN(); i++){
+    cumulative_power+=oldY[i];
+    if(oldX[i]>=freqLow && oldX[i]<=freqHigh) cumulative_power_between+=oldY[i];
+  }
+  return cumulative_power_between/cumulative_power;
 }
 
 double cumulativePowerBelowfromWaveform(TGraph *grIn, double freq){
