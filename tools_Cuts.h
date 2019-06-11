@@ -133,6 +133,35 @@ void getRealLocation(int station, int pulser, int pol, double &theta, double &ph
 	theta = TMath::ATan2(depth_diff,horz_dist)*TMath::RadToDeg();
 }
 
+void identifyCalPulser(int station, int peakTheta, int peakPhi, bool &isCP5, bool &isCP6, int flex=0){
+	if(station==2){
+		if (peakPhi >= -30-flex && peakPhi <= -20+flex
+		 	&& peakTheta >= -29-flex && peakTheta <= -14+flex)
+		{
+			isCP5=true;
+		}
+		if (peakPhi >= 60-flex && peakPhi <= 70+flex 
+			&& peakTheta >= 0-flex && peakTheta <= 15+flex)
+		{
+			isCP6=true;
+		}
+	}
+	else if(station==3){
+		if (peakPhi >= -28-flex && peakPhi <= -18+flex 
+			&& peakTheta >= -20-flex && peakTheta <= -5+flex)
+		{
+			isCP5=true;
+		}
+		if (peakPhi >= 60-flex && peakPhi <= 70+flex 
+			&& peakTheta >= -20-flex && peakTheta <= -5+flex)
+		{
+			isCP6=true;
+		}
+	}
+}
+
+
+
 /*
 	input: vector of graphs for an event
 	output: 0 (has no error), 1 (has less than 550 points error)
