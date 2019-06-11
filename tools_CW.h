@@ -223,9 +223,10 @@ double getMedian(TGraph* gr, double lowFreqLimit, double highFreqLimit, double &
 	return median;
 }
 
-TGraph *getPhaseVariance( vector<deque<TGraph*> > vdGrPhaseDiff ){
+TGraph *getPhaseVariance( vector<deque<TGraph*> > vdGrPhaseDiff, int runNum, int eventNum, int pol, bool print=false ){
 	int numEvents = vdGrPhaseDiff[0].size();
 	int numPairs = vdGrPhaseDiff.size();
+	// printf("Num pairs is %d \n",numPairs);
 
 	vector<TGraph*> vgPhaseVariance; vgPhaseVariance.resize(numPairs);
 	vector<TGraph*> vgSigmaVariance; vgSigmaVariance.resize(numPairs);
@@ -278,6 +279,20 @@ TGraph *getPhaseVariance( vector<deque<TGraph*> > vdGrPhaseDiff ){
 		average = average / (double)numPairs;
 		gSigmaVarianceAvg->SetPoint(i, x1, average);
 	}
+
+	if(print){
+		char *plotPath(getenv("PLOT_PATH"));
+		if (plotPath == NULL) std::cout << "Warning! $PLOT_PATH is not set!" << endl;
+		TCanvas *c = new TCanvas("","",1100,850);
+		c->Divide(2,1);
+		c->cd(1);
+			gSigmaVarianceAvg->Draw("ALP");
+		char save_temp_title[300];
+		sprintf(save_temp_title,"%s/trouble_events/Run%d_Ev%d_Pol%d_gSigmaVarianceAvg.png",plotPath,runNum,eventNum,pol);
+		c->SaveAs(save_temp_title);
+		delete c;
+	}
+
 	for ( int i = 0; i < numPairs; i++){
 		delete vgPhaseVariance[i];
 		delete vgSigmaVariance[i];
@@ -493,7 +508,8 @@ vector<double> CWCut_TB(vector <TGraph*> waveforms, vector <TGraph*> baselines, 
 		)
 		{
 			// check the polarization agreement
-			// and to make sure this isn't in the excluded channel list+
+			// and to make sure this isn't in the excluded channel list
+			// printf("Pol %d: Skipping Antenna %d \n", pol, i);
 			continue;
 		}
 		for(int ii=0; ii<int(badFreqs[i].size()); ii++){ //loop over the bad frequencies for this antenna
@@ -530,6 +546,7 @@ vector<double> CWCut_TB(vector <TGraph*> waveforms, vector <TGraph*> baselines, 
 			//now loop over all the other antennas in the array
 			for(int j=i+1; j<numAnts; j++){
 				int j_pol = geomTool->getStationInfo(station)->getAntennaInfo(j)->polType;
+				// cout<<"	Now on antenna j "<<j<<" with pol "<<j_pol<<endl;
 				if(
 					j_pol!=i_pol
 					||
@@ -538,6 +555,7 @@ vector<double> CWCut_TB(vector <TGraph*> waveforms, vector <TGraph*> baselines, 
 				{
 					// check the polarization agreement
 					// and to make sure this isn't in the excluded channel list
+					// printf("		One layer deeper. Still on pol %d, now skipping channel %d \n",pol,j);
 					continue;
 				}
 				bool matched_ant = false;
@@ -598,7 +616,7 @@ vector<double> CWCut_TB(vector <TGraph*> waveforms, vector <TGraph*> baselines, 
 			newFFTs[i]->GetYaxis()->SetRangeUser(0,50);
 		}
 		char save_temp_title[300];
-		sprintf(save_temp_title,"%s/trouble_events/Run%d_Ev%d_CWBaseline.png",plotPath,runNum,eventNum);
+		sprintf(save_temp_title,"%s/trouble_events/Run%d_Ev%d_Pol%d_CWBaseline.png",plotPath,runNum,eventNum,pol);
 		c->SaveAs(save_temp_title);
 		delete c;
 	}
