@@ -30,68 +30,68 @@ double ReturnLogL_highN( double N_bin, double U_exp ) {
 	Old method
 */
 
-// double lnGamma( double z, double x, int n )
-// {
-// 	if ( z>0 && x>0 && n>2 ) {
-// 		double mult1_1;
-// 		if (x>100.) {
-// 			double step1_1 = x/100.;
-// 			mult1_1 = step1_1 * log(exp(-1.*100.));
-// 		}
-// 		else {
-// 			mult1_1 = log(exp(-1.*x));
-// 		}
+double lnGamma( double z, double x, int n=100 )
+{
+	if ( z>0 && x>0 && n>2 ) {
+		double mult1_1;
+		if (x>100.) {
+			double step1_1 = x/100.;
+			mult1_1 = step1_1 * log(exp(-1.*100.));
+		}
+		else {
+			mult1_1 = log(exp(-1.*x));
+		}
 
-// 		double mult1_2;
-// 		if (z>10.) {
-// 			double step = z/10.;
-// 			mult1_2 = step*log(pow(x,10.));
-// 		}
-// 		else {
-// 			mult1_2 = log(pow(x,z));
-// 		}
+		double mult1_2;
+		if (z>10.) {
+			double step = z/10.;
+			mult1_2 = step*log(pow(x,10.));
+		}
+		else {
+			mult1_2 = log(pow(x,z));
+		}
 
-// 		//cout<<"log(mult1_1) : "<<mult1_1<<endl;
-// 		//cout<<"log(mult1_2) : "<<mult1_2<<endl;
+		//cout<<"log(mult1_1) : "<<mult1_1<<endl;
+		//cout<<"log(mult1_2) : "<<mult1_2<<endl;
 
-// 		double mult2 = 0.;
+		double mult2 = 0.;
 
-// 		for (int i=n; i>0; i--) {
+		for (int i=n; i>0; i--) {
 
-// 			mult2 = (double)i*( (double)i - z ) / ( x + 2.*(double)i+1.-z - mult2 );
-// 			//cout<<"at i:"<<i<<" mult2 : "<<mult2<<endl;
-// 		}
+			mult2 = (double)i*( (double)i - z ) / ( x + 2.*(double)i+1.-z - mult2 );
+			//cout<<"at i:"<<i<<" mult2 : "<<mult2<<endl;
+		}
 
-// 		mult2 = 1. / ( x +1.-z - mult2 );
-// 		mult2 = log( mult2 ); // change to log value
+		mult2 = 1. / ( x +1.-z - mult2 );
+		mult2 = log( mult2 ); // change to log value
 
-// 		//return mult1 * mult2;
-// 		return mult1_1 + mult1_2 + mult2; // add log values which is multiple
-// 	}
-// 	else return 0.;
-// }
+		//return mult1 * mult2;
+		return mult1_1 + mult1_2 + mult2; // add log values which is multiple
+	}
+	else return 0.;
+}
 
-// double Alpha_nb_ln( double s_up, double nb, int n )
-// {
-// 	if ( s_up>0 && nb>0 ) {
-// 		double gamma_part = lnGamma(1.+nb, s_up+nb, n) - lnGamma(1.+nb, nb, n);
-//  		gamma_part = exp( gamma_part );
-// 		return 1. - gamma_part;
-// 	}
-// 	else return 0.;
-// }
+double Alpha_nb_ln( double s_up, double nb, int n=100 )
+{
+	if ( s_up>0 && nb>0 ) {
+		double gamma_part = lnGamma(1.+nb, s_up+nb, n) - lnGamma(1.+nb, nb, n);
+ 		gamma_part = exp( gamma_part );
+		return 1. - gamma_part;
+	}
+	else return 0.;
+}
 
 
-// double GetS_up ( double ExpEvts, double &alpha_out, double alpha_cut, int n ) {
-// 	double s_up = -0.01;
-// 	alpha_out = 0.;
-// 	while ( alpha_out < alpha_cut ) {
-// 		s_up += 0.01;
-// 		//alpha = Alpha_nb_ln( s_up, ExpEvts, n );
-// 		alpha_out = Alpha_nb_ln( s_up, ExpEvts, n );
-// 	}
-// 	return s_up;
-// }
+double GetS_up ( double ExpEvts, double &alpha_out, double alpha_cut, int n=100 ) {
+	double s_up = -0.01;
+	alpha_out = 0.;
+	while ( alpha_out < alpha_cut ) {
+		s_up += 0.01;
+		//alpha = Alpha_nb_ln( s_up, ExpEvts, n );
+		alpha_out = Alpha_nb_ln( s_up, ExpEvts, n );
+	}
+	return s_up;
+}
 
 /*
 	Functions for computing S_up
