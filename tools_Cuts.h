@@ -186,6 +186,7 @@ int hasShortWaveformMultiGraph(vector <TGraph*> grs){
 */
 
 bool hasSpareChannelIssue(vector<TGraph*> electChansGraphs){
+	cout<<"Yeah, I'm in this function..."<<endl;
 	vector<double> spareRMS;
 	for(int i=0; i<4; i++){
 		spareRMS.push_back(electChansGraphs[i]->GetRMS(2));
@@ -195,9 +196,11 @@ bool hasSpareChannelIssue(vector<TGraph*> electChansGraphs){
 	for(int i=0; i<4; i++){
 		if(spareRMS[i]>20 && i!=3){
 			numBadSpareChans++;
+			cout<<"Bad spare chan in chan "<<i<<endl;
 		}
 		if(spareRMS[i]>60 && i!=3){
 			numReallyBadSpareChans++;
+			cout<<"Actually, it's a really bad spare chan issue in chan "<<i<<endl;
 		}
 	}
 	bool hasBadSpareChansIssue=false;
@@ -224,7 +227,8 @@ int isBadLivetime(int station, int unixTime){
 			// Livetime flagged as bad by my me
 			(unixTime>=1389381600 && unixTime<=1389384000) || // from run 2868
 			(unixTime>=1420317600 && unixTime<=1420318200) || // from run 4775
-			(unixTime>=1449189600 && unixTime<=1449190200) || // from run 6507
+			// (unixTime>=1449189600 && unixTime<=1449190200) || // from run 6507
+			(unixTime>=1449187200 && unixTime<=1449196200) || // from run 6507 
 
 			//Livetime flagged as bad by my undergrads
 			//config 1
@@ -302,7 +306,7 @@ int isBadLivetime(int station, int unixTime){
 			// (unixTime>=1476999000 && unixTime<=1476999900) || // from run 8114 22 hour balloon launch but barely noticeable
 			// (unixTime>=1477258200 && unixTime<=1477259100) || // from run 8129 22 hour balloon launch
 			(unixTime>=1477511700 && unixTime<=1477512600) || // from run 8143 weird possible balloon launch
-			// (unixTime>=1477950300 && unixTime<=1477951500) || // from run 8168 22 hour balloon launch
+			(unixTime>=1477950300 && unixTime<=1477951500) || // from run 8168 22 hour balloon launch
 			// (unixTime>=1478033400 && unixTime<=1478034000) || // from run 8173 22 hour balloon launch
 			// (unixTime>=1478295300 && unixTime<=1478296200) || // from run 8188 22 hour balloon launch
 			// (unixTime>=1478728500 && unixTime<=1478729400) || // from run 8213 22 hour balloon launch
@@ -336,20 +340,23 @@ int isBadLivetime(int station, int unixTime){
 			(unixTime>=1456392600 && unixTime<=1456393800) || // from run 6927
 			(unixTime>=1456997400 && unixTime<=1456999200) || // from run 6962
 			// (unixTime>=1457559000 && unixTime<=1457560800) || // from run 6994   22 hr
-			// (unixTime>=1460842800 && unixTime<=1460844600) || // from run 7119   22 hr
+			(unixTime>=1460842800 && unixTime<=1460844600) || // from run 7119   22 hr // has CW contam cal pulsers
 			// (unixTime>=1461620100 && unixTime<=1461621900) || // from run 7161   22 hr
-			(unixTime>=1466501400 && unixTime<=1466503200) // from run 7474
-			// (unixTime>=1466890200 && unixTime<=1466892000) || // from run 7494   22 hr
-			// (unixTime>=1467927600 && unixTime<=1467929700) || // from run 7552   22 hr
+			(unixTime>=1463002200 && unixTime<=1463004000) || // from run 7243  22 hr // has CW contam cal pulsers
+			(unixTime>=1466501400 && unixTime<=1466503200) || // from run 7474
+			(unixTime>=1466721900 && unixTime<=1466724600) || // from run 7486 22 hr // has CW contam cal pulsers
+			(unixTime>=1466805600 && unixTime<=1466808300) || // from run 7489 22 hr // has CW contam cal pulsers 
+			(unixTime>=1466890200 && unixTime<=1466892000) || // from run 7494   22 hr // has CW contam cal pulsers
+			(unixTime>=1467927600 && unixTime<=1467929700) || // from run 7552   22 hr
 			// (unixTime>=1472333400 && unixTime<=1472335200) || // from run 7831   22 hr
-			// (unixTime>=1473111300 && unixTime<=1473112800) || // from run 7879    22 hr
+			(unixTime>=1473111300 && unixTime<=1473112800) || // from run 7879    22 hr // has CW contam cal
 			// (unixTime>=1473370500 && unixTime<=1473372900) || // from run 7899   22 hr
 			// (unixTime>=1475011500 && unixTime<=1475013600) || // from run 7993   22 hr
-			// (unixTime>=1475185200 && unixTime<=1475187900) || // from run 8003 balloon 22hr
+			(unixTime>=1475185200 && unixTime<=1475187900) || // from run 8003 balloon 22hr // has CW contam cal pulsers
 			// (unixTime>=1475358000 && unixTime<=1475359800) || // from run 8013 balloon 22hr
-			// (unixTime>=1475529900 && unixTime<=1475531400) || // from run 8023 balloon 22hr
+			(unixTime>=1475529900 && unixTime<=1475531400) || // from run 8023 balloon 22hr // has CW contam cal pulsers
 			// (unixTime>=1475702700 && unixTime<=1475704200) || // from run 8033 balloon 22hr
-			// (unixTime>=1476221400 && unixTime<=1476222300) || // from run 8069 balloon 22hr
+			(unixTime>=1476221400 && unixTime<=1476222300) // from run 8069 balloon 22hr // has CW contam cal pulsers
 			// (unixTime>=1476479700 && unixTime<=1476481800) || // from run 8084 balloon 22hr
 
 		)
@@ -556,7 +563,7 @@ vector<int> BuildBadRunList(int station){
 
 
 		/*2015*/
-
+			exclude.push_back(4004);
 			/*
 			2015 icecube deep pulsing
 				4787 is the "planned" run
@@ -621,7 +628,15 @@ vector<int> BuildBadRunList(int station){
 			exclude.push_back(11);
 			exclude.push_back(59);
 			exclude.push_back(60);
-			exclude.push_back(71);			
+			exclude.push_back(71);
+
+			/*
+			Badly misreconstructing runs
+			*/
+			for(int i=8100; i<=8246; i++){
+				exclude.push_back(i);
+			}
+
 	}
 	else if(station==3){
 		/*2014*/
