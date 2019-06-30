@@ -179,7 +179,7 @@ void identifyCalPulser(int station, int config, int peakTheta, int peakPhi, bool
 int hasShortWaveformMultiGraph(vector <TGraph*> grs){
 	int event_has_error=0;
 	for(int i=0; i<grs.size(); i++){
-		if(grs[i]->GetN()<550.) event_has_error++;
+		if(grs[i]->GetN()<500.) event_has_error++;
 	}
 	return event_has_error;
 }
