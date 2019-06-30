@@ -196,11 +196,7 @@ bool hasSpareChannelIssue(vector<TGraph*> electChansGraphs){
 	vector<double> spareRMS;
 	for(int i=0; i<4; i++){
 		spareRMS.push_back(electChansGraphs[i]->GetRMS(2));
-<<<<<<< HEAD
-		cout<<"Spare RMS is "<<spareRMS[i]<<endl;
-=======
 		// cout<<"Spare RMS is "<<spareRMS[i]<<endl;
->>>>>>> cf609464128a079e8e4e99cd2d4c3b247439a544
 	}
 	int numBadSpareChans=0;
 	int numReallyBadSpareChans=0;
