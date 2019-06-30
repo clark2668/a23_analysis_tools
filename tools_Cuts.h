@@ -133,7 +133,7 @@ void getRealLocation(int station, int pulser, int pol, double &theta, double &ph
 	theta = TMath::ATan2(depth_diff,horz_dist)*TMath::RadToDeg();
 }
 
-void identifyCalPulser(int station, int peakTheta, int peakPhi, bool &isCP5, bool &isCP6, int flex=0){
+void identifyCalPulser(int station, int config, int peakTheta, int peakPhi, bool &isCP5, bool &isCP6, int flex=0){
 	if(station==2){
 		if (peakPhi >= -30-flex && peakPhi <= -20+flex
 		 	&& peakTheta >= -29-flex && peakTheta <= -14+flex)
@@ -144,6 +144,13 @@ void identifyCalPulser(int station, int peakTheta, int peakPhi, bool &isCP5, boo
 			&& peakTheta >= 0-flex && peakTheta <= 15+flex)
 		{
 			isCP6=true;
+		}
+		if(config==5){
+			if (peakPhi >= -28-flex && peakPhi <= -18+flex
+		 		&& peakTheta >= 30-flex && peakTheta <= 41+flex)
+			{
+				isCP5=true;
+			}
 		}
 	}
 	else if(station==3){
@@ -189,18 +196,22 @@ bool hasSpareChannelIssue(vector<TGraph*> electChansGraphs){
 	vector<double> spareRMS;
 	for(int i=0; i<4; i++){
 		spareRMS.push_back(electChansGraphs[i]->GetRMS(2));
+<<<<<<< HEAD
 		cout<<"Spare RMS is "<<spareRMS[i]<<endl;
+=======
+		// cout<<"Spare RMS is "<<spareRMS[i]<<endl;
+>>>>>>> cf609464128a079e8e4e99cd2d4c3b247439a544
 	}
 	int numBadSpareChans=0;
 	int numReallyBadSpareChans=0;
 	for(int i=0; i<4; i++){
 		if(spareRMS[i]>19 && i!=3){
 			numBadSpareChans++;
-			cout<<"Bad spare chan in chan "<<i<<endl;
+			// cout<<"Bad spare chan in chan "<<i<<endl;
 		}
 		if(spareRMS[i]>60 && i!=3){
 			numReallyBadSpareChans++;
-			cout<<"Actually, it's a really bad spare chan issue in chan "<<i<<endl;
+			// cout<<"Actually, it's a really bad spare chan issue in chan "<<i<<endl;
 		}
 	}
 	bool hasBadSpareChansIssue=false;
