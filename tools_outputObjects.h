@@ -87,6 +87,21 @@ double meanCorr_single_select[2];
 double rmsCorr_single_select[2];
 double peakSigma_single_select[2];
 
+double peakCorr_41m[2];
+int peakTheta_41m[2];
+int peakPhi_41m[2];
+double minCorr_41m[2];
+double meanCorr_41m[2];
+double rmsCorr_41m[2];
+double peakSigma_41m[2];
+
+double peakCorr_300m[2];
+int peakTheta_300m[2];
+int peakPhi_300m[2];
+double minCorr_300m[2];
+double meanCorr_300m[2];
+double rmsCorr_300m[2];
+double peakSigma_300m[2];
 
 // Abandoned terms
 

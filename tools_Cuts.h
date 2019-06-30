@@ -186,15 +186,15 @@ int hasShortWaveformMultiGraph(vector <TGraph*> grs){
 */
 
 bool hasSpareChannelIssue(vector<TGraph*> electChansGraphs){
-	cout<<"Yeah, I'm in this function..."<<endl;
 	vector<double> spareRMS;
 	for(int i=0; i<4; i++){
 		spareRMS.push_back(electChansGraphs[i]->GetRMS(2));
+		cout<<"Spare RMS is "<<spareRMS[i]<<endl;
 	}
 	int numBadSpareChans=0;
 	int numReallyBadSpareChans=0;
 	for(int i=0; i<4; i++){
-		if(spareRMS[i]>20 && i!=3){
+		if(spareRMS[i]>19 && i!=3){
 			numBadSpareChans++;
 			cout<<"Bad spare chan in chan "<<i<<endl;
 		}
