@@ -5,8 +5,10 @@
 #include <sstream>
 #include <stdio.h>
 #include <vector>
+#include <deque>
 #include <complex>
 #include <algorithm>
+#include <numeric>
 
 #include "TGraph.h"
 #include "TMath.h"
@@ -182,6 +184,83 @@ int hasShortWaveformMultiGraph(vector <TGraph*> grs){
 		if(grs[i]->GetN()<500.) event_has_error++;
 	}
 	return event_has_error;
+}
+
+
+void GetVectorOfBlockMeans(TGraph *grIn, vector<double> &means){
+	int n_input = grIn->GetN();
+	double *oldX = grIn->GetX();
+	double *oldY = grIn->GetY();
+
+	deque <double> inX;
+	deque <double> inY;
+
+	for(int samp=0; samp<n_input; samp++){
+		inX.push_back(oldX[samp]);
+		inY.push_back(oldY[samp]);
+	}
+
+	while(inX.size()>63){
+		vector <double> sub_X;
+		vector <double> sub_Y;
+		int num_to_pop=0;
+		for(int samp=0; samp<64; samp++){
+			sub_X.push_back(inX[samp]);
+			sub_Y.push_back(inY[samp]);
+			num_to_pop++;
+		}
+		double average = std::accumulate( sub_Y.begin(), sub_Y.end(), 0.0)/sub_Y.size();
+		means.push_back(average);
+		for(int iPop=0; iPop<num_to_pop; iPop++){
+			inX.pop_front();
+			inY.pop_front();
+		}
+	}
+}
+
+bool hasSpareChannelIssue_v2(vector<TGraph*> electChansGraphs, int station){
+	
+	// this is only tuned for A2 currrently (ugh)
+	bool hasIssue=false;
+	if(station!=2){
+		return hasIssue;
+	}
+
+	int shortest=300;
+	vector<vector< double > > means;
+	for(int i=0; i<4; i++){
+		vector<double> theseMeans;
+		GetVectorOfBlockMeans(electChansGraphs[i], theseMeans);
+		if(theseMeans.size()<shortest){
+			shortest=theseMeans.size();
+		}
+		means.push_back(theseMeans);
+	}
+	for(int i=0; i<4; i++){
+		while(means[i].size()>shortest){
+			means[i].pop_back();
+		}
+	}
+	int numViolatingBlocks=0;
+	for(int block=0; block<shortest; block++){
+		int numViolating=0;
+		for(int chan=0; chan<4; chan++){
+			if(abs(means[chan][block])>20){
+				numViolating++;
+			}
+		}
+		if(numViolating>1){
+			numViolatingBlocks++;
+		}
+		if(numViolatingBlocks>0){
+			break; //that's enough to call it bad under our current criteria
+		}
+	}
+
+	if(numViolatingBlocks>0){
+		hasIssue=true;
+	}
+	return hasIssue;
 }
 
 
@@ -719,228 +798,9 @@ vector<int> BuildBadRunList(int station){
 			reports if the run you gave it is bad
 */
 int isBadRun(int station, int run_num, vector<int>BadRunList){
-
-	if(BadRunList.size()<1)
+	if(BadRunList.size()<1){
 		BadRunList=BuildBadRunList(station);
+	}
 	int found = (std::find(BadRunList.begin(), BadRunList.end(), run_num) != BadRunList.end());
 	return found;
-
-	// /*
-	// station 2 exclusion
-	// */
-
-	// vector <double> station2_exclude;
-
-	// 	/*2014*/
-
-	// 		/*
-	// 		2014 rooftop pulsing
-	// 			http://ara.icecube.wisc.edu/wiki/index.php/Run_Log_2014
-	// 		*/
-	// 		station2_exclude.push_back(3120);
-	// 		station2_exclude.push_back(3242);
-
-
-	// 		/*
-	// 		2014 surface pulsing
-	// 			originally flagged by 2884, 2895, 2903, 2912, 2916
-	// 			going to throw all runs jan 14-20 (<1 week of livetime, oh well...)
-	// 		*/
-	// 		station2_exclude.push_back(2884); //jan 14 2014 surface pulser runs //actual problem causer
-	// 			station2_exclude.push_back(2885); //jan 16 2014 surface pulser runs //exclusion by proximity
-	// 			station2_exclude.push_back(2889); //jan 16 2014 surface pulser runs //exclusion by proximity
-	// 			station2_exclude.push_back(2890); //jan 16 2014 surface pulser runs //exclusion by proximity
-	// 			station2_exclude.push_back(2891); //jan 16 2014 surface pulser runs //exclusion by proximity
-	// 			station2_exclude.push_back(2893); //jan 16 2014 surface pulser runs //exclusion by proximity
-	// 		station2_exclude.push_back(2895); //jan 16 2014 surface pulser runs //actual problem causer
-	// 			station2_exclude.push_back(2898); //jan 16 2014 surface pulser runs //exclusion by proximity
-	// 			station2_exclude.push_back(2900); //jan 17 2014 surface pulser runs //exclusion by proximity
-	// 			station2_exclude.push_back(2901); //jan 17 2014 surface pulser runs //exclusion by proximity
-	// 			station2_exclude.push_back(2902); //jan 17 2014 surface pulser runs //exclusion by proximity
-	// 		station2_exclude.push_back(2903); //jan 18 2014 surface pulser runs //actual problem causer
-	// 			station2_exclude.push_back(2905); //jan 18 2014 surface pulser runs //exclusion by proximity
-	// 			station2_exclude.push_back(2906); //jan 18 2014 surface pulser runs //exclusion by proximity
-	// 			station2_exclude.push_back(2907); //jan 18 2014 surface pulser runs //exclusion by proximity
-	// 		station2_exclude.push_back(2912); //jan 19 2014 surface pulser runs //actual problem causer
-	// 			station2_exclude.push_back(2915); //jan 18 2014 surface pulser runs //exclusion by proximity
-	// 		station2_exclude.push_back(2916); //jan 20 2014 surface pulser runs //actual problem causer
-	// 			station2_exclude.push_back(2918); //jan 20 2014 surface pulser runs
-
-	// 		station2_exclude.push_back(2938); //surface pulsing from m richman (identified by MYL http://ara.physics.wisc.edu/cgi-bin/DocDB/ShowDocument?docid=1889 slide 14)
-	// 		station2_exclude.push_back(2939); //surface pulsing from m richman (identified by MYL http://ara.physics.wisc.edu/cgi-bin/DocDB/ShowDocument?docid=1889 slide 14)
-
-	// 		/*
-	// 		2014 Cal pulser sweep
-	// 			http://ara.icecube.wisc.edu/wiki/index.php/Run_Log_2014
-	// 		*/
-	// 		for(int i=3139; i<=3162; i++){ station2_exclude.push_back(i); }
-	// 		for(int i=3164; i<=3187; i++){ station2_exclude.push_back(i); }
-	// 		for(int i=3289; i<=3312; i++){ station2_exclude.push_back(i); }
-
-	// 		/*
-	// 		2014 L2 Scaler Masking Issue
-	// 			Cal pulsers sysemtatically do not reconstruct correctly, rate is only 1 Hz
-	// 			Excluded because configuration was not "science good"
-	// 		*/
-	// 		for(int i=3464; i<=3504; i++){ station2_exclude.push_back(i); }
-
-	// 		/*
-	// 		2014 Trigger Length Window Sweep
-	// 			http://ara.icecube.wisc.edu/wiki/index.php/Run_Log_2014
-	// 		*/
-	// 		for(int i=3578; i<=3598; i++){ station2_exclude.push_back(i); }
-
-
-
-
-	// 	/*2015*/
-
-	// 		/*
-	// 		2015 icecube deep pulsing
-	// 			4787 is the "planned" run
-	// 			4795,4797-4800 were accidental
-	// 		*/
-	// 		station2_exclude.push_back(4785); //accidental deep pulser run (http://ara.physics.wisc.edu/docs/0017/001719/003/181001_ARA02AnalysisUpdate.pdf, slide 38)
-	// 		station2_exclude.push_back(4787); //deep pulser run (http://ara.physics.wisc.edu/docs/0017/001724/004/181015_ARA02AnalysisUpdate.pdf, slide 29)
-	// 		for(int i=4795; i<=4800; i++){ station2_exclude.push_back(i); }
-
-	// 		/*
-	// 		2015 noise source tests
-	// 			January 2015
-	// 			http://ara.icecube.wisc.edu/wiki/index.php/Run_Log_2015
-	// 		*/
-	// 		for(int i=4820; i<=4825; i++){ station2_exclude.push_back(i); }
-	// 		for(int i=4850; i<=4854; i++){ station2_exclude.push_back(i); }
-	// 		for(int i=4879; i<=4936; i++){ station2_exclude.push_back(i); }
-	// 		for(int i=5210; i<=5277; i++){ station2_exclude.push_back(i); }
-
-	// 		/*
-	// 		2015 surface pulsing
-	// 			January 2015
-	// 			http://ara.physics.wisc.edu/cgi-bin/DocDB/ShowDocument?docid=1339 (slide 5)
-	// 		*/
-	// 		station2_exclude.push_back(4872);
-	// 		station2_exclude.push_back(4873);
-	// 		station2_exclude.push_back(4876); // Identified by MYL http://ara.physics.wisc.edu/cgi-bin/DocDB/ShowDocument?docid=1889 slide 14			
-
-	// 		/*
-	// 		2015 Pulser Lift
-	// 			December 2015
-	// 			http://ara.physics.wisc.edu/cgi-bin/DocDB/ShowDocument?docid=1269 (page 2)
-	// 			Run number from private communication with John Kelley
-	// 		*/
-	// 		station2_exclude.push_back(6513);
-
-	// 		/*
-	// 		2015 ICL pulsing
-	// 			December 2015
-	// 			http://ara.physics.wisc.edu/cgi-bin/DocDB/ShowDocument?docid=1269 (page 7)
-	// 		*/
-	// 		station2_exclude.push_back(6527);
-
-
-	// 	/*2016*/
-
-	// 		/*
-	// 		2016 cal pulser sweep
-	// 			January 2015
-	// 			http://ara.icecube.wisc.edu/wiki/index.php/Run_Log_2016
-	// 		*/
-	// 		for(int i=7625; i<=7686; i++){ station2_exclude.push_back(i); }
-
-
-	// 	/*Other*/
-
-	// 		/*
-	// 		D1 Glitches
-	// 			Identified by MYL as having glitches after long periods of downtime
-	// 		*/
-	// 		station2_exclude.push_back(3);
-	// 		station2_exclude.push_back(11);
-	// 		station2_exclude.push_back(59);
-	// 		station2_exclude.push_back(60);
-	// 		station2_exclude.push_back(71);			
-
-
-	// /*
-	// station 3 exclusion
-	// */
-	
-	// vector <double> station3_exclude;
-
-	// 	/*2014*/
-
-	// 		/*
-	// 		2014 Rooftop Pulser
-	// 			http://ara.icecube.wisc.edu/wiki/index.php/Run_Log_2014
-	// 		*/
-	// 		station3_exclude.push_back(2235);
-	// 		station3_exclude.push_back(2328);
-
-	// 		/*
-	// 		2014 Cal Pulser Sweep
-	// 			http://ara.icecube.wisc.edu/wiki/index.php/Run_Log_2014
-	// 		*/
-	// 		for(int i=2251; i<=2274; i++){ station3_exclude.push_back(i); }
-	// 		for(int i=2376; i<=2399; i++){ station3_exclude.push_back(i); }
-
-	// 	/*2015*/
-
-	// 		/*
-	// 		2015 surface or deep pulsing
-	// 			got through cuts
-	// 			happened jan 5-6, some jan 8
-	// 			waveforms clearly show double pulses or things consistent with surface pulsing
-	// 		*/
-	// 		station3_exclude.push_back(3811); //deep pulser run
-	// 			station3_exclude.push_back(3810); //elminated by proximity to deep pulser run
-	// 			station3_exclude.push_back(3820); //elminated by proximity to deep pulser run
-	// 			station3_exclude.push_back(3821); //elminated by proximity to deep pulser run
-	// 			station3_exclude.push_back(3822); //elminated by proximity to deep pulser run
-	// 		station3_exclude.push_back(3823); //deep pulser, observation of 10% iterator event numbers 496, 518, 674, 985, 1729, 2411
-
-	// 		/*
-	// 		2015 noise source tests
-	// 			January 2015
-	// 			http://ara.icecube.wisc.edu/wiki/index.php/Run_Log_2015
-	// 		*/
-	// 		for(int i=3844; i<=3860; i++){ station3_exclude.push_back(i); }
-	// 		for(int i=3881; i<=3891; i++){ station3_exclude.push_back(i); }
-	// 		for(int i=3916; i<=3918; i++){ station3_exclude.push_back(i); }
-	// 		for(int i=3920; i<=3975; i++){ station3_exclude.push_back(i); }
-	// 		for(int i=4009; i<=4073; i++){ station3_exclude.push_back(i); }
-
-	// 		/*
-	// 		2015 surface pulsing
-	// 			January 2015
-	// 			http://ara.physics.wisc.edu/cgi-bin/DocDB/ShowDocument?docid=1339 (slide 5)
-	// 		*/
-	// 		station3_exclude.push_back(3977);
-	// 		station3_exclude.push_back(3978);
-
-	// 		/*
-	// 		2015 ICL pulsing
-	// 			December 2015
-	// 			http://ara.physics.wisc.edu/cgi-bin/DocDB/ShowDocument?docid=1269 (page 7)
-	// 		*/
-	// 		station3_exclude.push_back(6041);
-
-	// 		/*
-	// 		Other random
-	// 		*/
-	// 		station3_exclude.push_back(3977); // looks like ICL events
-
-
-	// /*
-	// Check for run exclusion
-	// */
-
-	// if(station==2){
-	// 	found = (std::find(station2_exclude.begin(), station2_exclude.end(), run_num) != station2_exclude.end());
-	// }
-	// else if(station==3){
-	// 	found = (std::find(station3_exclude.begin(), station3_exclude.end(), run_num) != station3_exclude.end());
-	// }
-
-	// return found;
 }
