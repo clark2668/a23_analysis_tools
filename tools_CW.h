@@ -254,13 +254,13 @@ TGraph *getPhaseVariance( vector<deque<TGraph*> > vdGrPhaseDiff, int runNum, int
 		}
 		
 		double upper95, lower95, sigma;
-		double median = getMedian(vgPhaseVariance[pairIndex], 120., 850., upper95, lower95, sigma);
+		double median = getMedian(vgPhaseVariance[pairIndex], 120., 1000., upper95, lower95, sigma);
 		int npoints_temp = vgPhaseVariance[pairIndex]->GetN();
 		double x0,y0;
 
 		for(int i = 0; i < npoints_temp; i++){
 			vgPhaseVariance[pairIndex]->GetPoint(i,x0,y0);
-			if (x0 > 120. && x0 < 850.){
+			if (x0 > 120. && x0 < 1000.){
 				int npoints_sigma = vgSigmaVariance[pairIndex]->GetN();
 				double sigma_i = (median - y0)/sigma;
 				vgSigmaVariance[pairIndex]->SetPoint(npoints_sigma, x0, sigma_i);
