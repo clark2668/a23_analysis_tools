@@ -280,7 +280,7 @@ bool hasSpareChannelIssue(vector<TGraph*> electChansGraphs){
 	int numBadSpareChans=0;
 	int numReallyBadSpareChans=0;
 	for(int i=0; i<4; i++){
-		if(spareRMS[i]>19 && i!=3){
+		if(spareRMS[i]>20 && i!=3){
 			numBadSpareChans++;
 			// cout<<"Bad spare chan in chan "<<i<<endl;
 		}
