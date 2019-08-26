@@ -23,9 +23,9 @@ void getRCutValues(int station, int config, int pol, double &slope, double &inte
 bool passesRCut(int station, int config, int pol, double SNR, double corr){
 	bool passes=false;
 	if(station==2){
-		double slope_cal;
+		double slope_val;
 		double intercept_val;
-		getRCutParams(station, config, pol, slope_val, intercept_val);
+		getRCutValues(station, config, pol, slope_val, intercept_val);
 	}
 	else if(station==3){
 
