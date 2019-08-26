@@ -21,6 +21,60 @@ int getA3BadRunBoundary(){
 	return 1901;
 }
 
+int getConfig(int station, int runNum){
+	int config=0;
+	if(station==2){
+		if(runNum>=0 && runNum<=4){
+			config=1;
+		}
+		else if(runNum>=11 && runNum<=60){
+			config=4;
+		}
+		else if(runNum>=120 && runNum<=2274){
+			config=2;
+		}
+		else if(runNum>=2275 && runNum<=3463){
+			config=1;
+		}
+		else if(runNum>=3465 && runNum<=4027){
+			config=3;
+		}
+		else if(runNum>=4029 && runNum<=6481){
+			config=4;
+		}
+		else if(runNum>=6500 && runNum<=8097){
+			config=5;
+		}
+		else if(runNum>=8100 && runNum<=8246){
+			config=4;
+		}
+	}
+	else if(station==3){
+		if(runNum>=0 && runNum<=3){
+			config=1;
+		}
+		if(runNum>=470 && runNum<=1448){
+			config=2;
+		}
+		if(runNum>=1449 && runNum<=1901){
+			config=1;
+		}
+		if(runNum>=1902 && runNum<=3061){
+			config=5;
+		}
+		if(runNum>=3063 && runNum<=6004){
+			config=3;
+		}
+		if(runNum>=6005 && runNum<=7653){
+			config=4;
+		}
+		if(runNum>=7658 && runNum<=7808){
+			config=3;
+		}
+	}
+	return config;
+}
+
 /*
 	input: station, config, pulser, pol, startX, stopX, startY, stopY (the last four are the bounds of the projection region for projecting the TH2D into TH1D)
 	output: changes the value of thetas and phis
