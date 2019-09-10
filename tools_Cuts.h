@@ -18,6 +18,44 @@
 using namespace std;
 
 void getRCutValues(int station, int config, int pol, double &slope, double &intercept){
+	if(station==2){
+		if(pol==0){
+			slope=-2060.;
+			if(config==1){
+				intercept=20.5;
+			}
+			else if(config==2){
+				intercept=22.4;
+			}
+			else if(config==3){
+				intercept=20.4;
+			}
+			else if(config==4){
+				intercept=21.4;
+			}
+			else if(config==5){
+				intercept=21.5;
+			}
+		}
+		else if(pol==1){
+			slope=-780.;
+			if(config==1){
+				intercept=13.6;
+			}
+			else if(config==2){
+				intercept=14.7;
+			}
+			else if(config==3){
+				intercept=13.1;
+			}
+			else if(config==4){
+				intercept=14.7;
+			}
+			else if(config==5){
+				intercept=14.5;
+			}
+		}
+	}
 }
 
 bool passesRCut(int station, int config, int pol, double SNR, double corr){
