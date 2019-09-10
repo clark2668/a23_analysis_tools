@@ -19,40 +19,41 @@ using namespace std;
 
 void getRCutValues(int station, int config, int pol, double &slope, double &intercept){
 	if(station==2){
+		// these were updated 2019-09-10 with the results of the optimization after the re-processing with corrected pedestals
 		if(pol==0){
-			slope=-2060.;
+			slope=-2080.;
 			if(config==1){
-				intercept=20.5;
+				intercept=20.6;
 			}
 			else if(config==2){
-				intercept=22.4;
+				intercept=22.6;
 			}
 			else if(config==3){
-				intercept=20.4;
+				intercept=20.8;
 			}
 			else if(config==4){
-				intercept=21.4;
+				intercept=21.5;
 			}
 			else if(config==5){
-				intercept=21.5;
+				intercept=21.6;
 			}
 		}
 		else if(pol==1){
-			slope=-780.;
+			slope=-640.;
 			if(config==1){
-				intercept=13.6;
+				intercept=12.7;
 			}
 			else if(config==2){
-				intercept=14.7;
+				intercept=13.6;
 			}
 			else if(config==3){
-				intercept=13.1;
+				intercept=12.3;
 			}
 			else if(config==4){
-				intercept=14.7;
+				intercept=13.5;
 			}
 			else if(config==5){
-				intercept=14.5;
+				intercept=13.4;
 			}
 		}
 	}
