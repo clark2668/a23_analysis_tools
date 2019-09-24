@@ -834,6 +834,42 @@ vector<int> BuildBadRunList(int station){
 
 	}
 	else if(station==3){
+		
+		/*2013*/
+
+			/*
+				Misc tests: http://ara.icecube.wisc.edu/wiki/index.php/Run_Log_2013
+			*/
+			for(int i=22; i<=62; i++){ exclude.push_back(i); }
+
+
+
+			/*
+				ICL rooftop
+				http://ara.icecube.wisc.edu/wiki/index.php/A23_Diffuse_UW
+			*/
+
+			for(int i=63; i<=70; i++){ exclude.push_back(i); }
+			for(int i=333; i<=341; i++){ exclude.push_back(i); }
+
+
+			/*
+				Cal sweep
+				http://ara.icecube.wisc.edu/wiki/index.php/A23_Diffuse_UW
+			*/
+
+			for(int i=72; i<=297; i++){ exclude.push_back(i); }
+			for(int i=346; i<=473; i++){ exclude.push_back(i); }
+
+
+
+			/*
+				Cal sweep
+				http://ara.icecube.wisc.edu/wiki/index.php/A23_Diffuse_UW
+			*/
+
+
+
 		/*2014*/
 
 			/*
@@ -892,9 +928,19 @@ vector<int> BuildBadRunList(int station){
 			exclude.push_back(6041);
 
 			/*
-			Other random
+			2015 station anomaly
+			see moni report: http://ara.physics.wisc.edu/cgi-bin/DocDB/ShowDocument?docid=1213
+			identified by MYL: http://ara.icecube.wisc.edu/wiki/index.php/A23_Diffuse_UW
 			*/
-			exclude.push_back(3977); // looks like ICL events
+			for(int i=4914; i<=4960; i++){ exclude.push_back(i); }
+
+			/*
+			2016 Cal Pulser Sweep
+				http://ara.icecube.wisc.edu/wiki/index.php/Run_Log_2014
+			*/
+			for(int i=7126; i<=7253; i++){ exclude.push_back(i); }
+
+
 	}
 	return exclude;
 }
