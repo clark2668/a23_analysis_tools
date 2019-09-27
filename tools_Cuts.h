@@ -66,7 +66,7 @@ bool passesRCut(int station, int config, int pol, double SNR, double corr){
 		double intercept_val;
 		getRCutValues(station, config, pol, slope_val, intercept_val);
 		// passes if SNR > (corr * slope) + intercept
-		if (SNR > ((corr * slope ) + intercept)){
+		if (SNR > ((corr * slope_val ) + intercept_val)){
 			passes=true;
 		}
 	}
