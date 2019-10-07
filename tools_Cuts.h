@@ -687,13 +687,57 @@ int isBadLivetime(int station, int unixTime){
 	return isBadLivetime;
 
 }
-
 /*
-	input: station, run number
+	input: station
 	output:  vector of bad runs
 
-	function: looks through list of known "bad runs"
-			reports if the run you gave it is bad
+	function: runs vector of ints of runs
+				the we decided had surface activity
+				during unblinding process
+*/
+vector<int> BuildSurfaceRunList(int station){
+
+
+	vector<int> exclude;
+	if(station==2){
+
+		/*
+		Runs shared with Ming-Yuan
+			http://ara.physics.wisc.edu/cgi-bin/DocDB/ShowDocument?docid=1889
+		*/
+		exclude.push_back(2678);
+		exclude.push_back(2090);
+		exclude.push_back(4777);
+		exclude.push_back(5649);
+		exclude.push_back(5664);
+		exclude.push_back(5666);
+		exclude.push_back(5670);
+		exclude.push_back(5680);
+		exclude.push_back(6445);
+		exclude.push_back(6536);
+		exclude.push_back(6542);
+		exclude.push_back(6635);
+		exclude.push_back(6655);
+		exclude.push_back(6669);
+		exclude.push_back(6733);
+
+		/*
+		Runs identified independently
+		*/
+		exclude.push_back(2636);
+		exclude.push_back(6554);
+		exclude.push_back(6705);
+
+	}
+
+	return exclude;
+}
+
+/*
+	input: station
+	output:  vector of bad runs
+
+	function: returns vector of ints of bad run numbers
 */
 vector<int> BuildBadRunList(int station){
 
