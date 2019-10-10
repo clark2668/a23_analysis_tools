@@ -1010,7 +1010,7 @@ int isBadRun(int station, int run_num, vector<int>BadRunList){
 
 bool hasUntaggedCalpul(int config, int run_num){
 	char filename[100];
-	sprintf(filename,"./a23_analysis_tools/A3_c%i_untagged_calpul.csv",config);
+	sprintf(filename,"./A3_c%i_untagged_calpul.csv",config);
 	ifstream infile(filename);
 	string line;
 	string str;
