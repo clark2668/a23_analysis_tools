@@ -15,7 +15,7 @@
 #include <FFTtools.h>
 
 int getChansfromPair(AraGeomTool * geomTool, int stationNum, int polarization, int pair, int &ch1, int &ch2){
-	
+
 	int pairnum = 0;
 	for (int i = 0; i < 15; i++){
 		AraAntPol::AraAntPol_t pol1 = geomTool->getPolByRFChan(i, stationNum);
@@ -63,7 +63,7 @@ int padGraph (TGraph *gr, int padLimit){
 		double x1, y1;
 		gr->GetPoint(nPointsStart-1, x1, y1);
 		double x_diff = x1-x0;
-		
+
 		int nNewPoints = padLimit - nPointsStart;
 		double x, y;
 		for (int i = 0; i < nNewPoints; i++){
@@ -74,8 +74,8 @@ int padGraph (TGraph *gr, int padLimit){
 	}
 
 	int nPointsFinal = gr->GetN();
-	return nPointsFinal; 
-	
+	return nPointsFinal;
+
 }
 
 TGraph * getFFTAmplitude(TGraph *gr, double lowFreqLimit = 0., double highFreqLimit = 1000.);
@@ -204,7 +204,7 @@ double getMedian(TGraph* gr, double lowFreqLimit, double highFreqLimit, double &
 	std::sort(vec.begin(), vec.end());
 	int vec_size = int(vec.size());
 	double median;
-	int middle; 
+	int middle;
 	if (vec_size%2 == 0){
 		middle = vec_size/2;
 		// cout << middle << endl;
@@ -238,7 +238,7 @@ TGraph *getPhaseVariance( vector<deque<TGraph*> > vdGrPhaseDiff, int runNum, int
 		double x[numEvents];
 		double y[numEvents];
 		int npoints = vdGrPhaseDiff[pairIndex][0]->GetN();
-		
+
 		for (int ii = 0; ii < npoints; ii++){
 			complex<double> complex_sum (0,0);
 			for (int i = 0; i < numEvents; i++){
@@ -252,7 +252,7 @@ TGraph *getPhaseVariance( vector<deque<TGraph*> > vdGrPhaseDiff, int runNum, int
 			double phase_variance = 1. - abs(complex_sum)/double(numEvents);
 			vgPhaseVariance[pairIndex]->SetPoint(ii, x[0], phase_variance);
 		}
-		
+
 		double upper95, lower95, sigma;
 		double median = getMedian(vgPhaseVariance[pairIndex], 120., 1000., upper95, lower95, sigma);
 		int npoints_temp = vgPhaseVariance[pairIndex]->GetN();
@@ -284,11 +284,13 @@ TGraph *getPhaseVariance( vector<deque<TGraph*> > vdGrPhaseDiff, int runNum, int
 		char *plotPath(getenv("PLOT_PATH"));
 		if (plotPath == NULL) std::cout << "Warning! $PLOT_PATH is not set!" << endl;
 		TCanvas *c = new TCanvas("","",1100,850);
-		c->Divide(2,1);
-		c->cd(1);
-			gSigmaVarianceAvg->Draw("ALP");
+		gSigmaVarianceAvg->Draw("ALP");
 		char save_temp_title[300];
-		sprintf(save_temp_title,"%s/trouble_events/Run%d_Ev%d_Pol%d_gSigmaVarianceAvg.png",plotPath,runNum,eventNum,pol);
+		gSigmaVarianceAvg->SetTitle("Phase Variance Plot");
+		gSigmaVarianceAvg->GetYaxis()->SetTitle("Phase variance factor");
+		gSigmaVarianceAvg->GetXaxis()->SetTitle("Frequency [MHz]");
+		gSigmaVarianceAvg->GetYaxis()->SetRangeUser(-0.5, 3.);
+		sprintf(save_temp_title,"%s/phases/Run%d_Ev%d_Pol%d_gSigmaVarianceAvg.png",plotPath,runNum,eventNum,pol);
 		c->SaveAs(save_temp_title);
 		delete c;
 	}
@@ -297,7 +299,7 @@ TGraph *getPhaseVariance( vector<deque<TGraph*> > vdGrPhaseDiff, int runNum, int
 		delete vgPhaseVariance[i];
 		delete vgSigmaVariance[i];
 	}
-	
+
 	return gSigmaVarianceAvg;
 
 }
@@ -372,7 +374,7 @@ vector<double> CWCut_TB(vector <TGraph*> waveforms, vector <TGraph*> baselines, 
 			}
 			else magFFT[i]=-1000;
 		}
-		
+
 		//need to copy the baselines into new graphs
 		double xx, yy;
 		double bXreal[newLength];
@@ -394,10 +396,10 @@ vector<double> CWCut_TB(vector <TGraph*> waveforms, vector <TGraph*> baselines, 
 		double *bX_unmodified=baseline_clone[ant]->GetX();
 		int n_unmodified=baseline_clone[ant]->GetN();
 
-		
+
 		// Calculate mean baseline
 		//get baseline average so we can bump FFT around
-		double mean=0;    
+		double mean=0;
 		double meanBaseline=0;
 		int navg=0;
 		int nfirsthalfavg=0;
@@ -446,7 +448,7 @@ vector<double> CWCut_TB(vector <TGraph*> waveforms, vector <TGraph*> baselines, 
 		}
 		mean=mean/double(navg);
 		firstHalfMean=firstHalfMean/double(nfirsthalfavg);
-		secondHalfMean=secondHalfMean/double(nsecondhalfavg); 
+		secondHalfMean=secondHalfMean/double(nsecondhalfavg);
 
 		//now bump the average to the baseline average and apply a tilt correction to baseline
 		double deltaMean=mean-meanBaseline;
@@ -463,10 +465,10 @@ vector<double> CWCut_TB(vector <TGraph*> waveforms, vector <TGraph*> baselines, 
 				bYreal[ctr]=bYreal[ctr]-slope*(bXreal[ctr]-halfway);
 			}
 		}
-		
+
 		//now see if any peaks are ndB above the baseline.
 		double deltaMag[newLength];
-		
+
 		int j;
 		for (int i=0;i<newLength;i++){
 			if (frequencyArray[i]>lowFreqLimit+2 && frequencyArray[i]<highFreqLimit-2){
