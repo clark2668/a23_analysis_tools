@@ -705,9 +705,11 @@ vector<int> BuildSurfaceRunList(int station){
 		Runs shared with Ming-Yuan
 			http://ara.physics.wisc.edu/cgi-bin/DocDB/ShowDocument?docid=1889
 		*/
-		exclude.push_back(2678);
 		exclude.push_back(2090);
+		exclude.push_back(2678);
 		exclude.push_back(4777);
+		exclude.push_back(5516);
+		exclude.push_back(5619);
 		exclude.push_back(5649);
 		exclude.push_back(5664);
 		exclude.push_back(5666);
@@ -724,9 +726,19 @@ vector<int> BuildSurfaceRunList(int station){
 		/*
 		Runs identified independently
 		*/
+		exclude.push_back(2091);
+		exclude.push_back(2155);
 		exclude.push_back(2636);
+		exclude.push_back(2662);
+		exclude.push_back(2784);
+		exclude.push_back(4837);
+		exclude.push_back(4842);
+		exclude.push_back(5675);
+		exclude.push_back(5702);
 		exclude.push_back(6554);
+		exclude.push_back(6818);
 		exclude.push_back(6705);
+		exclude.push_back(8074);
 
 	}
 
