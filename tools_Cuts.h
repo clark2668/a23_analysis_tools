@@ -1021,16 +1021,16 @@ int isBadRun(int station, int run_num, vector<int>BadRunList){
 }
 
 /*
-	input: path to "configs w/o cal pulse files", station number, config number, and run number
+	input: path to "the a23_analysis_tools" directory, station number, config number, and run number
 	output: 0/false (does not contained untagged cal pulse), 1/true (does contain untagged cal pulse)
 
 	function: looks through list of runs that are known to have <3% cal pulser content
 				which we interpret to mean "has no tagged cal pulsers"
 				and return if this run for this station and config is such
 */
-bool hasUntaggedCalpul(std::string pathToFiles, int station, int config, int run_num){
+bool hasUntaggedCalpul(std::string pathToToolsDir, int station, int config, int run_num){
 	char filename[200];
-	sprintf(filename,"%s/data/A%d_c%i_untagged_calpul.csv",pathToFiles.c_str(), station,config);
+	sprintf(filename,"%s/data/A%d_c%i_untagged_calpul.csv",pathToToolsDir.c_str(), station,config);
 	ifstream infile(filename);
 	string line;
 	string str;
