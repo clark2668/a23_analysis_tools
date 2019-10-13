@@ -1020,12 +1020,22 @@ int isBadRun(int station, int run_num, vector<int>BadRunList){
 	return found;
 }
 
-bool hasUntaggedCalpul(int station, int config, int run_num){
-	char filename[100];
-	sprintf(filename,"./data/A%d_c%i_untagged_calpul.csv",station,config);
+/*
+	input: path to "configs w/o cal pulse files", station number, config number, and run number
+	output: 0/false (does not contained untagged cal pulse), 1/true (does contain untagged cal pulse)
+
+	function: looks through list of runs that are known to have <3% cal pulser content
+				which we interpret to mean "has no tagged cal pulsers"
+				and return if this run for this station and config is such
+*/
+bool hasUntaggedCalpul(std::string pathToFiles, int station, int config, int run_num){
+	char filename[200];
+	sprintf(filename,"%s/A%d_c%i_untagged_calpul.csv",pathToFiles.c_str(), station,config);
 	ifstream infile(filename);
 	string line;
 	string str;
+
+	bool hasUntagged=false;
 
 	//  Read the file
 	while (getline(infile, line))
@@ -1038,9 +1048,10 @@ bool hasUntaggedCalpul(int station, int config, int run_num){
 		int runNum;
 		std::stringstream(record[0]) >> runNum;
 		if (runNum==run_num){
-			cout << "Untagged" << endl;
-			return 1;
+			// cout << "Untagged" << endl;
+			hasUntagged=true;
 		}
-		else return 0;
 	}
+
+	return hasUntagged;
 }
