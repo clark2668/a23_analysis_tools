@@ -926,7 +926,6 @@ vector<int> BuildBadRunList(int station){
 			for(int i=346; i<=473; i++){ exclude.push_back(i); }
 
 
-
 			/*
 				Cal sweep
 				http://ara.icecube.wisc.edu/wiki/index.php/A23_Diffuse_UW
@@ -935,8 +934,13 @@ vector<int> BuildBadRunList(int station){
 
 
 			/*
-			  2013 run 1800 "software trigger only" runs
+				2013 "software trigger dominated" runs
 			*/
+			for(int i=1126; i<=1143; i++){ exclude.push_back(i); }
+			exclude.push_back(1228);
+			exclude.push_back(1231);
+			exclude.push_back(1322);
+			exclude.push_back(1428);
 			for(int i=1795; i<=1815; i++){ exclude.push_back(i); }
 
 
@@ -956,7 +960,28 @@ vector<int> BuildBadRunList(int station){
 			for(int i=2251; i<=2274; i++){ exclude.push_back(i); }
 			for(int i=2376; i<=2399; i++){ exclude.push_back(i); }
 
+			/*
+				2014 software dominated runs
+			*/
+			exclude.push_back(2000);
+			for(int i=2037; i<=2043; i++){ exclude.push_back(i); }
+			for(int i=2466; i<=2473; i++){ exclude.push_back(i); }
+
 		/*2015*/
+
+			/*
+				2015 run "software trigger dominated" runs
+			*/
+			// for(int i=3063; i<=3102; i++){ exclude.push_back(i); }
+			for(int i=3421; i<=3429; i++){ exclude.push_back(i); }
+			exclude.push_back(3788);
+			exclude.push_back(3861);
+			exclude.push_back(3892);
+			exclude.push_back(3919);
+			exclude.push_back(4978);
+			exclude.push_back(5014);
+			exclude.push_back(5024);
+
 
 			/*
 			2015 surface or deep pulsing
@@ -999,10 +1024,13 @@ vector<int> BuildBadRunList(int station){
 
 			/*
 			2015 station anomaly
-			see moni report: http://ara.physics.wisc.edu/cgi-bin/DocDB/ShowDocument?docid=1213
-			identified by MYL: http://ara.icecube.wisc.edu/wiki/index.php/A23_Diffuse_UW
+				see moni report: http://ara.physics.wisc.edu/cgi-bin/DocDB/ShowDocument?docid=1213
+				identified by MYL: http://ara.icecube.wisc.edu/wiki/index.php/A23_Diffuse_UW
 			*/
 			for(int i=4914; i<=4960; i++){ exclude.push_back(i); }
+
+
+		/*2016*/
 
 			/*
 			2016 Cal Pulser Sweep
@@ -1010,6 +1038,15 @@ vector<int> BuildBadRunList(int station){
 			*/
 			for(int i=7126; i<=7253; i++){ exclude.push_back(i); }
 
+
+			/*
+				2016 software dominated events
+			*/
+			exclude.push_back(7125);
+			exclude.push_back(7312);
+			exclude.push_back(7561);
+			exclude.push_back(7570);
+			for(int i=7756; i<=7772; i++){ exclude.push_back(i); }
 
 	}
 	return exclude;
