@@ -759,11 +759,6 @@ vector<int> BuildBadRunList(int station){
 
 		/*2013*/
 
-			/*
-			2013 run 1800 "software trigger only" runs
-			*/
-			for(int i=1797; i<=1815; i++){ exclude.push_back(i); }
-
 		/*2014*/
 
 			/*
@@ -937,6 +932,12 @@ vector<int> BuildBadRunList(int station){
 				http://ara.icecube.wisc.edu/wiki/index.php/A23_Diffuse_UW
 			*/
 
+
+
+			/*
+			2013 run 1800 "software trigger only" runs
+			*/
+			for(int i=1797; i<=1815; i++){ exclude.push_back(i); }
 
 
 		/*2014*/
