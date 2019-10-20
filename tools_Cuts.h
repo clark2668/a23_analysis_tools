@@ -935,9 +935,9 @@ vector<int> BuildBadRunList(int station){
 
 
 			/*
-			2013 run 1800 "software trigger only" runs
+			  2013 run 1800 "software trigger only" runs
 			*/
-			for(int i=1797; i<=1815; i++){ exclude.push_back(i); }
+			for(int i=1795; i<=1815; i++){ exclude.push_back(i); }
 
 
 		/*2014*/
