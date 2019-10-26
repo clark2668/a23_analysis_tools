@@ -109,7 +109,7 @@ int getConfig(int station, int runNum){
 		}
 	}
 	else if(station==3){
-		if(runNum>=0 && runNum<=3){
+		if(runNum>=0 && runNum<=4){
 			config=1;
 		}
 		if(runNum>=470 && runNum<=1448){
@@ -118,10 +118,10 @@ int getConfig(int station, int runNum){
 		if(runNum>=1449 && runNum<=1901){
 			config=1;
 		}
-		if(runNum>=1902 && runNum<=3061){
+		if(runNum>=1902 && runNum<=3103){
 			config=5;
 		}
-		if(runNum>=3063 && runNum<=6004){
+		if(runNum>=3104 && runNum<=6004){
 			config=3;
 		}
 		if(runNum>=6005 && runNum<=7653){
