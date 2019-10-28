@@ -134,6 +134,36 @@ int getConfig(int station, int runNum){
 	return config;
 }
 
+void getWFRMSCutValues(int station, int config, int &vBin, int &hBin, double &vThresh, double &hThresh){
+
+	if(station==2){
+		vBin=0;
+		hBin=0;
+		vThresh=-1.3;
+		hThresh=-1.4;
+	}
+	else if(station==3){
+		vBin=0;
+		hBin=1;
+		if(config==1){
+			vThresh=-1.2;
+			hThresh=-1.3;
+		}
+		else if(config==2){
+			vThresh=-1.3;
+			hThresh=-1.4;
+		}
+		else if(config==3 || config==4){
+			vThresh=-1.0;
+			hThresh=-1.1;
+		}
+		else if(config==5){
+			vThresh=-0.7;
+			hThresh=-0.8;
+		}
+	}
+}
+
 /*
 	input: station, config, pulser, pol, startX, stopX, startY, stopY (the last four are the bounds of the projection region for projecting the TH2D into TH1D)
 	output: changes the value of thetas and phis
@@ -932,18 +962,6 @@ vector<int> BuildBadRunList(int station){
 			*/
 
 
-
-			/*
-				2013 "software trigger dominated" runs
-			*/
-			for(int i=1126; i<=1143; i++){ exclude.push_back(i); }
-			exclude.push_back(1228);
-			exclude.push_back(1231);
-			exclude.push_back(1322);
-			exclude.push_back(1428);
-			for(int i=1795; i<=1815; i++){ exclude.push_back(i); }
-
-
 		/*2014*/
 
 			/*
@@ -960,28 +978,7 @@ vector<int> BuildBadRunList(int station){
 			for(int i=2251; i<=2274; i++){ exclude.push_back(i); }
 			for(int i=2376; i<=2399; i++){ exclude.push_back(i); }
 
-			/*
-				2014 software dominated runs
-			*/
-			exclude.push_back(2000);
-			for(int i=2037; i<=2043; i++){ exclude.push_back(i); }
-			for(int i=2466; i<=2473; i++){ exclude.push_back(i); }
-
 		/*2015*/
-
-			/*
-				2015 run "software trigger dominated" runs
-			*/
-			// for(int i=3063; i<=3102; i++){ exclude.push_back(i); }
-			for(int i=3421; i<=3429; i++){ exclude.push_back(i); }
-			exclude.push_back(3788);
-			exclude.push_back(3861);
-			exclude.push_back(3892);
-			exclude.push_back(3919);
-			exclude.push_back(4978);
-			exclude.push_back(5014);
-			exclude.push_back(5024);
-
 
 			/*
 			2015 surface or deep pulsing
@@ -1037,17 +1034,6 @@ vector<int> BuildBadRunList(int station){
 				http://ara.icecube.wisc.edu/wiki/index.php/Run_Log_2014
 			*/
 			for(int i=7126; i<=7253; i++){ exclude.push_back(i); }
-
-
-			/*
-				2016 software dominated events
-			*/
-			exclude.push_back(7125);
-			exclude.push_back(7312);
-			exclude.push_back(7561);
-			exclude.push_back(7570);
-			for(int i=7756; i<=7772; i++){ exclude.push_back(i); }
-
 	}
 	return exclude;
 }
@@ -1066,6 +1052,43 @@ int isBadRun(int station, int run_num, vector<int>BadRunList){
 	int found = (std::find(BadRunList.begin(), BadRunList.end(), run_num) != BadRunList.end());
 	return found;
 }
+
+/*
+	input: path to "the a23_analysis_tools" directory, station number, config number, and run number
+	output: 0/false (does not contained untagged cal pulse), 1/true (does contain untagged cal pulse)
+
+	function: looks through list of runs that are known to have <3% cal pulser content
+				which we interpret to mean "has no tagged cal pulsers"
+				and return if this run for this station and config is such
+*/
+bool isSoftwareDominatedRun(std::string pathToToolsDir, int station, int run_num){
+	char filename[200];
+	sprintf(filename,"%s/data/A%d_software_dominated_list.csv",pathToToolsDir.c_str(), station);
+	ifstream infile(filename);
+	string line;
+	string str;
+
+	bool isSoftwareDominated=false;
+
+	//  Read the file
+	while (getline(infile, line))
+	{   istringstream ss (line);
+		vector <string> record;
+
+		while (getline(ss, str, ','))
+		record.push_back(str);
+		// cout << record[0] << endl;
+		int runNum;
+		std::stringstream(record[0]) >> runNum;
+		if (runNum==run_num){
+			// cout << "Untagged" << endl;
+			isSoftwareDominated=true;
+		}
+	}
+
+	return isSoftwareDominated;
+}
+
 
 /*
 	input: path to "the a23_analysis_tools" directory, station number, config number, and run number
