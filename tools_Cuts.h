@@ -1126,3 +1126,51 @@ bool hasUntaggedCalpul(std::string pathToToolsDir, int station, int config, int 
 
 	return hasUntagged;
 }
+
+Double_t getPeakSqVal(TGraph *gr, int *index){
+  Double_t x,y;
+  gr->GetPoint(0,x,y);
+  Double_t peakVal=y*y;
+  Int_t peakBin=0;
+  Int_t numPoints=gr->GetN();
+  for(int i=1;i<numPoints;i++) {
+     gr->GetPoint(i,x,y);
+     if(peakVal<y*y) {
+        peakVal=y*y;
+        peakBin=i;
+     }
+  }
+  if(index) *index=peakBin;
+  return peakVal;
+ }
+
+ bool isSpikeyStringEvent(int stationId, bool dropARA03D4, TGraph** wf, int config){
+	 double spikeyRatio = 0.;
+	 if (stationId != 3){ //Only A3 has such problem
+		 return false;
+	 }
+	 double maxV[16];
+	 int maxVIdx;
+	 std::fill(&maxV[0], &maxV[16], 0.);
+	 double avgSNR[4];
+	 getPeakSqVal(wf[1], &maxVIdx);
+	 for(int ch=0; ch<16; ch++){
+		 maxV[ch] = sqrt(getPeakSqVal(wf[ch], &maxVIdx));
+	 }
+	 for (int string=0; string<4; string++){
+		 avgSNR[string] = (maxV[string] + maxV[string+4] + maxV[string+12])/3.; //TH don't seem to see the spike, so exclude
+	 }
+	 if(dropARA03D4) spikeyRatio = 2. * avgSNR[0] / (avgSNR[1] + avgSNR[2]);
+	 else            spikeyRatio = 3. * avgSNR[0] / (avgSNR[1] + avgSNR[2] + avgSNR[3]);
+
+	 bool isSpikey=false;
+	 // We now need to see if the spikey ratio is greater than the cuts imposed by Ming-Yuan Lu.
+	 if(config==1 && spikeyRatio>=2.4055) isSpikey=true;
+	 if(config==2 && spikeyRatio>=2.5267) isSpikey=true;
+	 if(config==3 && spikeyRatio>=3.5007) isSpikey=true;
+	 if(config==4 && spikeyRatio>=3.9877) isSpikey=true;
+	 if(config==5 && spikeyRatio>=3.6174) isSpikey=true;
+
+
+	 return isSpikey;
+ }
