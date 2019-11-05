@@ -15,6 +15,9 @@
 #include "TMath.h"
 
 #include "AraGeomTool.h"
+#include "tools_PlottingFns.h"
+#include "tools_WaveformFns.h"
+
 
 using namespace std;
 
@@ -1144,7 +1147,7 @@ Double_t getPeakSqVal(TGraph *gr, int *index){
   return peakVal;
  }
 
- bool isSpikeyStringEvent(int stationId, bool dropARA03D4, TGraph** wf, int config){
+ bool isSpikeyStringEvent(int stationId, bool dropARA03D4, vector <TGraph*> wf, int config){
 	 double spikeyRatio = 0.;
 	 if (stationId != 3){ //Only A3 has such problem
 		 return false;
@@ -1153,7 +1156,6 @@ Double_t getPeakSqVal(TGraph *gr, int *index){
 	 int maxVIdx;
 	 std::fill(&maxV[0], &maxV[16], 0.);
 	 double avgSNR[4];
-	 getPeakSqVal(wf[1], &maxVIdx);
 	 for(int ch=0; ch<16; ch++){
 		 maxV[ch] = sqrt(getPeakSqVal(wf[ch], &maxVIdx));
 	 }
@@ -1171,6 +1173,52 @@ Double_t getPeakSqVal(TGraph *gr, int *index){
 	 if(config==4 && spikeyRatio>=3.9877) isSpikey=true;
 	 if(config==5 && spikeyRatio>=3.6174) isSpikey=true;
 
-
 	 return isSpikey;
+ }
+
+ /* Check for cliff event. Cut created by Ming-Yuan Lu and adapted by Jorge Torres
+ for the OSU A23 analysis.
+
+ /* Check if a cliff string exists. If so, the event is considered a cliff event and discarded.
+ /* A cliff string is defined as either string 1,2,3 where all 4 channels on it shows |median difference| > predefined thresholds
+ */
+ bool isCliffEvent(vector <TGraph*> grInt){
+	 int cliff_threshold_A3_string1=100;
+	 int cliff_threshold_A3_string2=45;
+	 int cliff_threshold_A3_string3=100;
+	 int cliffCount_string1, cliffCount_string2, cliffCount_string3;
+	 int const IRS2SamplePerBlock=64;
+	 bool isCliff;
+	 double firstBlockMedian, lastBlockMedian;
+	 double firstBlockSamples[IRS2SamplePerBlock], lastBlockSamples[IRS2SamplePerBlock];
+	 cliffCount_string1 = cliffCount_string2 = cliffCount_string3 = 0;
+	 int len;
+	 for (int ch=0; ch<16; ch++){
+		 int len = grInt[ch]->GetN();
+		 double * voltValues;
+		 voltValues = grInt[ch]->GetY();
+		 for (int s=0; s<IRS2SamplePerBlock; s++){
+			 firstBlockSamples[s] = voltValues[s];
+			 lastBlockSamples[s]  = voltValues[len-IRS2SamplePerBlock+s];
+		 }
+		 firstBlockMedian = TMath::Median(IRS2SamplePerBlock, firstBlockSamples);
+		 lastBlockMedian  = TMath::Median(IRS2SamplePerBlock, lastBlockSamples);
+		 double medianDiff = fabs(firstBlockMedian - lastBlockMedian);
+
+		 if (ch%4 == 0){ //string 1
+			 if (medianDiff > cliff_threshold_A3_string1){
+				 isCliff = true;
+			 }
+		 } else if (ch%4 == 1) { //string 2
+			 if (medianDiff > cliff_threshold_A3_string2){
+				 isCliff = true;
+			 }
+		 } else if (ch%4 == 2){ //string 3
+			 if (medianDiff > cliff_threshold_A3_string3){
+				 isCliff = true;
+			 }
+		 }
+	 }//end of ch
+
+	 return isCliff;
  }
