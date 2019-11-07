@@ -1232,7 +1232,7 @@ Double_t getPeakSqVal(TGraph *gr, int *index){
 
  //Other version implemented by Ming-Yuan Lu. It tags the event as bad if the peak power bin
  //is out of band.
- bool hasOutofBandIssue(vector <TGraph*> wform){
+ bool hasOutofBandIssue(vector <TGraph*> wform, bool dropDDA4){
 	 double interpolation_step = 0.5;
 	 int counts = 0;
 	 bool isGlitch=false;
@@ -1265,7 +1265,6 @@ Double_t getPeakSqVal(TGraph *gr, int *index){
 		// 	 break;
 		//  }
 	 // }
-
 	 for (int i = 0; i < 16; i++){
 		 TGraph *Waveform_Interpolated = FFTtools::getInterpolatedGraph(wform[i],interpolation_step);
 		 //	delete gr;
@@ -1279,9 +1278,13 @@ Double_t getPeakSqVal(TGraph *gr, int *index){
 		 // printf("number of bins is:%i, xmin is:%f, xmax is:%f\n",num_bins,spectra->GetX()[0],spectra->GetX()[num_bins-1]);
 		 int peakBin = FFTtools::getPeakBin(spectra);
 		 // cout << peakBin << endl;
-		 // printf("PeakBin is:%i, UpBin is:%i\n",peakBin,upBin);
 		 delete spectra;
+
+		 if(dropDDA4==true && (i==3 || i==7 || i==11 || i==15)) continue;
 		 if(peakBin<upBin){
+			 // printf("PeakBin is:%i, UpBin is:%i\n",peakBin,upBin);
+			 // cout << i << endl;
+			 // if (peakBin>0) counts+=1;
 			 counts+=1;
 		}
 	 }
