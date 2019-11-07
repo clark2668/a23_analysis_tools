@@ -17,6 +17,7 @@
 #include "AraGeomTool.h"
 #include "tools_PlottingFns.h"
 #include "tools_WaveformFns.h"
+#include "FFTtools.h"
 
 
 using namespace std;
@@ -1147,6 +1148,7 @@ Double_t getPeakSqVal(TGraph *gr, int *index){
   return peakVal;
  }
 
+//isSpikeyStringEvent
  bool isSpikeyStringEvent(int stationId, bool dropARA03D4, vector <TGraph*> wf, int config){
 	 double spikeyRatio = 0.;
 	 if (stationId != 3){ //Only A3 has such problem
@@ -1221,4 +1223,69 @@ Double_t getPeakSqVal(TGraph *gr, int *index){
 	 }//end of ch
 
 	 return isCliff;
+ }
+
+ //hasOutofBandIssue: Cut implemented by Jorge Torres.
+ //Inputs: vector of dim=16 containing waveforms for each channels
+ //Outputs: returns a false or true depending on whether the event has more than
+ //10% of power below 120 MHz.
+
+ //Other version implemented by Ming-Yuan Lu. It tags the event as bad if the peak power bin
+ //is out of band.
+ bool hasOutofBandIssue(vector <TGraph*> wform){
+	 double interpolation_step = 0.5;
+	 int counts = 0;
+	 bool isGlitch=false;
+
+	 // for (int i = 0; i < 16; i++){
+		//  TGraph *Waveform_Interpolated = FFTtools::getInterpolatedGraph(wform[i],interpolation_step);
+		//  //	delete gr;
+		//  TGraph *Waveform_Padded = FFTtools::padWaveToLength(Waveform_Interpolated, Waveform_Interpolated->GetN()+6000);
+		//  delete Waveform_Interpolated;
+		//  TGraph *Waveform_Cropped=FFTtools::cropWave(Waveform_Padded,-300.,300.);
+		//  delete Waveform_Padded;
+		//  TGraph* spectra = FFTtools::makePowerSpectrumMilliVoltsNanoSeconds(Waveform_Cropped);
+		//  double outOfBandPower = 0;
+		//  double integral = 0;
+		//  double fracOutPower = 0;
+		//  int num_bins = spectra->GetN();
+		//  int upBin = (int) 50*(spectra->GetX()[num_bins-1]-spectra->GetX()[0])/num_bins;//120 MHz is the freq below which it's out of band
+		//  // printf("number of bins is:%i, xmin is:%f, xmax is:%f\n",num_bins,spectra->GetX()[0],spectra->GetX()[num_bins-1]);
+		//  for(int samp=0; samp<num_bins; samp++){
+	 //     integral+=spectra->GetY()[samp];
+	 //   }
+		//  for(int j = 0; j < upBin+1; j++){
+		// 	 outOfBandPower+= spectra->GetY()[j];
+		//  }
+		//  delete spectra;
+		//  fracOutPower = outOfBandPower/integral;
+		//  // cout << fracOutPower << endl;
+		//  if(fracOutPower>=0.5){
+		// 	 isGlitch=true;
+		// 	 break;
+		//  }
+	 // }
+
+	 for (int i = 0; i < 16; i++){
+		 TGraph *Waveform_Interpolated = FFTtools::getInterpolatedGraph(wform[i],interpolation_step);
+		 //	delete gr;
+		 TGraph *Waveform_Padded = FFTtools::padWaveToLength(Waveform_Interpolated, Waveform_Interpolated->GetN()+6000);
+		 delete Waveform_Interpolated;
+		 TGraph *Waveform_Cropped=FFTtools::cropWave(Waveform_Padded,-300.,300.);
+		 delete Waveform_Padded;
+		 TGraph* spectra = FFTtools::makePowerSpectrumMilliVoltsNanoSeconds(Waveform_Cropped);
+		 int num_bins = spectra->GetN();
+		 int upBin = (int) 100/((spectra->GetX()[num_bins-1]-spectra->GetX()[0])/num_bins);//120 MHz is the freq below which it's out of band
+		 // printf("number of bins is:%i, xmin is:%f, xmax is:%f\n",num_bins,spectra->GetX()[0],spectra->GetX()[num_bins-1]);
+		 int peakBin = FFTtools::getPeakBin(spectra);
+		 // cout << peakBin << endl;
+		 // printf("PeakBin is:%i, UpBin is:%i\n",peakBin,upBin);
+		 delete spectra;
+		 if(peakBin<upBin){
+			 counts+=1;
+		}
+	 }
+	 if(counts>3) isGlitch=true;
+	 // printf("counts is %i\n",counts);
+	 return isGlitch;
  }
