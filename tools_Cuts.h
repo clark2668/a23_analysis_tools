@@ -1292,3 +1292,97 @@ Double_t getPeakSqVal(TGraph *gr, int *index){
 	 // printf("counts is %i\n",counts);
 	 return isGlitch;
  }
+
+/*
+	input: antenna_powers (take a vector of the power contained in each channel), and dropBadChans (for if to drop bad channels)
+	output: the ratio
+
+	function: return the ratio of the average antenna power on the string with the most power
+				over the average antenna power on the string with the next most power
+*/
+double returnStringPowerRatio(vector<double> antenna_powers, int station, bool dropBadChans){
+
+ 	// protections against Brian's stupidity
+ 	vector<double> average_string_powers;
+ 	double ratio;
+ 	if(antenna_powers.size()<16){
+ 		ratio=0.;
+ 		return ratio;
+ 	}
+
+ 	if(station==2){
+ 		average_string_powers.push_back((antenna_powers[0]+antenna_powers[4]+antenna_powers[8]+antenna_powers[12])/4.);
+ 		average_string_powers.push_back((antenna_powers[1]+antenna_powers[5]+antenna_powers[9]+antenna_powers[13])/4.);
+ 		average_string_powers.push_back((antenna_powers[2]+antenna_powers[6]+antenna_powers[10]+antenna_powers[14])/4.);
+ 		average_string_powers.push_back((antenna_powers[3]+antenna_powers[7]+antenna_powers[11])/3.);
+ 	}
+
+ 	if(station==3){
+ 		if(!dropBadChans){
+			average_string_powers.push_back((antenna_powers[0]+antenna_powers[4]+antenna_powers[8]+antenna_powers[12])/4.);
+ 			average_string_powers.push_back((antenna_powers[1]+antenna_powers[5]+antenna_powers[9]+antenna_powers[13])/4.);
+ 			average_string_powers.push_back((antenna_powers[2]+antenna_powers[6]+antenna_powers[10]+antenna_powers[14])/4.);
+ 			average_string_powers.push_back((antenna_powers[3]+antenna_powers[7]+antenna_powers[11]+antenna_powers[15])/4.);
+ 		}
+ 		else if(dropBadChans){
+ 			average_string_powers.push_back((antenna_powers[0]+antenna_powers[4]+antenna_powers[8]+antenna_powers[12])/4.);
+ 			average_string_powers.push_back((antenna_powers[1]+antenna_powers[5]+antenna_powers[9]+antenna_powers[13])/4.);
+ 			average_string_powers.push_back((antenna_powers[2]+antenna_powers[6]+antenna_powers[10]+antenna_powers[14])/4.);
+ 		}
+ 	}
+
+ 	//sort smallest to largest
+ 	std::sort(average_string_powers.begin(), average_string_powers.end());
+	ratio = average_string_powers[3]/average_string_powers[2];
+	return ratio;
+}
+/*
+	input: waveforms (vector of waveforms; raw, interpolated, don't matter), and station, runNum
+	output: does the event have too much power concentrated in one run or not?
+
+	function: check if the event has too much power concentrated in a single run, 
+				like we saw in the A2 unblindinging
+*/
+bool isHighPowerStringEvent(vector<TGraph*> waveforms, int station, int runNum){
+
+	// protections against Brian's stupidity
+	bool this_isHighPowerEvent=false;
+	if(waveforms.size()<16 || (station!=2 && station!=3)){
+		this_isHighPowerEvent=false;
+		return this_isHighPowerEvent;
+	}
+
+	// compute power in the antennas
+	vector<double> powers_on_antennas;
+	for(int chan=0; chan<16; chan++){
+		Double_t *yVals = waveforms[chan]->GetY();
+		int N = waveforms[chan]->GetN();
+		double thisPower =0.;
+		for(int samp=0; samp<N; samp++){
+			thisPower+=yVals[samp]*yVals[samp];
+		}
+		powers_on_antennas.push_back(thisPower);
+	}
+
+	// figure out if we need to drop bad channels based on the runNum
+	bool dropBadChans=false;
+	if(station==2){
+		dropBadChans=true;
+	}
+	else if(station==3){
+		if(runNum>getA3BadRunBoundary()){
+			dropBadChans=true;
+		}
+	}
+
+	// get the ratio
+	double ratio = returnStringPowerRatio(powers_on_antennas, station, dropBadChans);
+
+	// if the average power in string with highest power is >5x average power in string with next highest power
+	// mark it as a high power event
+	if(ratio>5.)
+		this_isHighPowerEvent=true;
+
+	// return
+	return this_isHighPowerEvent;
+}
