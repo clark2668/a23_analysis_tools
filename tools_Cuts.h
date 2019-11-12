@@ -1068,13 +1068,12 @@ int isBadRun(int station, int run_num, vector<int>BadRunList){
 */
 bool isSoftwareDominatedRun(std::string pathToToolsDir, int station, int run_num){
 	char filename[200];
-	sprintf(filename,"%s/data/A%d_software_dominated_list.csv",pathToToolsDir.c_str(), station);
+	sprintf(filename,"%s/data/A%i_software_dominated_list.txt",pathToToolsDir.c_str(), station);
 	ifstream infile(filename);
 	string line;
 	string str;
 
 	bool isSoftwareDominated=false;
-
 	//  Read the file
 	while (getline(infile, line))
 	{   istringstream ss (line);
@@ -1082,11 +1081,9 @@ bool isSoftwareDominatedRun(std::string pathToToolsDir, int station, int run_num
 
 		while (getline(ss, str, ','))
 		record.push_back(str);
-		// cout << record[0] << endl;
 		int runNum;
 		std::stringstream(record[0]) >> runNum;
 		if (runNum==run_num){
-			// cout << "Untagged" << endl;
 			isSoftwareDominated=true;
 		}
 	}
@@ -1340,7 +1337,7 @@ double returnStringPowerRatio(vector<double> antenna_powers, int station, bool d
 	input: waveforms (vector of waveforms; raw, interpolated, don't matter), and station, runNum
 	output: does the event have too much power concentrated in one run or not?
 
-	function: check if the event has too much power concentrated in a single run, 
+	function: check if the event has too much power concentrated in a single run,
 				like we saw in the A2 unblindinging
 */
 bool isHighPowerStringEvent(vector<TGraph*> waveforms, int station, int runNum){
