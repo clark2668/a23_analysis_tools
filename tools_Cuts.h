@@ -635,6 +635,7 @@ int isBadLivetime(int station, int unixTime){
 			(unixTime>=1413897900 && unixTime<=1413899100) || // from run 3439
 			(unixTime>=1413914400 && unixTime<=1413922200) || // from run 3440 big wide weird above ground
 			(unixTime>=1414083600 && unixTime<=1414086300) || // from run 3449 , 2 spikes
+			(unixTime>=1413550800 && unixTime<=1413552600) || // from run 3419, end of the run, before a software dominated run starts
 			(unixTime>=1414674000 && unixTime<=1414675500) || // from run 3478
 			(unixTime>=1415380500 && unixTime<=1415381400) || // from run 3520
 			(unixTime>=1415460600 && unixTime<=1415461500) || // from run 3524
