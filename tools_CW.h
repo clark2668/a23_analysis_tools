@@ -593,6 +593,8 @@ vector<double> CWCut_TB(vector <TGraph*> waveforms, vector <TGraph*> baselines, 
 					} //was the second ant's bad frequency within 5 MHz of the first antennas bad frequency?
 				} //loop over second antennas bad freqs
 			}//loop over second antenna
+			//cout<<"matchedFreqsFull is "<<matchedFreqsFull<<endl;
+			//cout<<"Freq "<<badFreqs[i][ii]<<" has matchedFreqsFull of "<<matchedFreqsFull<<endl;
 			if(matchedFreqsFull>=num_coinc){
 				double new_freq=badFreqs[i][ii];
 				for(int k=0; k<FreqToNotch.size(); k++){
@@ -606,21 +608,40 @@ vector<double> CWCut_TB(vector <TGraph*> waveforms, vector <TGraph*> baselines, 
 	} //loop over antenna 1
 
 	if(print){
+
+		std::vector<TGraph*> newBaselines_6dB;
+		for(int i=0; i<16; i++){
+			newBaselines_6dB.push_back((TGraph*)newBaselines[i]->Clone());
+			for(int samp=0; samp<newBaselines_6dB[i]->GetN(); samp++){
+				newBaselines_6dB[i]->GetY()[samp]+=6.;
+			}
+		}
+
 		char *plotPath(getenv("PLOT_PATH"));
 		if (plotPath == NULL) std::cout << "Warning! $PLOT_PATH is not set!" << endl;
-		TCanvas *c = new TCanvas("","",1100,850);
+		TCanvas *c = new TCanvas("","",2*1100,2*850);
 		c->Divide(4,4);
 		for(int i=0; i<16; i++){
 			c->cd(i+1);
 			newFFTs[i]->Draw("ALP");
 			newBaselines[i]->Draw("same");
 			newBaselines[i]->SetLineColor(kRed);
-			newFFTs[i]->GetYaxis()->SetRangeUser(0,50);
+			newBaselines[i]->SetLineWidth(2);
+			newFFTs[i]->GetYaxis()->SetRangeUser(15,50);
+			newFFTs[i]->GetYaxis()->SetTitle("Power (dB)");
+			newFFTs[i]->GetXaxis()->SetTitle("Frequency (MHz)");
+			newFFTs[i]->SetLineWidth(2);
+
+			// newBaselines_6dB[i]->Draw("same");
+			// newBaselines_6dB[i]->SetLineColor(kBlue);
+			// newBaselines_6dB[i]->SetLineWidth(2);
+
 		}
 		char save_temp_title[300];
 		sprintf(save_temp_title,"%s/trouble_events/Run%d_Ev%d_Pol%d_CWBaseline.png",plotPath,runNum,eventNum,pol);
 		c->SaveAs(save_temp_title);
 		delete c;
+		for(int i=0; i<16; i++) delete newBaselines_6dB[i];
 	}
 
 	for(int i=0; i<16; i++){
@@ -629,4 +650,56 @@ vector<double> CWCut_TB(vector <TGraph*> waveforms, vector <TGraph*> baselines, 
 		delete newBaselines[i];
 	}
 	return FreqToNotch;
+}
+
+// determine if the baselines themselves have a peak
+
+bool areBaselinesGood(vector<TGraph*> baselines){
+
+	bool areTheseBaselinesGood=true;
+
+	char equation[150];
+	sprintf(equation,"([3]*x*x*x + [2]*x*x + [0]*x + [1])");
+	char equation_name[16][150];
+	TF1 *fit[16];
+	double start_of_fit[16];
+	double end_of_fit[16];
+	for(int chan=0; chan<16; chan++){
+		start_of_fit[chan]=150.;
+		end_of_fit[chan]=850.;
+		sprintf(equation_name[chan],"Fit%d",chan);
+		fit[chan] = new TF1(equation_name[chan],equation,start_of_fit[chan],end_of_fit[chan]);
+		baselines[chan]->Fit(equation_name[chan],"Q,R");
+	}
+
+	int numViolations=0;
+
+	for(int chan=0; chan<16; chan++){
+		int numSamps = baselines[chan]->GetN();
+		Double_t *theseY = baselines[chan]->GetY();
+		Double_t *theseX = baselines[chan]->GetX();
+		for(int samp=0; samp<numSamps; samp++){
+			double thisX = theseX[samp];
+			double thisY = theseY[samp];
+			// if(thisX>150. && thisX<850. && (thisX-300.>1.) && (thisX-500.>1.)){
+			if(abs(thisX-300.)<2.) continue;
+			if(abs(thisX-500.)<2.) continue;
+			if(thisX>150. && thisX<800.){
+				double expectedY = fit[chan]->Eval(thisX);
+				double violation = thisY - expectedY;
+				if( violation > 2.){
+					// printf("Chan %d, Freq %.2f has %.2f violation \n", chan, thisX, violation);
+					numViolations++;
+				}
+			}
+		}
+	}
+
+	for(int chan=0; chan<16; chan++) delete fit[chan];
+
+	if(numViolations>0)
+		areTheseBaselinesGood=false;
+
+	return areTheseBaselinesGood;
+
 }
