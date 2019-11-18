@@ -937,29 +937,34 @@ vector<int> BuildBadRunList(int station){
 
 		/*2013*/
 
+			// /*
+			// 	Misc tests: http://ara.icecube.wisc.edu/wiki/index.php/Run_Log_2013
+			// */
+			// for(int i=22; i<=62; i++){ exclude.push_back(i); }
+
+
+
+			// /*
+			// 	ICL rooftop
+			// 	http://ara.icecube.wisc.edu/wiki/index.php/A23_Diffuse_UW
+			// */
+
+			// for(int i=63; i<=70; i++){ exclude.push_back(i); }
+			// for(int i=333; i<=341; i++){ exclude.push_back(i); }
+
+
+			// /*
+			// 	Cal sweep
+			// 	http://ara.icecube.wisc.edu/wiki/index.php/A23_Diffuse_UW
+			// */
+
+			// for(int i=72; i<=297; i++){ exclude.push_back(i); }
+			// for(int i=346; i<=473; i++){ exclude.push_back(i); }
+
 			/*
-				Misc tests: http://ara.icecube.wisc.edu/wiki/index.php/Run_Log_2013
+				Eliminate all early data taking (all runs before 508)
 			*/
-			for(int i=22; i<=62; i++){ exclude.push_back(i); }
-
-
-
-			/*
-				ICL rooftop
-				http://ara.icecube.wisc.edu/wiki/index.php/A23_Diffuse_UW
-			*/
-
-			for(int i=63; i<=70; i++){ exclude.push_back(i); }
-			for(int i=333; i<=341; i++){ exclude.push_back(i); }
-
-
-			/*
-				Cal sweep
-				http://ara.icecube.wisc.edu/wiki/index.php/A23_Diffuse_UW
-			*/
-
-			for(int i=72; i<=297; i++){ exclude.push_back(i); }
-			for(int i=346; i<=473; i++){ exclude.push_back(i); }
+			for(int i=0; i<=508; i++){ exclude.push_back(i); }
 
 
 			/*
@@ -1040,6 +1045,12 @@ vector<int> BuildBadRunList(int station){
 				http://ara.icecube.wisc.edu/wiki/index.php/Run_Log_2014
 			*/
 			for(int i=7126; i<=7253; i++){ exclude.push_back(i); }
+
+			/*
+				More events with no RF/deep triggers
+				seems to precede coming test
+			*/
+			exclude.push_back(7125);
 	}
 	return exclude;
 }
