@@ -14,6 +14,9 @@
 #include <AraGeomTool.h>
 #include <FFTtools.h>
 
+// custom tools stuff
+#include "tools_Cuts.h"
+
 int getChansfromPair(AraGeomTool * geomTool, int stationNum, int polarization, int pair, int &ch1, int &ch2){
 
 	int pairnum = 0;
@@ -654,9 +657,21 @@ vector<double> CWCut_TB(vector <TGraph*> waveforms, vector <TGraph*> baselines, 
 
 // determine if the baselines themselves have a peak
 
-bool areBaselinesGood(vector<TGraph*> baselines){
+bool areBaselinesGood(vector<TGraph*> baselines, int station, int runNum){
 
 	bool areTheseBaselinesGood=true;
+
+	int config = getConfig(station, runNum);
+	bool dropBadChans=false;
+	if(config>2){
+		dropBadChans=true;
+	}
+
+	// if for some reason the "baselines" didn't form, don't continue with this operation
+	for(int chan=0; chan<16; chan++){
+		if(baselines[chan]->GetN()<1)
+			return false;
+	}
 
 	char equation[150];
 	sprintf(equation,"([3]*x*x*x + [2]*x*x + [0]*x + [1])");
@@ -672,32 +687,57 @@ bool areBaselinesGood(vector<TGraph*> baselines){
 		baselines[chan]->Fit(equation_name[chan],"Q,R");
 	}
 
-	int numViolations=0;
+	int numChannelViolations=0;
 
 	for(int chan=0; chan<16; chan++){
+		if(dropBadChans && station==2){
+			if(chan==15) continue;
+		}
+
+		if(station==3){
+			if(chan==6) continue;
+
+			if(dropBadChans){
+				if(chan==3 || chan==7 || chan==11 || chan==15){
+					continue;
+				}
+			}
+		}
+
+		int numViolations=0;
+
 		int numSamps = baselines[chan]->GetN();
 		Double_t *theseY = baselines[chan]->GetY();
 		Double_t *theseX = baselines[chan]->GetX();
 		for(int samp=0; samp<numSamps; samp++){
 			double thisX = theseX[samp];
 			double thisY = theseY[samp];
-			// if(thisX>150. && thisX<850. && (thisX-300.>1.) && (thisX-500.>1.)){
 			if(abs(thisX-300.)<2.) continue;
 			if(abs(thisX-500.)<2.) continue;
+			if(abs(thisX-675.)<2.) continue;
+			if(abs(thisX-725.)<2.) continue;
+			if(abs(thisX-750.)<2.) continue;
+			if(abs(thisX-775.)<2.) continue;
+			if(abs(thisX-800.)<2.) continue;
+
 			if(thisX>150. && thisX<800.){
 				double expectedY = fit[chan]->Eval(thisX);
 				double violation = thisY - expectedY;
 				if( violation > 2.){
-					// printf("Chan %d, Freq %.2f has %.2f violation \n", chan, thisX, violation);
+					printf(     "Chan %d, Freq %.2f has %.2f violation \n", chan, thisX, violation);
 					numViolations++;
 				}
 			}
+		}
+		if(numViolations>0){
+			numChannelViolations++;
+			printf("Chan %d has %d violations \n", chan, numViolations);
 		}
 	}
 
 	for(int chan=0; chan<16; chan++) delete fit[chan];
 
-	if(numViolations>0)
+	if(numChannelViolations>0)
 		areTheseBaselinesGood=false;
 
 	return areTheseBaselinesGood;
