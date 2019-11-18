@@ -1395,3 +1395,38 @@ bool isHighPowerStringEvent(vector<TGraph*> waveforms, int station, int runNum){
 	// return
 	return this_isHighPowerEvent;
 }
+
+
+/*
+	input: waveforms (vector of waveforms; raw, interpolated, don't matter), freqLimit (below what we consider out of band),
+	dropDDA4 (drop string 4?), absPower (vector to be filled)
+	output: vector conataining absolute power per channel
+
+	function: calculates the absolute power concentrated below "freqLimit" MHz.
+*/
+
+int outOfBandAbsPower(vector <TGraph*> wform, bool dropDDA4, double freqLimit, vector <double> & absPower){
+	double interpolation_step = 0.5;
+	for (int i = 0; i < 16; i++){
+		if(dropDDA4==true && (i==3 || i==7 || i==11 || i==15)){
+			absPower.push_back(-1);
+			continue;
+		}
+	  TGraph *Waveform_Interpolated = FFTtools::getInterpolatedGraph(wform[i],interpolation_step);
+	  //	delete gr;
+	  TGraph *Waveform_Padded = FFTtools::padWaveToLength(Waveform_Interpolated, Waveform_Interpolated->GetN()+6000);
+	  delete Waveform_Interpolated;
+	  TGraph *Waveform_Cropped=FFTtools::cropWave(Waveform_Padded,-300.,300.);
+	  delete Waveform_Padded;
+	  TGraph* spectra = FFTtools::makePowerSpectrumMilliVoltsNanoSeconds(Waveform_Cropped);
+	  double outOfBandPower = 0;
+	  int num_bins = spectra->GetN();
+	  int upBin = (int) freqLimit/((spectra->GetX()[num_bins-1]-spectra->GetX()[0])/num_bins);//freqLimit is the freq below which it's out of band
+	  for(int j = 0; j < upBin+1; j++){
+	 	 outOfBandPower+= spectra->GetY()[j];
+	  }
+	  delete spectra;
+		absPower.push_back(outOfBandPower);
+	}
+	return 0;
+}
