@@ -1337,10 +1337,14 @@ double returnStringPowerRatio(vector<double> antenna_powers, int station, bool d
  			average_string_powers.push_back((antenna_powers[0]+antenna_powers[4]+antenna_powers[8]+antenna_powers[12])/4.);
  			average_string_powers.push_back((antenna_powers[1]+antenna_powers[5]+antenna_powers[9]+antenna_powers[13])/4.);
  			average_string_powers.push_back((antenna_powers[2]+antenna_powers[6]+antenna_powers[10]+antenna_powers[14])/4.);
+ 			average_string_powers.push_back(0.); // push back a zero for string 4, just to keep the vector the right length
  		}
  	}
 
  	//sort smallest to largest
+ 	if(average_string_powers.size()!=4){
+ 		cout<<"WARNING! This array is too short"<<endl;
+ 	}
  	std::sort(average_string_powers.begin(), average_string_powers.end());
 	ratio = average_string_powers[3]/average_string_powers[2];
 	return ratio;
