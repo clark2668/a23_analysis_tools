@@ -1414,20 +1414,20 @@ int outOfBandAbsPower(vector <TGraph*> wform, bool dropDDA4, double freqLimit, v
 			absPower.push_back(-1);
 			continue;
 		}
-	  TGraph *Waveform_Interpolated = FFTtools::getInterpolatedGraph(wform[i],interpolation_step);
-	  TGraph *Waveform_Padded = FFTtools::padWaveToLength(Waveform_Interpolated, Waveform_Interpolated->GetN()+6000);
-	  delete Waveform_Interpolated;
-	  TGraph *Waveform_Cropped=FFTtools::cropWave(Waveform_Padded,-500.,700.);
-	  delete Waveform_Padded;
-	  TGraph* spectra = FFTtools::makePowerSpectrumMilliVoltsNanoSeconds(Waveform_Cropped);
+		TGraph *Waveform_Interpolated = FFTtools::getInterpolatedGraph(wform[i],interpolation_step);
+		TGraph *Waveform_Padded = FFTtools::padWaveToLength(Waveform_Interpolated, Waveform_Interpolated->GetN()+6000);
+		delete Waveform_Interpolated;
+		TGraph *Waveform_Cropped=FFTtools::cropWave(Waveform_Padded,-500.,700.);
+		delete Waveform_Padded;
+		TGraph* spectra = FFTtools::makePowerSpectrumMilliVoltsNanoSeconds(Waveform_Cropped);
 		delete Waveform_Cropped;
-	  double outOfBandPower = 0.;
-	  int num_bins = spectra->GetN();
-	  int upBin = (int) freqLimit/((spectra->GetX()[num_bins-1]-spectra->GetX()[0])/num_bins);//freqLimit is the freq below which it's out of band
-	  for(int j = 0; j < upBin+1; j++){
-	 	 outOfBandPower+= spectra->GetY()[j];
-	  }
-	  delete spectra;
+		double outOfBandPower = 0.;
+		int num_bins = spectra->GetN();
+		int upBin = (int) freqLimit/((spectra->GetX()[num_bins-1]-spectra->GetX()[0])/num_bins);//freqLimit is the freq below which it's out of band
+		for(int j = 0; j < upBin+1; j++){
+			outOfBandPower+= spectra->GetY()[j];
+		}
+		delete spectra;
 		absPower.push_back(outOfBandPower);
 	}
 	return 0;
