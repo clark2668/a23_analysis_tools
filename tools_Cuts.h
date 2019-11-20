@@ -1352,7 +1352,7 @@ double returnStringPowerRatio(vector<double> antenna_powers, int station, bool d
 	function: check if the event has too much power concentrated in a single run,
 				like we saw in the A2 unblindinging
 */
-bool isHighPowerStringEvent(vector<TGraph*> waveforms, int station, int runNum){
+bool isHighPowerStringEvent(vector<TGraph*> waveforms, int station, int config){
 
 	// protections against Brian's stupidity
 	bool this_isHighPowerEvent=false;
@@ -1378,10 +1378,8 @@ bool isHighPowerStringEvent(vector<TGraph*> waveforms, int station, int runNum){
 	if(station==2){
 		dropBadChans=true;
 	}
-	else if(station==3){
-		if(runNum>getA3BadRunBoundary()){
-			dropBadChans=true;
-		}
+	else if(station==3 && config>2){
+		dropBadChans=true;
 	}
 
 	// get the ratio
