@@ -1288,6 +1288,7 @@ Double_t getPeakSqVal(TGraph *gr, int *index){
 		 int peakBin = FFTtools::getPeakBin(spectra);
 		 // cout << peakBin << endl;
 		 delete spectra;
+		 delete Waveform_Cropped;
 
 		 if(dropDDA4==true && (i==3 || i==7 || i==11 || i==15)) continue;
 		 if(peakBin<upBin){
