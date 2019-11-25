@@ -105,7 +105,7 @@ void getRCutValues(int station, int config, int pol, double &slope, double &inte
 
 bool passesRCut(int station, int config, int pol, double SNR, double corr){
 	bool passes=false;
-	if(station==2){
+	if(station==2 || station==3){
 		double slope_val;
 		double intercept_val;
 		getRCutValues(station, config, pol, slope_val, intercept_val);
@@ -113,9 +113,6 @@ bool passesRCut(int station, int config, int pol, double SNR, double corr){
 		if (SNR >= ((corr * slope_val ) + intercept_val)){
 			passes=true;
 		}
-	}
-	else if(station==3){
-
 	}
 	return passes;
 }
