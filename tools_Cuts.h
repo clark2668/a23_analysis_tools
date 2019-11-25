@@ -65,39 +65,51 @@ void getRCutValues(int station, int config, int pol, double &slope, double &inte
 	else if(station==3){
 		// these were updated 2019-11-25 with the results of the A3 optimization
 		if(pol==0){
-			slope=-1240.;
+			// slope=-1240.;
+			slope=-1420.;
 			if(config==1){
-				intercept=14.6;
+				// intercept=14.6;
+				intercept=15.8;
 			}
 			else if(config==2){
-				intercept=15.4;
+				// intercept=15.4;
+				intercept=16.5;
 			}
 			else if(config==3){
-				intercept=17.9;
+				// intercept=17.9;
+				intercept=19.5;
 			}
 			else if(config==4){
-				intercept=17.9;
+				// intercept=17.9;
+				intercept=19.4;
 			}
 			else if(config==5){
-				intercept=16.1;
+				// intercept=16.1;
+				intercept=17.5;
 			}
 		}
 		else if(pol==1){
-			slope=-600.;
+			// slope=-600.;
+			slope=-680.;
 			if(config==1){
-				intercept=13.4;
-			}
-			else if(config==2){
+				// intercept=13.4;
 				intercept=14.1;
 			}
+			else if(config==2){
+				// intercept=14.1;
+				intercept=14.6;
+			}
 			else if(config==3){
-				intercept=14.0;
+				// intercept=14.0;
+				intercept=14.8;
 			}
 			else if(config==4){
-				intercept=13.7;
+				// intercept=13.7;
+				intercept=14.3;
 			}
 			else if(config==5){
-				intercept=12.3;
+				// intercept=12.3;
+				intercept=13.0;
 			}
 		}
 	}
