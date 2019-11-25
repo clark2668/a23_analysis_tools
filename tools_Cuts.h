@@ -825,6 +825,49 @@ vector<int> BuildSurfaceRunList(int station){
 		exclude.push_back(8074);
 
 	}
+	else if(station==3){
+
+		/*
+		Runs shared with Ming-Yuan
+			http://ara.physics.wisc.edu/cgi-bin/DocDB/ShowDocument?docid=2041
+		*/
+		exclude.push_back(977);
+		exclude.push_back(1240);
+		exclude.push_back(3158);
+		exclude.push_back(3431);
+		exclude.push_back(3432);
+		exclude.push_back(3435);
+		exclude.push_back(3437);
+		exclude.push_back(3438);
+		exclude.push_back(3439);
+		exclude.push_back(3440);
+		exclude.push_back(3651);
+		exclude.push_back(3841);
+		exclude.push_back(4472);
+		exclude.push_back(4963);
+		exclude.push_back(4988);
+		exclude.push_back(4989);
+
+
+		/*
+		Runs identified independently
+		*/
+		exclude.push_back(1745);
+		exclude.push_back(3157);
+		exclude.push_back(3652);
+		exclude.push_back(3800);
+		exclude.push_back(6193);
+		exclude.push_back(6319);
+		exclude.push_back(6426);
+
+		/*
+		Runs I am sure we will exclude...
+		*/
+		exclude.push_back(2000);
+		exclude.push_back(2001);
+
+
+	}
 
 	return exclude;
 }
